@@ -1,29 +1,252 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>アイヌ民族星文化表示ビューア～カムイの星図～（工事中）</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Stellarium Web + SVG パン/ズーム デモ</title>
   <style>
-    body { font-family: sans-serif; margin: 2em; }
-    #stellarium { width: 100%; height: 500px; border: 1px solid #ccc; margin-bottom: 1em; }
+    html,body{height:100%;margin:0;font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif}
+    .container{position:relative;height:100vh;overflow:hidden;background:#000}
+
+    /* iframe を背面に敷く例 */
+    iframe.stellarium{
+      position:absolute;inset:0;border:0;width:100%;height:100%;display:block;background:#000}
+
+    /* SVG をオーバーレイして直接操作する例 */
+    .svg-overlay{
+      position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none; /* pointer-events は JS 側で切り替えます */
+      display:flex;align-items:center;justify-content:center
+    }
+
+    /* デバッグ用にボタン */
+    .controls{position:absolute;left:10px;top:10px;z-index:1000;color:#fff}
+    .controls button{margin-right:6px}
+
+    /* サンプルSVGの見た目 */
+    svg.sample{width:800px;height:600px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}
   </style>
-  <script src="https://unpkg.com/stellarium-web-engine/dist/stellarium-web-engine.min.js"></script>
 </head>
 <body>
-  <h1>アイヌ民族星文化ビューア～カムイの星図～（工事中）</h1>
-  <div>アイヌ民族の星文化を表示する地域を選択してください。</div>
-  <button id="gps-btn">GPSで自動判定</button>
-  <select id="area-select">
-    <option value="">地域を選択</option>
-  </select>
-  <div id="stellarium" style="position:relative;">
-    <div id="stellarium-container" style="width:100%;height:500px;"></div>
-    <svg id="star-svg" style="position:absolute; left:0; top:0; pointer-events:none;"></svg>
+  <div class="container">
+    <!-- 1) 外部の Stellarium Web を iframe で表示（注：クロスオリジンで iframe 内の SVG を直接操作できない点に注意） -->
+    <iframe class="stellarium" src="https://stellarium-web.org/" title="Stellarium Web"></iframe>
+
+    <!-- 2) オーバーレイで操作可能な SVG（この SVG をドラッグ・ホイールで操作します） -->
+    <div class="svg-overlay" id="svg-overlay">
+      <!-- pointer-events:none にしているので JS で切り替えます -->
+      <!-- 実際に Stellarium の SVG を直接操作するには、その SVG が同一オリジンでページ内にある必要があります -->
+      <svg class="sample" id="manipulable-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+        <defs>
+          <radialGradient id="g" cx="50%" cy="30%">
+            <stop offset="0%" stop-color="#ffe"/>
+            <stop offset="100%" stop-color="#fbd"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="800" height="600" fill="none"/>
+        <!-- 星っぽいリング -->
+        <g id="content">
+          <circle cx="400" cy="300" r="160" fill="url(#g)" stroke="#fff1"/>
+          <g id="stars">
+            <!-- ランダムな星を描画（例） -->
+            <g>
+              <circle cx="200" cy="130" r="2"/>
+              <circle cx="250" cy="420" r="1.5"/>
+              <circle cx="520" cy="200" r="1"/>
+              <circle cx="620" cy="330" r="2.5"/>
+              <circle cx="360" cy="460" r="1.2"/>
+            </g>
+          </g>
+          <text x="20" y="30" fill="#fff" font-size="18">SVG をドラッグ＆ホイールでズーム / パンできます</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="controls">
+      <button id="enableBtn">SVG の操作を有効</button>
+      <button id="resetBtn">リセット</button>
+    </div>
   </div>
-  <div id="detail-info" style="border:1px solid #ccc; padding:1em; min-height:4em; background:#fafaff; margin-bottom:1em;">
-    <strong>アイヌ民族の星文化詳細：</strong>
-    <div id="detail-content">星や星座をクリックすると詳細が表示されます。</div>
-  </div>
-  <script src="ainu_constellation.js"></script>
+
+  <script>
+  // ---------------------------------------------
+  // SVG パン / ズーム 実装（幅広いブラウザ対応、マウス/タッチ対応）
+  // 前提: 操作対象の SVG は同一オリジンでページ内に存在すること（iframe 内のものは操作不可）
+  // ---------------------------------------------
+
+  (function(){
+    const svg = document.getElementById('manipulable-svg');
+    const overlay = document.getElementById('svg-overlay');
+    const enableBtn = document.getElementById('enableBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // 初期 transform 値
+    let scale = 1;
+    let minScale = 0.2;
+    let maxScale = 8;
+    let tx = 0; // translate x
+    let ty = 0; // translate y
+
+    // 内部で使うフラグ
+    let pointerDown = false;
+    let lastPointer = null;
+    let isEnabled = false;
+
+    // SVG の viewBox サイズを取得（拘束された描画領域を使うため）
+    const vb = svg.viewBox.baseVal || {x:0,y:0,width:800,height:600};
+
+    // 操作対象の <g id="content"> をまとめて変形する（元の座標系を壊さないため）
+    const content = svg.querySelector('#content');
+    if(!content){
+      console.warn('SVG に #content 要素が見つかりません。全体を変形するようにしてください。');
+    }
+
+    // transform 更新
+    function applyTransform(){
+      const t = `translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${scale.toFixed(6)})`;
+      if(content) content.setAttribute('transform', t);
+      else svg.setAttribute('transform', t);
+    }
+
+    // 指定ピクセル位置 (clientX/clientY) を SVG の座標に変換
+    function clientToSvg(clientX, clientY){
+      const rect = svg.getBoundingClientRect();
+      // SVG 上のピクセル位置
+      const px = clientX - rect.left;
+      const py = clientY - rect.top;
+      // viewBox 単位に変換
+      const svgX = vb.x + px * (vb.width / rect.width);
+      const svgY = vb.y + py * (vb.height / rect.height);
+      return {px,py,svgX,svgY};
+    }
+
+    // ウィールでズームする（カーソル位置を中心にする）
+    function onWheel(e){
+      if(!isEnabled) return;
+      e.preventDefault();
+      const delta = - (e.deltaY || e.wheelDelta || -e.detail);
+      // 簡単なスケール因子定義
+      const factor = Math.exp(delta * 0.00125); // 調整可能
+      const {px} = clientToSvg(e.clientX, e.clientY);
+
+      // カーソルの SVG 座標に相対した焦点を計算
+      // focus = (cursor - tx) / scale
+      const focusX = (px - tx) / scale;
+      const newScale = Math.max(minScale, Math.min(maxScale, scale * factor));
+      // 新しい tx でカーソル位置が同じコンテンツの点を指すようにする
+      tx = px - focusX * newScale;
+      scale = newScale;
+      applyTransform();
+    }
+
+    // pointer events 用ハンドラ（マウス・タッチ統一）
+    function onPointerDown(e){
+      if(!isEnabled) return;
+      pointerDown = true;
+      lastPointer = getPointer(e);
+      // キャプチャしておく
+      overlay.setPointerCapture && overlay.setPointerCapture(e.pointerId);
+    }
+    function onPointerMove(e){
+      if(!isEnabled || !pointerDown) return;
+      const p = getPointer(e);
+      const dx = p.x - lastPointer.x;
+      const dy = p.y - lastPointer.y;
+      // ピクセルの差をそのまま translate に使う（SVG の viewBox 比率を考慮して変換）
+      const rect = svg.getBoundingClientRect();
+      const scaleX = vb.width / rect.width;
+      const scaleY = vb.height / rect.height;
+      tx += dx * scaleX;
+      ty += dy * scaleY;
+      lastPointer = p;
+      applyTransform();
+    }
+    function onPointerUp(e){
+      if(!isEnabled) return;
+      pointerDown = false;
+      lastPointer = null;
+      overlay.releasePointerCapture && overlay.releasePointerCapture(e.pointerId);
+    }
+
+    function getPointer(e){
+      // PointerEvent の場合
+      if(e.touches && e.touches.length) {
+        return {x: e.touches[0].clientX, y: e.touches[0].clientY};
+      }
+      return {x: e.clientX, y: e.clientY};
+    }
+
+    // enable/disable 操作（overlay の pointer-events を切り替え）
+    function setEnabled(v){
+      isEnabled = !!v;
+      if(isEnabled){
+        overlay.style.pointerEvents = 'auto';
+        enableBtn.textContent = 'SVG の操作を無効';
+      } else {
+        overlay.style.pointerEvents = 'none';
+        enableBtn.textContent = 'SVG の操作を有効';
+      }
+    }
+
+    enableBtn.addEventListener('click', ()=> setEnabled(!isEnabled));
+    resetBtn.addEventListener('click', ()=>{
+      scale = 1; tx = 0; ty = 0; applyTransform();
+    });
+
+    // イベント登録
+    // Wheel: overlay 上でホイールを拾う
+    overlay.addEventListener('wheel', onWheel, {passive:false});
+
+    // Pointer events
+    overlay.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+
+    // さらにタッチデバイスの2本指ピンチズームにも対応する（簡易実装）
+    let lastTouches = null;
+    function onTouchStart(e){
+      if(!isEnabled) return;
+      if(e.touches.length === 2){
+        e.preventDefault();
+        lastTouches = [e.touches[0], e.touches[1]];
+      }
+    }
+    function onTouchMove(e){
+      if(!isEnabled) return;
+      if(e.touches.length === 2 && lastTouches){
+        e.preventDefault();
+        const a = lastTouches[0], b = lastTouches[1];
+        const na = e.touches[0], nb = e.touches[1];
+        const oldDist = Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+        const newDist = Math.hypot(nb.clientX - na.clientX, nb.clientY - na.clientY);
+        if(oldDist > 0){
+          const factor = newDist / oldDist;
+          // 中心点
+          const cx = (na.clientX + nb.clientX) / 2;
+          const {px} = clientToSvg(cx, (na.clientY + nb.clientY) / 2);
+          const focusX = (px - tx) / scale;
+          const newScale = Math.max(minScale, Math.min(maxScale, scale * factor));
+          tx = px - focusX * newScale;
+          scale = newScale;
+          applyTransform();
+        }
+        lastTouches = [e.touches[0], e.touches[1]];
+      }
+    }
+    function onTouchEnd(e){ lastTouches = null; }
+
+    overlay.addEventListener('touchstart', onTouchStart, {passive:false});
+    overlay.addEventListener('touchmove', onTouchMove, {passive:false});
+    overlay.addEventListener('touchend', onTouchEnd);
+
+    // 初期適用
+    applyTransform();
+
+    // 注意書き（consoleにも出しておく）
+    console.log('SVG pan/zoom ready. 注意: iframe 内のコンテンツ(Same-Origin でない場合)にはアクセスできません。');
+
+    // 自動で有効にしたい場合は以下を有効に
+    // setEnabled(true);
+  })();
+  </script>
 </body>
 </html>
