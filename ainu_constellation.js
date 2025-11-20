@@ -17,9 +17,9 @@ async function loadData() {
   try {
     // 3つのJSONファイルを同時に取得
     const [starsRes, constRes, cityRes] = await Promise.all([
-      fetch('./stars_data.json'),
-      fetch('./constellation_data.json'),
-      fetch('./city_to_forecast_area.json')
+      fetch('stars_data.json'),
+      fetch('constellation_data.json'),
+      fetch('city_to_forecast_area.json')
     ]);
     // 星データを格納
     stars = await starsRes.json();
@@ -272,4 +272,5 @@ async function init() {
 }
 
 // --- ページロード時に初期化 ---
+
 init();
