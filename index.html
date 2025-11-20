@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Stellarium Web ４</title>
+  <title>Stellarium Web ５</title>
   <style>
     html,body{height:100%;margin:0;font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif}
     .container{position:relative;height:100vh;overflow:hidden;background:#000}
@@ -36,15 +36,10 @@
 
     <!-- 2) Stellarium Web と同じエリアに SVG を重ねる（クリッピングエリアとして機能） -->
     <div class="svg-overlay" id="svg-overlay">
-      <svg class="sample" id="manipulable-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
-        <clipPath id="clipArea">
-          <rect x="0" y="0" width="800" height="600" />
-        </clipPath>
-        <g clip-path="url(#clipArea)" id="content">
-          <rect x="0" y="0" width="800" height="600" fill="none" stroke="#fff2"/>
-          <text x="20" y="30" fill="#fff" font-size="18">SVG 領域内に Stellarium Web を収めています</text>
-        </g>
-      </svg>
+      <div class="svg-wrapper" style="position: relative;">
+  <svg ...> ... </svg>
+  <div class="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+</div>
     </div>
     </div>
 
