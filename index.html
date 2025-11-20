@@ -28,37 +28,24 @@
 </head>
 <body>
   <div class="container">
-    <!-- 1) 外部の Stellarium Web を iframe で表示（注：クロスオリジンで iframe 内の SVG を直接操作できない点に注意） -->
+    <!-- Stellarium Web を SVG エリアに収めるため、SVG と同じ領域に iframe を配置 -->
+    <div class="stellarium-wrapper" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:auto;">
+      <iframe class="stellarium" src="https://stellarium-web.org/" title="Stellarium Web" style="width:800px; height:600px; border:0;"></iframe>
+    </div>
     <iframe class="stellarium" src="https://stellarium-web.org/" title="Stellarium Web"></iframe>
 
-    <!-- 2) オーバーレイで操作可能な SVG（この SVG をドラッグ・ホイールで操作します） -->
+    <!-- 2) Stellarium Web と同じエリアに SVG を重ねる（クリッピングエリアとして機能） -->
     <div class="svg-overlay" id="svg-overlay">
-      <!-- pointer-events:none にしているので JS で切り替えます -->
-      <!-- 実際に Stellarium の SVG を直接操作するには、その SVG が同一オリジンでページ内にある必要があります -->
       <svg class="sample" id="manipulable-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
-        <defs>
-          <radialGradient id="g" cx="50%" cy="30%">
-            <stop offset="0%" stop-color="#ffe"/>
-            <stop offset="100%" stop-color="#fbd"/>
-          </radialGradient>
-        </defs>
-        <rect x="0" y="0" width="800" height="600" fill="none"/>
-        <!-- 星っぽいリング -->
-        <g id="content">
-          <circle cx="400" cy="300" r="160" fill="url(#g)" stroke="#fff1"/>
-          <g id="stars">
-            <!-- ランダムな星を描画（例） -->
-            <g>
-              <circle cx="200" cy="130" r="2"/>
-              <circle cx="250" cy="420" r="1.5"/>
-              <circle cx="520" cy="200" r="1"/>
-              <circle cx="620" cy="330" r="2.5"/>
-              <circle cx="360" cy="460" r="1.2"/>
-            </g>
-          </g>
-          <text x="20" y="30" fill="#fff" font-size="18">SVG をドラッグ＆ホイールでズーム / パンできます</text>
+        <clipPath id="clipArea">
+          <rect x="0" y="0" width="800" height="600" />
+        </clipPath>
+        <g clip-path="url(#clipArea)" id="content">
+          <rect x="0" y="0" width="800" height="600" fill="none" stroke="#fff2"/>
+          <text x="20" y="30" fill="#fff" font-size="18">SVG 領域内に Stellarium Web を収めています</text>
         </g>
       </svg>
+    </div>
     </div>
 
     <div class="controls">
