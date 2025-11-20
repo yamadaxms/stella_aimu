@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>アイヌ民族星文化表示ビューア～カムイの星図～（工事中）</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    #stellarium { width: 100%; height: 500px; border: 1px solid #ccc; margin-bottom: 1em; }
+  </style>
+  <script src="https://unpkg.com/stellarium-web-engine/dist/stellarium-web-engine.min.js"></script>
+</head>
+<body>
+  <h1>アイヌ民族星文化ビューア～カムイの星図～（工事中）</h1>
+  <div>アイヌ民族の星文化を表示する地域を選択してください。</div>
+  <button id="gps-btn">GPSで自動判定</button>
+  <select id="area-select">
+    <option value="">地域を選択</option>
+  </select>
+  <div id="stellarium" style="position:relative;">
+    <div id="stellarium-container" style="width:100%;height:500px;"></div>
+    <svg id="star-svg" style="position:absolute; left:0; top:0; pointer-events:none;"></svg>
+  </div>
+  <div id="detail-info" style="border:1px solid #ccc; padding:1em; min-height:4em; background:#fafaff; margin-bottom:1em;">
+    <strong>アイヌ民族の星文化詳細：</strong>
+    <div id="detail-content">星や星座をクリックすると詳細が表示されます。</div>
+  </div>
+  <script src="ainu_constellation.js"></script>
+</body>
+</html>
