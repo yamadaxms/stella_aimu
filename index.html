@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Stellarium Web + SVG パン/ズーム デモ２</title>
+  <title>Stellarium Web + SVG パン/ズーム デモ３</title>
   <style>
     html,body{height:100%;margin:0;font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif}
     .container{position:relative;height:100vh;overflow:hidden;background:#000}
@@ -29,8 +29,8 @@
 <body>
   <div class="container">
     <!-- Stellarium Web を SVG エリアに収めるため、SVG と同じ領域に iframe を配置 -->
-    <div class="stellarium-wrapper" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:auto;">
-      <iframe class="stellarium" src="https://stellarium-web.org/" title="Stellarium Web" style="width:800px; height:600px; border:0;"></iframe>
+    <div class="stellarium-wrapper" style="position:absolute; left:50%; top:50%; width:800px; height:600px; transform:translate(-50%, -50%); overflow:hidden; pointer-events:auto; border:none; display:flex; align-items:center; justify-content:center;">
+      <iframe class="stellarium" src="https://stellarium-web.org/" title="Stellarium Web" style="width:800px; height:600px; border:0; overflow:hidden;"></iframe>
     </div>
     <iframe class="stellarium" src="https://stellarium-web.org/" title="Stellarium Web"></iframe>
 
