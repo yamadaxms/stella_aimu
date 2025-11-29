@@ -256,14 +256,26 @@ function updateAinuGeoJSON() {
  *  地域の現在時刻 RA へ中心を合わせる
  * ────────────────────────────────────────────── */
 
-// 経度 lonDeg（東経+）に対する、その時刻の地方恒星時から RA（度）を計算
+// 経度 lonDeg（東経+）に対する、その「地域の現在時刻」のRA（度）を計算
 function getLocalRaForRegion(date, lonDeg) {
-  const jd = Celestial.jd(date);
-  const gst = Celestial.gst(jd);      // グリニッジ恒星時 (hours)
-  const lst = (gst + lonDeg / 15) % 24; // 地方恒星時 (hours)
-  return lst * 15;                    // RA 度
-}
+  // ローカルタイムゾーンのオフセット（分） → 時間
+  // JSTなら getTimezoneOffset() は -540（分）なので tzHours = +9
+  const tzHours = -date.getTimezoneOffset() / 60;
 
+  // いまのコードの jd は「ローカル時刻のJD」になっているので、
+  // そこからタイムゾーンぶん引いて「UTC時刻のJD」に直す
+  const jdLocal = Celestial.jd(date);
+  const jdUTC = jdLocal - tzHours / 24;
+
+  // UTCベースのJDからグリニッジ恒星時を計算
+  const gstUTC = Celestial.gst(jdUTC);   // hours
+
+  // 地方恒星時 LST (hours)
+  const lst = (gstUTC + lonDeg / 15 + 24) % 24;
+
+  // RA（度）に変換して返す
+  return lst * 15;
+}
 function moveToRegionCurrentRA(lonDeg) {
   const now = new Date();
   const raDeg = getLocalRaForRegion(now, lonDeg);
