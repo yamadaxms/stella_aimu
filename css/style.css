@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #000;
+  color: #eee;
+}
+
+header {
+  padding: 10px;
+  background: #111;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  color: #fff;
+  z-index: 10;
+}
+
+#stellarium-container {
+  width: 100%;
+  height: calc(100vh - 60px);
+}

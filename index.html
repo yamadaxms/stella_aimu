@@ -1,32 +1,24 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>Stellarium Web Engine Demo</title>
-<style>
-  body { margin:0; }
-  #stellarium { width:100vw; height:100vh; }
-</style>
+  <meta charset="UTF-8">
+  <title>Ainu Star Culture + Stellarium ver.0.0.1</title>
+  <script src="https://unpkg.com/@stellarium/stellarium-web-engine/dist/stellarium-web.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-<canvas id="stellarium"></canvas>
-<script type="module">
-import { AstronomicalEngine } from "./dist/astro-engine.js";
 
-async function main() {
-    const engine = await AstronomicalEngine.create({
-        canvas: document.getElementById("stellarium"),
-        assetsUrl: "./dist/assets/",
-    });
-    engine.core.setObserverLocation({
-        longitude: 141.3545,
-        latitude: 43.0618,
-        elevation: 20,
-    });
-    engine.core.setDate(new Date());
-    engine.start();
-}
-main();
-</script>
+<body>
+  <header>
+    <h1>アイヌ民族の星座 × Stellarium Web</h1>
+    <div>
+      <label>市町村を選択：</label>
+      <select id="citySelect"></select>
+    </div>
+  </header>
+
+  <div id="stellarium-container"></div>
+
+  <script src="js/loader.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
