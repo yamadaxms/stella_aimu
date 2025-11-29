@@ -276,6 +276,7 @@ function getLocalRaForRegion(date, lonDeg) {
   // RA（度）に変換して返す
   return lst * 15;
 }
+
 function moveToRegionCurrentRA(lonDeg) {
   const now = new Date();
   const raDeg = getLocalRaForRegion(now, lonDeg);
