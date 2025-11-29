@@ -1,9 +1,16 @@
 // グローバル状態
 let AINU_DATA = null;
 let CURRENT_AREA_KEY = null;      // "area1" 〜 "area5"
-let CURRENT_FORECAST_AREA = null; // 気象庁の細分区分
+let CURRENT_FORECAST_AREA = null; // 気象庁の細分区分（例: "石狩中部"）
 let CURRENT_CITY = null;          // 市町村名
-let AINU_GEOJSON = null;          // 現在地域のアイヌ星座 GeoJSON
+let AINU_GEOJSON = null;          // 現在の地域に対応した GeoJSON
+
+// ラインの描画スタイル（アイヌ星座）
+const AINU_LINE_STYLE = {
+  stroke: "#ffcc33",
+  fill: "rgba(255, 204, 0, 0.18)",
+  width: 2,
+};
 
 // Celestial の設定
 const CELESTIAL_CONFIG = {
@@ -14,15 +21,19 @@ const CELESTIAL_CONFIG = {
   orientationfixed: true,
   geopos: null,
   follow: "zenith",
+  zoomlevel: null,
   zoomextend: 10,
   adaptable: true,
   interactive: true,
-  form: false,
-  controls: true,
+  form: false,              // 右側の標準フォームは使わない
+  controls: true,           // 拡大縮小ボタン
   lang: "ja",
   culture: "iau",
   container: "celestial-map",
+
+  // d3-celestial 標準データのパス（CDN）
   datapath: "https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/data/",
+
   stars: {
     show: true,
     limit: 6,
@@ -34,9 +45,11 @@ const CELESTIAL_CONFIG = {
     exponent: -0.28,
     data: "stars.6.json",
   },
+
   dsos: {
     show: false,
   },
+
   constellations: {
     show: true,
     names: true,
@@ -49,24 +62,14 @@ const CELESTIAL_CONFIG = {
     },
     bounds: false,
   },
+
   mw: {
     show: true,
     style: { fill: "#ffffff", opacity: 0.04 },
   },
 };
 
-// アイヌ星座の線の描画スタイル
-const AINU_LINE_STYLE = {
-  stroke: "#ffcc33",
-  fill: "rgba(255, 204, 0, 0.18)",
-  width: 2,
-};
-
 document.addEventListener("DOMContentLoaded", initApp);
-
-/* ──────────────────────────────────────────────
- *  初期化
- * ────────────────────────────────────────────── */
 
 async function initApp() {
   try {
@@ -75,12 +78,9 @@ async function initApp() {
     setupCitySelect(AINU_DATA.cityMap);
     setupCelestial();
 
-    // 初期表示：最初の市町村を選択
+    // 初期表示：最初の市町村
     const firstCity =
-      Object.keys(AINU_DATA.cityMap.cityToForecastArea).sort(
-        (a, b) => a.localeCompare(b, "ja")
-      )[0];
-
+      Object.keys(AINU_DATA.cityMap.cityToForecastArea).sort()[0];
     if (firstCity) {
       document.getElementById("city-select").value = firstCity;
       onCityChange(firstCity);
@@ -92,20 +92,23 @@ async function initApp() {
 }
 
 /* ──────────────────────────────────────────────
- *  市町村セレクト
+ *  地域選択 UI
  * ────────────────────────────────────────────── */
 
 function setupCitySelect(cityMap) {
   const select = document.getElementById("city-select");
   const cityToForecast = cityMap.cityToForecastArea;
 
+  // 一旦クリア
   select.innerHTML = "";
 
+  // プレースホルダ
   const placeholder = document.createElement("option");
   placeholder.value = "";
   placeholder.textContent = "市町村を選択してください";
   select.appendChild(placeholder);
 
+  // 市町村名でソートして追加
   const cities = Object.keys(cityToForecast).sort(
     (a, b) => a.localeCompare(b, "ja")
   );
@@ -118,8 +121,9 @@ function setupCitySelect(cityMap) {
   }
 
   select.addEventListener("change", (e) => {
-    if (!e.target.value) return;
-    onCityChange(e.target.value);
+    const value = e.target.value;
+    if (!value) return;
+    onCityChange(value);
   });
 }
 
@@ -127,10 +131,9 @@ function onCityChange(cityName) {
   const { cityMap } = AINU_DATA;
   const cityToForecast = cityMap.cityToForecastArea;
   const forecastToArea = cityMap.forecastAreaToArea;
-  const cityLon = cityMap.cityLon || {};
 
   const forecastArea = cityToForecast[cityName];
-  const areaKey = forecastToArea[forecastArea];
+  const areaKey = forecastToArea[forecastArea]; // "area1" など
 
   CURRENT_CITY = cityName;
   CURRENT_FORECAST_AREA = forecastArea;
@@ -139,14 +142,10 @@ function onCityChange(cityName) {
   updateRegionInfo();
   updateAinuGeoJSON();
   updateAinuList();
-
-  // cityLon から経度を取得（なければ札幌の経度をデフォルトに）
-  const lonDeg = cityLon[cityName] ?? 141.3545;
-  moveToRegionCurrentRA(lonDeg);
 }
 
 /* ──────────────────────────────────────────────
- *  地域情報表示・アイヌ星座リスト
+ *  Region info / Ainu list
  * ────────────────────────────────────────────── */
 
 function updateRegionInfo() {
@@ -198,45 +197,50 @@ function updateAinuList() {
 }
 
 /* ──────────────────────────────────────────────
- *  Celestial 初期化 & アイヌ星座レイヤー
+ *  Celestial 初期化 & アイヌ星座描画
  * ────────────────────────────────────────────── */
 
 function setupCelestial() {
+  // d3-celestial に「アイヌ星座レイヤー」を登録
   Celestial.add({
     type: "line",
+    // 初回ロード時に呼ばれる
     callback: function () {
       if (!AINU_GEOJSON) return;
       bindAinuFeatures();
       Celestial.redraw();
     },
+    // 再描画時に呼ばれる
     redraw: function () {
       const sel = Celestial.container.selectAll(".ainu-constellation");
       sel.each(function (d) {
         Celestial.setStyle(AINU_LINE_STYLE);
-        Celestial.map(d);
+        Celestial.map(d);              // ラインを投影
         Celestial.context.fill();
         Celestial.context.stroke();
       });
     },
   });
 
+  // 星図を表示
   Celestial.display(CELESTIAL_CONFIG);
 }
 
 function bindAinuFeatures() {
   if (!AINU_GEOJSON) return;
 
-  const transformed = Celestial.getData(
-    AINU_GEOJSON,
-    CELESTIAL_CONFIG.transform
-  );
+  const transformed = Celestial.getData(AINU_GEOJSON, CELESTIAL_CONFIG.transform);
 
+  // .ainu-constellation を更新（enter/exit 対応）
   const sel = Celestial.container
     .selectAll(".ainu-constellation")
     .data(transformed.features, (d) => d.id);
 
   sel.exit().remove();
-  sel.enter().append("path").attr("class", "ainu-constellation");
+
+  sel.enter()
+    .append("path")
+    .attr("class", "ainu-constellation");
 }
 
 function updateAinuGeoJSON() {
@@ -253,46 +257,13 @@ function updateAinuGeoJSON() {
 }
 
 /* ──────────────────────────────────────────────
- *  地域の現在時刻 RA へ中心を合わせる
- * ────────────────────────────────────────────── */
-
-// 経度 lonDeg（東経+）に対する、その「地域の現在時刻」のRA（度）を計算
-function getLocalRaForRegion(date, lonDeg) {
-  // ローカルタイムゾーンのオフセット（分） → 時間
-  // JSTなら getTimezoneOffset() は -540（分）なので tzHours = +9
-  const tzHours = -date.getTimezoneOffset() / 60;
-
-  // いまのコードの jd は「ローカル時刻のJD」になっているので、
-  // そこからタイムゾーンぶん引いて「UTC時刻のJD」に直す
-  const jdLocal = Celestial.jd(date);
-  const jdUTC = jdLocal - tzHours / 24;
-
-  // UTCベースのJDからグリニッジ恒星時を計算
-  const gstUTC = Celestial.gst(jdUTC);   // hours
-
-  // 地方恒星時 LST (hours)
-  const lst = (gstUTC + lonDeg / 15 + 24) % 24;
-
-  // RA（度）に変換して返す
-  return lst * 15;
-}
-
-function moveToRegionCurrentRA(lonDeg) {
-  const now = new Date();
-  const raDeg = getLocalRaForRegion(now, lonDeg);
-
-  // Dec は 0 度固定にしておく（赤道付近を基準）
-  Celestial.skyview({
-    center: [raDeg, 0],
-  });
-
-  Celestial.redraw();
-}
-
-/* ──────────────────────────────────────────────
  *  アイヌ星座 → GeoJSON 変換
  * ────────────────────────────────────────────── */
 
+/**
+ * RA/Dec（0〜360度の RA）を d3-celestial 用の [lon, lat] に変換
+ *  - lon は -180〜180 度に正規化
+ */
 function raDecToLonLat(raDeg, decDeg) {
   let lon = raDeg;
   if (lon > 180) lon -= 360;
@@ -300,6 +271,10 @@ function raDecToLonLat(raDeg, decDeg) {
   return [lon, lat];
 }
 
+/**
+ * constellation_data.json + stars_data.json から
+ * 指定 areaKey ("area1" 〜 "area5") のみを GeoJSON にまとめる
+ */
 function buildAinuGeoJSON(constellations, stars, areaKey) {
   const features = [];
 
@@ -307,7 +282,7 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
     const name = c.names?.[areaKey] || "";
     const desc = c.description?.[areaKey] || "";
 
-    if (!name) continue;
+    if (!name) continue; // この地域には存在しない星座
 
     const lines = c.lines;
     const lineSegments = [];
@@ -316,6 +291,7 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
     if (Array.isArray(lines)) {
       for (const item of lines) {
         if (Array.isArray(item) && item.length === 2) {
+          // ["hip24436", "hip25336"] のような線分
           const [id1, id2] = item;
           const s1 = stars[id1];
           const s2 = stars[id2];
@@ -326,10 +302,12 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
           lineSegments.push([p1, p2]);
           usedPoints.push(p1, p2);
         } else if (typeof item === "string") {
+          // ["hip32349"] のような点だけ（シリウスなど）
           const s = stars[item];
           if (!s) continue;
           const p = raDecToLonLat(s.ra, s.dec);
-          lineSegments.push([p, p]); // 点でも線として扱う
+          // 点でも MultiLineString として扱うため、同じ点を2回入れる
+          lineSegments.push([p, p]);
           usedPoints.push(p);
         }
       }
@@ -337,6 +315,7 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 
     if (!lineSegments.length) continue;
 
+    // ラベル表示用の位置：使用した点の平均
     let labelLon = 0;
     let labelLat = 0;
     for (const p of usedPoints) {
