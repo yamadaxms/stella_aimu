@@ -4,19 +4,17 @@
   <meta charset="UTF-8">
   <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
 
-  <!-- レスポンシブ -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- d3-celestial の CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css">
-  <!-- 自前の CSS -->
+  <!-- d3-celestial 最新版 dist 版 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/dist/celestial.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header class="site-header">
-    <h1>アイヌ民族星文化ビューア ～カムイの星図～ ver.0.0.1</h1>
+    <h1>アイヌ民族星文化ビューア ～カムイの星図～ ver.0.0.2</h1>
     <p class="subtitle">
-      D3-Celestial ＋ アイヌ民族星座データ（八十八星座と重ね描き）
+      D3-Celestial ＋ アイヌ民族星座データ ＋ 地方恒星時センタリング
     </p>
   </header>
 
@@ -32,9 +30,7 @@
       </div>
 
       <div class="field">
-        <div id="region-info">
-          地域情報：まだ選択されていません
-        </div>
+        <div id="region-info">地域情報：まだ選択されていません</div>
       </div>
 
       <hr>
@@ -44,24 +40,18 @@
         <li>読み込み中…</li>
       </ul>
 
-      <p class="note">
-        ※ 星図上では黄色の線でアイヌ民族の星座を描画しています。<br>
-        ※ マウスドラッグで移動、ホイールで拡大縮小できます。
-      </p>
+      <p class="note">※ 星図はドラッグで移動、ホイールで拡大縮小できます。</p>
     </section>
 
     <section class="map-area">
-      <!-- d3-celestial がここにキャンバスを作る -->
       <div id="celestial-map"></div>
     </section>
   </main>
 
-  <!-- d3-celestial 関連ライブラリ -->
-  <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/lib/d3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/lib/d3.geo.projection.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.min.js"></script>
+  <!-- Celestial の dist 版。これが最重要！ -->
+  <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/dist/celestial.min.js?v=5"></script>
 
-  <!-- 自前の JS -->
+  <!-- 自作 JS -->
   <script src="js/dataLoader.js"></script>
   <script src="js/main.js"></script>
 </body>
