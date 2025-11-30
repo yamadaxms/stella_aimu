@@ -10,9 +10,9 @@ async function loadJSON(path) {
 
 async function loadAllAinuData() {
   const [stars, constellations, cityMap] = await Promise.all([
-    loadJSON("data/city_map.json"),
     loadJSON("data/stars_data.json"),
     loadJSON("data/constellation_data.json"),
+    loadJSON("data/city_map.json"),
   ]);
 
   return {
