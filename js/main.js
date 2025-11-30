@@ -80,7 +80,7 @@ async function initApp() {
 
     // 初期表示：最初の市町村
     const firstCity =
-      Object.keys(AINU_DATA.cityMap.cityToForecastArea).sort()[0];
+      Object.keys(AINU_DATA.cityMap.cityToForecastArea);
     if (firstCity) {
       document.getElementById("city-select").value = firstCity;
       onCityChange(firstCity);
