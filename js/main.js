@@ -1,15 +1,20 @@
-// ---------------------------------------------------------
-//  ver.0.0.2  main.js  (Celestial.jd対応 & 地方恒星時センタリング)
-// ---------------------------------------------------------
+// ============================================================
+// ver.0.0.1 + 「選択地域の現在 RA へ自動センタリング」
+// Celestial.jd / gst を使用しない安全版
+// ============================================================
 
+// ----------------------------
 // グローバル状態
+// ----------------------------
 let AINU_DATA = null;
 let CURRENT_AREA_KEY = null;
 let CURRENT_FORECAST_AREA = null;
 let CURRENT_CITY = null;
 let AINU_GEOJSON = null;
 
-// Celestial の基本設定
+// ----------------------------
+// Celestial 設定（ver.0.0.1そのまま）
+// ----------------------------
 const CELESTIAL_CONFIG = {
   width: 0,
   projection: "aitoff",
@@ -44,20 +49,13 @@ const CELESTIAL_CONFIG = {
     names: true,
     desig: false,
     lines: true,
-    linestyle: {
-      stroke: "#555555",
-      width: 1,
-      opacity: 0.7
-    },
+    linestyle: { stroke: "#555555", width: 1, opacity: 0.7 },
     bounds: false
   },
-  mw: {
-    show: true,
-    style: { fill: "#ffffff", opacity: 0.04 }
-  }
+  mw: { show: true, style: { fill: "#ffffff", opacity: 0.04 } }
 };
 
-// アイヌ星座の描画スタイル
+// アイヌ星座ラインの style
 const AINU_LINE_STYLE = {
   stroke: "#ffcc33",
   fill: "rgba(255, 204, 0, 0.18)",
@@ -67,19 +65,19 @@ const AINU_LINE_STYLE = {
 document.addEventListener("DOMContentLoaded", initApp);
 
 
-// ---------------------------------------------------------
-//   初期化
-// ---------------------------------------------------------
-
+// ============================================================
+// 初期化
+// ============================================================
 async function initApp() {
   try {
     AINU_DATA = await loadAllAinuData();
+
     setupCitySelect(AINU_DATA.cityMap);
     setupCelestial();
 
-    // 初期表示: 最初の市町村を選択
+    // 初期表示
     const firstCity = Object.keys(AINU_DATA.cityMap.cityToForecastArea)
-      .sort((a, b) => a.localeCompare(b, "ja"))[0];
+      .sort((a,b)=>a.localeCompare(b, "ja"))[0];
 
     if (firstCity) {
       document.getElementById("city-select").value = firstCity;
@@ -88,15 +86,14 @@ async function initApp() {
 
   } catch (err) {
     console.error(err);
-    alert("データの読み込みに失敗しました。コンソールを確認してください。");
+    alert("データの読み込みに失敗しました。");
   }
 }
 
 
-// ---------------------------------------------------------
-//   市町村セレクト
-// ---------------------------------------------------------
-
+// ============================================================
+// 市町村セレクト
+// ============================================================
 function setupCitySelect(cityMap) {
   const select = document.getElementById("city-select");
   select.innerHTML = "";
@@ -106,15 +103,14 @@ function setupCitySelect(cityMap) {
   placeholder.textContent = "市町村を選択してください";
   select.appendChild(placeholder);
 
-  const cities = Object.keys(cityMap.cityToForecastArea)
-    .sort((a, b) => a.localeCompare(b, "ja"));
+  const cities = Object.keys(cityMap.cityToForecastArea).sort((a,b)=>a.localeCompare(b,"ja"));
 
-  for (const city of cities) {
+  cities.forEach(c => {
     const opt = document.createElement("option");
-    opt.value = city;
-    opt.textContent = city;
+    opt.value = c;
+    opt.textContent = c;
     select.appendChild(opt);
-  }
+  });
 
   select.addEventListener("change", e => {
     if (e.target.value) onCityChange(e.target.value);
@@ -127,96 +123,80 @@ function onCityChange(cityName) {
   const forecastToArea = cityMap.forecastAreaToArea;
   const cityLon = cityMap.cityLon;
 
-  const forecastArea = cityToForecast[cityName];
-  const areaKey = forecastToArea[forecastArea];
-
   CURRENT_CITY = cityName;
-  CURRENT_FORECAST_AREA = forecastArea;
-  CURRENT_AREA_KEY = areaKey;
+  CURRENT_FORECAST_AREA = cityToForecast[cityName];
+  CURRENT_AREA_KEY = forecastToArea[CURRENT_FORECAST_AREA];
 
   updateRegionInfo();
   updateAinuGeoJSON();
   updateAinuList();
 
-  // ★ ver.0.0.2 新機能：地方恒星時（LST）からRA中心へ移動
+  // ★ ver.0.0.1 → LST計算で RA センタリング追加
   const lonDeg = cityLon[cityName] ?? 141.35; // デフォルト札幌
   moveToRegionCurrentRA(lonDeg);
 }
 
 
-// ---------------------------------------------------------
-//   地域情報パネル & 星座一覧
-// ---------------------------------------------------------
-
+// ============================================================
+// 地域情報
+// ============================================================
 function updateRegionInfo() {
   const div = document.getElementById("region-info");
   if (!CURRENT_CITY) {
-    div.textContent = "地域情報：まだ選択されていません";
+    div.textContent = "地域情報：まだ選択されてません";
     return;
   }
-
   div.innerHTML = `
     <div><strong>市町村：</strong>${CURRENT_CITY}</div>
     <div><strong>気象庁細分区域：</strong>${CURRENT_FORECAST_AREA}</div>
-    <div><strong>アイヌ星座エリアキー：</strong>${CURRENT_AREA_KEY}</div>
+    <div><strong>エリアキー：</strong>${CURRENT_AREA_KEY}</div>
   `;
 }
 
+
+// ============================================================
+// アイヌ星座 list
+// ============================================================
 function updateAinuList() {
   const list = document.getElementById("ainu-list");
   list.innerHTML = "";
 
   if (!AINU_GEOJSON || !AINU_GEOJSON.features.length) {
-    const li = document.createElement("li");
-    li.textContent = "この地域に対応するアイヌ星座は登録されていません。";
-    list.appendChild(li);
+    list.innerHTML = "<li>この地域に対応する星座は登録されていません</li>";
     return;
   }
 
-  for (const f of AINU_GEOJSON.features) {
+  AINU_GEOJSON.features.forEach(f => {
     const li = document.createElement("li");
-
-    const nameEl = document.createElement("div");
-    nameEl.className = "name";
-    nameEl.textContent = f.properties.n;
-
-    const codeEl = document.createElement("div");
-    codeEl.className = "code";
-    codeEl.textContent = `コード: ${f.id}`;
-
-    const descEl = document.createElement("div");
-    descEl.className = "desc";
-    descEl.textContent = f.properties.desc || "";
-
-    li.appendChild(nameEl);
-    li.appendChild(codeEl);
-    li.appendChild(descEl);
+    li.innerHTML = `
+      <div class="name">${f.properties.n}</div>
+      <div class="code">コード: ${f.id}</div>
+      <div class="desc">${f.properties.desc ?? ""}</div>
+    `;
     list.appendChild(li);
-  }
+  });
 }
 
 
-// ---------------------------------------------------------
-//  Celestial 初期化
-// ---------------------------------------------------------
-
+// ============================================================
+// Celestial 初期化
+// ============================================================
 function setupCelestial() {
-  // 独自レイヤー（アイヌ星座）
   Celestial.add({
     type: "line",
-    callback: function () {
+    callback: () => {
       if (!AINU_GEOJSON) return;
       bindAinuFeatures();
       Celestial.redraw();
     },
-    redraw: function () {
-      const sel = Celestial.container.selectAll(".ainu-constellation");
-      sel.each(function (d) {
-        Celestial.setStyle(AINU_LINE_STYLE);
-        Celestial.map(d);
-        Celestial.context.fill();
-        Celestial.context.stroke();
-      });
+    redraw: () => {
+      Celestial.container.selectAll(".ainu-constellation")
+        .each(function(d){
+          Celestial.setStyle(AINU_LINE_STYLE);
+          Celestial.map(d);
+          Celestial.context.fill();
+          Celestial.context.stroke();
+        });
     }
   });
 
@@ -226,50 +206,38 @@ function setupCelestial() {
 function bindAinuFeatures() {
   if (!AINU_GEOJSON) return;
 
-  const transformed = Celestial.getData(
-    AINU_GEOJSON,
-    CELESTIAL_CONFIG.transform
-  );
+  const converted = Celestial.getData(AINU_GEOJSON, CELESTIAL_CONFIG.transform);
 
   const sel = Celestial.container
-    .selectAll(".ainu-constellation")
-    .data(transformed.features, d => d.id);
+      .selectAll(".ainu-constellation")
+      .data(converted.features, d => d.id);
 
   sel.exit().remove();
   sel.enter().append("path").attr("class", "ainu-constellation");
 }
 
-function updateAinuGeoJSON() {
-  if (!CURRENT_AREA_KEY) return;
-  AINU_GEOJSON = buildAinuGeoJSON(
-    AINU_DATA.constellations,
-    AINU_DATA.stars,
-    CURRENT_AREA_KEY
-  );
-  bindAinuFeatures();
-  Celestial.redraw();
+
+// ============================================================
+// ★ ver.0.0.1 → 追加：地方恒星時(LST)に応じて RA センタリング
+//   Celestial.jd を使わず安全
+// ============================================================
+
+// ユリウス日
+function toJulian(date) {
+  return date / 86400000 + 2440587.5;
 }
 
+// GMST 計算（hours）
+function gmst(jd) {
+  const T = (jd - 2451545.0) / 36525.0;
+  return (18.697374558 + 24.06570982441908 * T) % 24;
+}
 
-// ---------------------------------------------------------
-//   ★ ver.0.0.2 地方恒星時から RA を求めて星図中央へ
-// ---------------------------------------------------------
-
+// LST → RA 度
 function getLocalRaForRegion(date, lonDeg) {
-  // タイムゾーン補正（JSTなら+9h）
-  const tzHours = -date.getTimezoneOffset() / 60;
-
-  // Celestial.jd(date) はローカル時刻の JD なので UTC に補正
-  const jdLocal = Celestial.jd(date);
-  const jdUTC = jdLocal - tzHours / 24;
-
-  // UTC の GST（hours）
-  const gstUTC = Celestial.gst(jdUTC);
-
-  // LST = GST + 経度（hours）
-  const lst = (gstUTC + lonDeg / 15 + 24) % 24;
-
-  return lst * 15; // RA 度
+  const jd = toJulian(date);
+  const lstHour = (gmst(jd) + lonDeg / 15 + 24) % 24;
+  return lstHour * 15; // degrees
 }
 
 function moveToRegionCurrentRA(lonDeg) {
@@ -277,17 +245,15 @@ function moveToRegionCurrentRA(lonDeg) {
   const raDeg = getLocalRaForRegion(now, lonDeg);
 
   Celestial.skyview({
-    center: [raDeg, 0] // Dec は 0 度固定
+    center: [raDeg, 0]
   });
-
   Celestial.redraw();
 }
 
 
-// ---------------------------------------------------------
-//   アイヌ星座データ → GeoJSON 変換
-// ---------------------------------------------------------
-
+// ============================================================
+// アイヌ星座 → GeoJSON
+// ============================================================
 function raDecToLonLat(raDeg, decDeg) {
   let lon = raDeg;
   if (lon > 180) lon -= 360;
@@ -298,64 +264,47 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
   const features = [];
 
   for (const c of constellations) {
-    const name = c.names?.[areaKey] || "";
-    const desc = c.description?.[areaKey] || "";
+    const name = c.names?.[areaKey];
+    const desc = c.description?.[areaKey] ?? "";
     if (!name) continue;
 
     const lines = c.lines;
-    const lineSegments = [];
-    const usedPoints = [];
+    const segments = [];
+    const points = [];
 
     for (const ln of lines) {
-      if (Array.isArray(ln) && ln.length === 2) {
+      if (Array.isArray(ln)) {
         const s1 = stars[ln[0]];
         const s2 = stars[ln[1]];
         if (!s1 || !s2) continue;
 
         const p1 = raDecToLonLat(s1.ra, s1.dec);
         const p2 = raDecToLonLat(s2.ra, s2.dec);
-
-        lineSegments.push([p1, p2]);
-        usedPoints.push(p1, p2);
+        segments.push([p1, p2]);
+        points.push(p1, p2);
 
       } else if (typeof ln === "string") {
         const s = stars[ln];
         if (!s) continue;
-
         const p = raDecToLonLat(s.ra, s.dec);
-        lineSegments.push([p, p]);
-        usedPoints.push(p);
+        segments.push([p, p]);
+        points.push(p);
       }
     }
 
-    if (!lineSegments.length) continue;
+    if (!segments.length) continue;
 
-    // ラベル位置 = 中心
-    let lonSum = 0, latSum = 0;
-    for (const p of usedPoints) {
-      lonSum += p[0];
-      latSum += p[1];
-    }
-    const labelLon = lonSum / usedPoints.length;
-    const labelLat = latSum / usedPoints.length;
+    // ラベル位置（平均値）
+    const lon = points.reduce((a,p)=>a+p[0],0) / points.length;
+    const lat = points.reduce((a,p)=>a+p[1],0) / points.length;
 
     features.push({
       type: "Feature",
       id: c.code,
-      properties: {
-        n: name,
-        desc: desc,
-        loc: [labelLon, labelLat]
-      },
-      geometry: {
-        type: "MultiLineString",
-        coordinates: lineSegments
-      }
+      properties: { n: name, desc: desc, loc: [lon, lat] },
+      geometry: { type: "MultiLineString", coordinates: segments }
     });
   }
 
-  return {
-    type: "FeatureCollection",
-    features
-  };
+  return { type: "FeatureCollection", features };
 }
