@@ -1,0 +1,41 @@
+[
+  {
+    "code": "ori1",
+    "lines": [
+      ["hip27989", "hip25336"],["hip25336", "hip24436"],["hip24436", "hip27366"],["hip27366", "hip27989"],
+      ["hip26727", "hip26311"],["hip26311", "hip25930"]
+    ],
+    "names": {
+      "area1": "あああ",
+      "area2": "いいい",
+      "area3": "ううう",
+      "area4": "",
+      "area5": "おおお"
+    },
+    "description": {
+      "area1": "かかか",
+      "area2": "ききき",
+      "area3": "くくく",
+      "area4": "",
+      "area5": "こここ"
+    }
+  },
+  {
+    "code": "cma1",
+    "lines": ["hip32349"],
+    "names": {
+      "area1": "さささ",
+      "area2": "",
+      "area3": "すすす",
+      "area4": "",
+      "area5": "そそそ"
+    },
+    "description": {
+      "area1": "たたた",
+      "area2": "",
+      "area3": "つつつ",
+      "area4": "",
+      "area5": "ととと"
+    }
+  }
+]
