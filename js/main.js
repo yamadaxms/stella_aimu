@@ -176,8 +176,8 @@ function updateRegionInfo() {
 
   div.innerHTML = `
     <div><strong>市町村：</strong>${CURRENT_CITY}</div>
-    <div><strong>気象庁細分区域：</strong>${CURRENT_FORECAST_AREA}</div>
-    <div><strong>アイヌ星座エリアキー：</strong>${CURRENT_AREA_KEY}</div>
+    <div><strong>地域区分：</strong>${CURRENT_FORECAST_AREA}</div>
+    <div><strong>文化地域：</strong>${CURRENT_AREA_KEY}</div>
   `;
 }
 
@@ -186,7 +186,7 @@ function updateAinuList() {
   list.innerHTML = "";
 
   if (!AINU_GEOJSON?.features?.length) {
-    list.innerHTML = "<li>この地域に対応するアイヌ星座はありません。</li>";
+    list.innerHTML = "<li>この地域に対応するアイヌ民族の星文化はありません。</li>";
     return;
   }
 
