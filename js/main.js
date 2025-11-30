@@ -143,7 +143,7 @@ function onCityChange(cityName) {
 
   // ▼ 星図センタリング
   Celestial.location([cityInfo.lon, cityInfo.lat]);
-  Celestial.date(new Date());
+  setCelestialTimeToJST();
 
   // ▼ データ更新
   updateRegionInfo();
@@ -154,6 +154,13 @@ function onCityChange(cityName) {
   Celestial.redraw();
 }
 
+function setCelestialTimeToJST() {
+  const now = new Date();
+  const utc = new Date(
+    now.getTime() - now.getTimezoneOffset() * 60000   // JST → UTC 化
+  );
+  Celestial.date(utc);
+}
 
 // ============================================================
 // 情報表示（右側の領域）
