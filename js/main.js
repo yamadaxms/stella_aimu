@@ -85,7 +85,7 @@ async function initApp() {
     setupCitySelect(AINU_DATA.cityMap);
     setupCelestial();
 
-    // ▼ 初期選択：JSON 順序の最初の市町村
+    // ▼ 初期選択：JSON の最初
     const firstCity = Object.keys(AINU_DATA.cityMap.cities)[0];
     if (firstCity) {
       document.getElementById("city-select").value = firstCity;
@@ -104,7 +104,7 @@ async function initApp() {
 
 function setupCitySelect(cityMap) {
   const select = document.getElementById("city-select");
-  const cities = Object.keys(cityMap.cities); // JSON順
+  const cities = Object.keys(cityMap.cities);
 
   select.innerHTML = "";
 
@@ -132,10 +132,7 @@ function setupCitySelect(cityMap) {
 
 function onCityChange(cityName) {
   const cityInfo = AINU_DATA.cityMap.cities[cityName];
-  if (!cityInfo) {
-    console.warn("市町村データなし:", cityName);
-    return;
-  }
+  if (!cityInfo) return;
 
   CURRENT_CITY = cityName;
   CURRENT_FORECAST_AREA = cityInfo.forecast;
@@ -150,20 +147,19 @@ function onCityChange(cityName) {
   updateAinuGeoJSON();
   updateAinuList();
 
-  // ▼ 最後にまとめて 1 回 redraw
+  // ▼ redraw
   Celestial.redraw();
 }
 
 function setCelestialTimeToJST() {
   const now = new Date();
-  const utc = new Date(
-    now.getTime() - now.getTimezoneOffset() * 60000   // JST → UTC 化
-  );
+  const utc = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   Celestial.date(utc);
 }
 
+
 // ============================================================
-// 情報表示（右側の領域）
+// 右側の情報表示
 // ============================================================
 
 function updateRegionInfo() {
@@ -207,6 +203,8 @@ function updateAinuList() {
 // ============================================================
 
 function setupCelestial() {
+
+  // ▼ カスタムアイヌ星座の追加（線＋ラベル）
   Celestial.add({
     type: "line",
 
@@ -216,14 +214,36 @@ function setupCelestial() {
     },
 
     redraw: () => {
+      const ctx = Celestial.context;
+
+      // --- 線描画 ---
       const sel = Celestial.container.selectAll(".ainu-constellation");
       sel.each(function (d) {
         Celestial.setStyle(AINU_LINE_STYLE);
         Celestial.map(d);
-        Celestial.context.fill();
-        Celestial.context.stroke();
+        ctx.fill();
+        ctx.stroke();
       });
-    },
+
+      // --- ★ 星座名（ラベル）描画 ★ ---
+      if (!AINU_GEOJSON) return;
+      const transformed = Celestial.getData(AINU_GEOJSON, CELESTIAL_CONFIG.transform);
+
+      ctx.fillStyle = "#ffcc33";
+      ctx.font = "bold 14px sans-serif";
+      ctx.textAlign = "center";
+
+      transformed.features.forEach(f => {
+        const name = f.properties?.n;
+        const loc = f.properties?.loc;
+        if (!name || !loc) return;
+
+        const xy = Celestial.mapProjection(loc);
+        if (!xy) return;
+
+        ctx.fillText(name, xy[0], xy[1]);
+      });
+    }
   });
 
   Celestial.display(CELESTIAL_CONFIG);
@@ -261,12 +281,17 @@ function updateAinuGeoJSON() {
 
 
 // ============================================================
-// RA/Dec → GeoJSON 変換
+// RA/Dec → lon/lat
 // ============================================================
 
 function raDecToLonLat(raDeg, decDeg) {
-  return [ raDeg > 180 ? raDeg - 360 : raDeg, decDeg ];
+  return [raDeg > 180 ? raDeg - 360 : raDeg, decDeg];
 }
+
+
+// ============================================================
+// アイヌ星座 → GeoJSON 生成
+// ============================================================
 
 function buildAinuGeoJSON(constellations, stars, areaKey) {
   const features = [];
@@ -295,7 +320,7 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
         if (!s) continue;
 
         const p = raDecToLonLat(s.ra, s.dec);
-        lineSegments.push([p, p]); // 点として扱う
+        lineSegments.push([p, p]);
         usedPoints.push(p);
       }
     }
