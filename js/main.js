@@ -138,7 +138,10 @@ function onCityChange(cityName) {
   CURRENT_FORECAST_AREA = cityInfo.forecast;
   CURRENT_AREA_KEY = AINU_DATA.cityMap.forecastAreaToArea[cityInfo.forecast];
 
-  // ▼ 星図センタリング
+  // 地図画像を更新する
+  updateAreaMapPreview(CURRENT_AREA_KEY);
+	
+	// ▼ 星図センタリング
   Celestial.location([cityInfo.lon, cityInfo.lat]);
   setCelestialTimeToJST();
 
@@ -344,7 +347,7 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 // ============================================================
 // 地図エリア切り替え用
 // ============================================================
-updateAreaMapPreview(areaKey);
+
 function updateAreaMapPreview(areaKey) {
   const img = document.getElementById("area-map-preview");
   if (!img) return;
