@@ -233,7 +233,7 @@ function setupCelestial() {
       const transformed = Celestial.getData(AINU_GEOJSON, CELESTIAL_CONFIG.transform);
 
       ctx.fillStyle = "ee82ee";					// ★文字色
-      ctx.font = "bold 14px sans-serif";		// ★文字サイズ
+      ctx.font = "bold 20px sans-serif";		// ★文字サイズ
       ctx.textAlign = "center";
 
       transformed.features.forEach(f => {
@@ -362,3 +362,4 @@ function updateAreaMapPreview(areaKey) {
   img.style.display = "block";
 
 }
+
