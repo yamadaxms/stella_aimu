@@ -129,9 +129,10 @@ select {
 /* 地図エリア用 */
 .area-map-preview {
   position: fixed;
+  text-align: center;
   left: 10px;
   bottom: 10px;
-  width: 160px;        /* 好みで調整 */
+  width: 250px;        /* 好みで調整 */
   height: auto;
   border: 1px solid #aaa;
   background: #fff;
