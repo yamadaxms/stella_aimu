@@ -340,3 +340,21 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 
   return { type: "FeatureCollection", features };
 }
+
+// ============================================================
+// 地図エリア切り替え用
+// ============================================================
+updateAreaMapPreview(areaKey);
+function updateAreaMapPreview(areaKey) {
+  const img = document.getElementById("area-map-preview");
+  if (!img) return;
+
+  if (!areaKey) {
+    img.style.display = "none";
+    img.src = "";
+    return;
+  }
+
+  img.src = `img/${areaKey}.png`;
+  img.style.display = "block";
+}
