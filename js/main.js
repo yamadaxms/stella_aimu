@@ -190,6 +190,7 @@ function updateAinuList() {
     const li = document.createElement("li");
     li.innerHTML = `
       <div class="name">${f.properties.n}</div>
+      <div class="code">コード: ${f.id}</div>
       <div class="desc">${f.properties.desc || ""}</div>
     `;
     list.appendChild(li);
@@ -339,33 +340,3 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 
   return { type: "FeatureCollection", features };
 }
-
-// ============================================================
-// 表示モード切替（通常 ⇄ 星座早見盤）
-// ============================================================
-
-// ▼ Celestial設定反映して再描画
-function refreshSky() {
-  Celestial.display(CELESTIAL_CONFIG);
-  Celestial.redraw();
-}
-
-// ▼ 1) 赤道座標モード（通常）
-function setEquatorialMode() {
-  CELESTIAL_CONFIG.transform = "equatorial";
-  CELESTIAL_CONFIG.projection = "aitoff";
-  CELESTIAL_CONFIG.center = null;
-  refreshSky();
-}
-
-// ▼ 2) 星座早見盤モード（水平座標表示）
-function setPlanisphereMode() {
-  CELESTIAL_CONFIG.transform = "horizon";               // 地平座標
-  CELESTIAL_CONFIG.projection = "azimuthal-equidistant"; // 早見盤風
-  CELESTIAL_CONFIG.center = null;                       // 観測地中心
-  refreshSky();
-}
-
-// ▼ グローバル公開（念のため）
-window.setPlanisphereMode = setPlanisphereMode;
-window.setEquatorialMode = setEquatorialMode;
