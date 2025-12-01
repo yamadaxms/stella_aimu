@@ -14,7 +14,7 @@
 </head>
 <body>
   <header class="site-header">
-    <h1>アイヌ民族星文化ビューア ～カムイの星図～ ver.0.0.3</h1>
+    <h1>アイヌ民族星文化ビューア ～カムイの星図～ ver.0.0.4</h1>
     <p class="subtitle">
       D3-Celestial ＋ アイヌ民族星座データ（八十八星座と重ね描き）
     </p>
@@ -34,6 +34,14 @@
         <div id="region-info">
           地域情報：未選択
         </div>
+      </div>
+
+      <hr>
+
+      <h2>表示モード</h2>
+      <div class="btn-group">
+        <button onclick="setEquatorialMode()">通常（赤道座標）</button>
+        <button onclick="setPlanisphereMode()">星座早見盤モード</button>
       </div>
 
       <hr>

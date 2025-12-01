@@ -339,3 +339,29 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 
   return { type: "FeatureCollection", features };
 }
+
+// ============================================================
+// 表示モード切替（通常 ⇄ 星座早見盤）
+// ============================================================
+
+// 設定反映して再描画
+function refreshSky() {
+  Celestial.display(CELESTIAL_CONFIG);
+  Celestial.redraw();
+}
+
+// ▼ 1) 通常の赤道座標モード（デフォルト）
+function setEquatorialMode() {
+  CELESTIAL_CONFIG.transform = "equatorial";
+  CELESTIAL_CONFIG.projection = "aitoff";
+  CELESTIAL_CONFIG.center = null;
+  refreshSky();
+}
+
+// ▼ 2) 星座早見盤モード（地平座標系）
+function setPlanisphereMode() {
+  CELESTIAL_CONFIG.transform = "horizon";               // 地平座標
+  CELESTIAL_CONFIG.projection = "azimuthal-equidistant"; // 正距方位図（早見盤の形）
+  CELESTIAL_CONFIG.center = null;                       // 天頂（観測地）を中心に
+  refreshSky();
+}
