@@ -193,7 +193,7 @@ function updateAinuList() {
     const li = document.createElement("li");
     li.innerHTML = `
       <div class="name">${f.properties.n}</div>
-      <div class="code">コード: ${f.id}</div>
+//      <div class="code">コード: ${f.id}</div>
       <div class="desc">${f.properties.desc || ""}</div>
     `;
     list.appendChild(li);
