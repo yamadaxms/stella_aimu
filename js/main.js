@@ -15,7 +15,7 @@ let AINU_GEOJSON = null;          // 現在の地域に対応した GeoJSON
 const AINU_LINE_STYLE = {
   stroke: "#ee82ee",					// ★線の色
   fill: "rgba(238, 130, 238, 0.18)",	// ★塗りつぶし（透明度つき）
-  width: 1,								// ★線の太さ
+  width: 2,								// ★線の太さ
 };
 
 // ============================================================
@@ -362,4 +362,5 @@ function updateAreaMapPreview(areaKey) {
   img.style.display = "block";
 
 }
+
 
