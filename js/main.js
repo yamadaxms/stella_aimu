@@ -13,9 +13,9 @@ let AINU_GEOJSON = null;          // 現在の地域に対応した GeoJSON
 // ============================================================
 
 const AINU_LINE_STYLE = {
-  stroke: "#ffcc33",
-  fill: "rgba(255, 204, 0, 0.18)",
-  width: 2,
+  stroke: "#90ee90",
+  fill: "rgba(144, 238, 144, 0.18)",
+  width: 1,
 };
 
 // ============================================================
@@ -232,8 +232,8 @@ function setupCelestial() {
       if (!AINU_GEOJSON) return;
       const transformed = Celestial.getData(AINU_GEOJSON, CELESTIAL_CONFIG.transform);
 
-      ctx.fillStyle = "#ffcc33";
-      ctx.font = "bold 14px sans-serif";
+      ctx.fillStyle = "90ee90";
+      ctx.font = "bold 12px sans-serif";
       ctx.textAlign = "center";
 
       transformed.features.forEach(f => {
