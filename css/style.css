@@ -128,11 +128,7 @@ select {
 
 /* 地図エリア用 */
 .area-map-preview {
-  position: fixed;
-  text-align: center;
-  left: 10px;
-  bottom: 10px;
-  width: 250px;        /* 好みで調整 */
+  width: 250px;
   height: auto;
   border: 1px solid #aaa;
   background: #fff;
@@ -141,6 +137,7 @@ select {
   opacity: 0.9;
   z-index: 2000;
   display: none;       /* 初期は非表示 */
+  margin: 0 auto;
 }
 
 /* スマホサイズ対応 */
