@@ -13,8 +13,8 @@ let AINU_GEOJSON = null;          // 現在の地域に対応した GeoJSON
 // ============================================================
 
 const AINU_LINE_STYLE = {
-  stroke: "#90ee90",					// ★線の色
-  fill: "rgba(144, 238, 144, 0.18)",	// ★塗りつぶし（透明度つき）
+  stroke: "#ee82ee",					// ★線の色
+  fill: "rgba(238, 130, 238, 0.18)",	// ★塗りつぶし（透明度つき）
   width: 1,								// ★線の太さ
 };
 
@@ -232,7 +232,7 @@ function setupCelestial() {
       if (!AINU_GEOJSON) return;
       const transformed = Celestial.getData(AINU_GEOJSON, CELESTIAL_CONFIG.transform);
 
-      ctx.fillStyle = "ffcc33";					// ★文字色
+      ctx.fillStyle = "ee82ee";					// ★文字色
       ctx.font = "bold 14px sans-serif";		// ★文字サイズ
       ctx.textAlign = "center";
 
@@ -360,4 +360,5 @@ function updateAreaMapPreview(areaKey) {
 
   img.src = `img/${areaKey}.png`;
   img.style.display = "block";
+
 }
