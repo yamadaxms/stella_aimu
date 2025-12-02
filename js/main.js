@@ -90,10 +90,12 @@ async function initApp() {
 
     // 市町村選択UIをセットアップ
     setupCitySelect(AINU_DATA.cityMap);
-    // 星図（Celestial）を初期化
-    setupCelestial();
+	// 地域情報を初期化
+	updateRegionInfo();
     // 地図表示を初期化
     updateAreaMapPreview(null);
+    // 星図（Celestial）を初期化
+	setupCelestial();
 
   } catch (err) {
     // データ読み込み失敗時のエラーハンドリング
