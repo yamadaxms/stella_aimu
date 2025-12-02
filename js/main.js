@@ -92,6 +92,8 @@ async function initApp() {
     setupCitySelect(AINU_DATA.cityMap);
     // 星図（Celestial）を初期化
     setupCelestial();
+    // 地図表示を初期化
+    updateAreaMapPreview(null);
 
   } catch (err) {
     // データ読み込み失敗時のエラーハンドリング
@@ -379,15 +381,14 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 // ============================================================
 // 選択された文化地域（areaKey）に応じて、
 // 地図画像（img/areaX.png）を表示・非表示に切り替えます。
-// 地域未選択時は画像を非表示にします。
 function updateAreaMapPreview(areaKey) {
   const img = document.getElementById("area-map-preview");
   if (!img) return;
 
-  // 地域未選択時は画像非表示
+  // 地域未選択時は Area0.png を表示
   if (!areaKey) {
-    img.style.display = "none";
-    img.src = "";
+    img.src = "img/Area0.png";
+    img.style.display = "block";
     return;
   }
 
