@@ -416,10 +416,11 @@ function onCityClear() {
   list.innerHTML = "<li>……</li>";
 
   // 地図（Area0 に戻す）
-  const img = document.getElementById("area-map-preview");
-  img.src = "img/Area0.png";
-  img.style.display = "block";
+  updateAreaMapPreview(null);  // ← ここで関数を再利用してもOK
 
-  // 星図をクリアして再描画
+  // アイヌ星座のパスを削除
+  Celestial.container.selectAll(".ainu-constellation").remove();
+
+  // 星図を再描画
   Celestial.redraw();
 }
