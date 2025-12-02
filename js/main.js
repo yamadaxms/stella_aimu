@@ -193,11 +193,17 @@ function setCelestialTimeToJST() {
 function updateRegionInfo() {
   const div = document.getElementById("region-info");
 
+  // --- 未選択時 ---
   if (!CURRENT_CITY) {
-    div.textContent = "地域情報：未選択";
+    div.innerHTML = `
+      <div><strong>市町村：</strong></div>
+      <div><strong>地域区分：</strong></div>
+      <div><strong>文化地域：</strong></div>
+    `;
     return;
   }
 
+  // --- 選択時 ---
   div.innerHTML = `
     <div><strong>市町村：</strong>${CURRENT_CITY}</div>
     <div><strong>地域区分：</strong>${CURRENT_FORECAST_AREA}</div>
