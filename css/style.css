@@ -117,8 +117,8 @@ select {
 
 .attention {
   margin-top: 0.8rem; /* ノートの上余白 */
-  font-size: 1.0rem; /* ノートの文字サイズ */
-  color: #ffff66; /* ノートの色 */
+  font-size: 0.8rem; /* ノートの文字サイズ */
+  color: #ffcc66; /* ノートの色 */
 }
 
 /* 右側: 星図表示エリア */
