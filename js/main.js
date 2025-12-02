@@ -131,9 +131,14 @@ function setupCitySelect(cityMap) {
   }
 
   // 選択変更時の処理（onCityChange呼び出し）
-  select.addEventListener("change", (e) => {
-    if (e.target.value) onCityChange(e.target.value);
-  });
+select.addEventListener("change", (e) => {
+  const v = e.target.value;
+  if (v) {
+    onCityChange(v);
+  } else {
+    onCityClear();   // ← 未選択時の処理を追加
+  }
+});
 }
 
 // ============================================================
@@ -395,4 +400,26 @@ function updateAreaMapPreview(areaKey) {
   // 選択地域に対応する地図画像を表示
   img.src = `img/${areaKey}.png`;
   img.style.display = "block";
+}
+
+function onCityClear() {
+  CURRENT_CITY = null;
+  CURRENT_AREA_KEY = null;
+  CURRENT_FORECAST_AREA = null;
+  AINU_GEOJSON = null;
+
+  // 地域情報
+  updateRegionInfo();
+
+  // 星文化リスト
+  const list = document.getElementById("ainu-list");
+  list.innerHTML = "<li>……</li>";
+
+  // 地図（Area0 に戻す）
+  const img = document.getElementById("area-map-preview");
+  img.src = "img/Area0.png";
+  img.style.display = "block";
+
+  // 星図をクリアして再描画
+  Celestial.redraw();
 }
