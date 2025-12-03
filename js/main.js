@@ -5,19 +5,26 @@
 // これらは市町村選択や星座データの表示など、各種処理で参照・更新されます。
 let AINU_DATA = null;             // アイヌ民族星文化・市町村データ全体
 let CURRENT_AREA_KEY = null;      // 現在選択されている文化地域キー（"Area1" 〜 "Area5"）
-let CURRENT_FORECAST_AREA = null; // 気象庁の細分区分（例: "石狩中部"）
+let CURRENT_FORECAST_AREA = null; // 気象庁の天気予報発表区域（一次細分区域）（例: "石狩中部"）
 let CURRENT_CITY = null;          // 現在選択されている市町村名
 let AINU_GEOJSON = null;          // 現在の地域に対応したアイヌ民族星文化のGeoJSONデータ
+
+// ============================================================
+// 定数定義
+// ============================================================
+const DEFAULT_AREA_IMAGE = "img/Area0.png";             // 地図画像の未選択時ファイル名
+const AINU_LINE_COLOR = "#ee82ee";                    // アイヌ星座線の色
+const AINU_FILL_COLOR = "rgba(238, 130, 238, 0.18)";  // アイヌ星座塗り色
+const AINU_FONT_SIZE = "bold 14px sans-serif";          // アイヌ星座ラベルフォントサイズ
 
 // ============================================================
 // スタイル設定
 // ============================================================
 // アイヌ民族星文化の描画スタイル（線色・塗り色・線幅）を定義します。
 const AINU_LINE_STYLE = {
-  stroke: "#ee82ee",                  // 線の色（紫）
-//  fill: "rgba(255, 204, 0, 0.18)",    // 塗りつぶし色（半透明の黄色）
-  fill: "rgba(238, 130, 238, 0.18)",  // 塗りつぶし色（半透明の紫色）
-  width: 2,                           // 線幅
+  stroke: AINU_LINE_COLOR,      // 線の色
+  fill: AINU_FILL_COLOR,        // 塗りつぶし色
+  width: 2,                     // 線幅
 };
 
 // ============================================================
@@ -90,12 +97,15 @@ async function initApp() {
 
     // 市町村選択UIをセットアップ
     setupCitySelect(AINU_DATA.cityMap);
-	// 地域情報を初期化
-	updateRegionInfo();
+
+    // 星図（Celestial）を初期化
+    setupCelestial();
+
+    // 地域情報を初期化
+    updateRegionInfo();
+
     // 地図表示を初期化
     updateAreaMapPreview(null);
-    // 星図（Celestial）を初期化
-	setupCelestial();
 
   } catch (err) {
     // データ読み込み失敗時のエラーハンドリング
@@ -133,12 +143,14 @@ function setupCitySelect(cityMap) {
   }
 
   // 選択変更時の処理（onCityChange呼び出し）
-select.addEventListener("change", (e) => {
+  select.addEventListener("change", (e) => {
   const v = e.target.value;
   if (v) {
+    // 選択時の処理
     onCityChange(v);
   } else {
-    onCityClear();   // ← 未選択時の処理を追加
+    // 未選択時の処理
+    onCityClear();
   }
 });
 }
@@ -269,8 +281,8 @@ function setupCelestial() {
       if (!AINU_GEOJSON) return;
       const transformed = Celestial.getData(AINU_GEOJSON, CELESTIAL_CONFIG.transform);
 
-      ctx.fillStyle = "#ee82ee";
-      ctx.font = "bold 14px sans-serif";
+      ctx.fillStyle = AINU_LINE_COLOR;
+      ctx.font = AINU_FONT_SIZE;
       ctx.textAlign = "center";
 
       transformed.features.forEach(f => {
@@ -394,13 +406,14 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 // ============================================================
 // 選択された文化地域（areaKey）に応じて、
 // 地図画像（img/areaX.png）を表示・非表示に切り替えます。
+// 地域未選択時は DEFAULT_AREA_IMAGE を表示にします。
 function updateAreaMapPreview(areaKey) {
   const img = document.getElementById("area-map-preview");
   if (!img) return;
 
-  // 地域未選択時は Area0.png を表示
+  // 地域未選択時はデフォルト画像を表示
   if (!areaKey) {
-    img.src = "img/Area0.png";
+    img.src = DEFAULT_AREA_IMAGE;
     img.style.display = "block";
     return;
   }
@@ -410,6 +423,15 @@ function updateAreaMapPreview(areaKey) {
   img.style.display = "block";
 }
 
+// ============================================================
+// 市町村未選択時の処理
+// ============================================================
+// セレクトボックスで市町村が未選択になった際の処理をまとめています。
+// 1. グローバル状態のリセット
+// 2. 地域情報・星文化リストの初期化
+// 3. 地図画像を初期状態（Area0）に戻す
+// 4. アイヌ星座の描画パスを削除
+// 5. 星図の再描画
 function onCityClear() {
   CURRENT_CITY = null;
   CURRENT_AREA_KEY = null;
@@ -424,7 +446,7 @@ function onCityClear() {
   list.innerHTML = "<li>……</li>";
 
   // 地図（Area0 に戻す）
-  updateAreaMapPreview(null);  // ← ここで関数を再利用してもOK
+  updateAreaMapPreview(null);
 
   // アイヌ星座のパスを削除
   Celestial.container.selectAll(".ainu-constellation").remove();
