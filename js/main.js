@@ -206,6 +206,7 @@ function setCelestialTimeToJST() {
 // 地域情報（市町村・区分・文化地域）の表示更新
 function updateRegionInfo() {
   const div = document.getElementById("region-info");
+  if (!div) return;
 
   // --- 未選択時 ---
   if (!CURRENT_CITY) {
