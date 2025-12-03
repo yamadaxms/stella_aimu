@@ -1,158 +1,173 @@
-/* 全体レイアウト */
+/*
+  style.css - 星図アプリ用のスタイルシート
+  このファイルは全体レイアウト、コントロールパネル、星図表示エリア、レスポンシブ対応などのCSSを定義しています。
+  各セクションごとに詳細な説明をコメントで記載しています。
+*/
+
+/* 全体レイアウト: ページ全体の基本スタイルを設定 */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #060612;
-  color: #f5f5f5;
+  margin: 0; /* ページ余白をなくす */
+  padding: 0; /* ページ内側余白をなくす */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; /* モダンなフォントを指定 */
+  background: #060612; /* ダークな背景色 */
+  color: #f5f5f5; /* 明るい文字色 */
 }
 
+/* ヘッダー部分のスタイル */
 .site-header {
-  padding: 0.8rem 1.2rem;
-  background: #111827;
-  border-bottom: 1px solid #1f2933;
+  padding: 0.8rem 1.2rem; /* 上下左右の余白 */
+  background: #111827; /* ヘッダー背景色 */
+  border-bottom: 1px solid #1f2933; /* 下線で区切り */
 }
 
 .site-header h1 {
-  margin: 0;
-  font-size: 1.3rem;
+  margin: 0; /* 見出しの余白をなくす */
+  font-size: 1.3rem; /* 見出しのサイズ */
 }
 
 .subtitle {
-  margin: 0.2rem 0 0;
-  font-size: 0.85rem;
-  color: #cbd5f5;
+  margin: 0.2rem 0 0; /* 上余白のみ少し追加 */
+  font-size: 0.85rem; /* サブタイトルのサイズ */
+  color: #cbd5f5; /* サブタイトルの色 */
 }
 
+/* メインレイアウト: 左右分割 */
 .layout {
-  display: flex;
-  flex-wrap: wrap;
-  min-height: calc(100vh - 64px);
+  display: flex; /* 横並びレイアウト */
+  flex-wrap: wrap; /* 画面サイズに応じて折り返し */
+  min-height: calc(100vh - 64px); /* ヘッダー分を除いた高さ */
 }
 
-/* 左：コントロールパネル */
+/* 左側: コントロールパネル領域 */
 .controls {
-  flex: 0 0 280px;
-  max-width: 320px;
-  padding: 1rem;
-  background: #111827;
-  border-right: 1px solid #1f2933;
-  box-sizing: border-box;
+  flex: 0 0 280px; /* 固定幅 */
+  max-width: 320px; /* 最大幅 */
+  padding: 1rem; /* 内側余白 */
+  background: #111827; /* 背景色 */
+  border-right: 1px solid #1f2933; /* 右側の区切り線 */
+  box-sizing: border-box; /* パディングを含めたサイズ計算 */
 }
 
 .controls h2 {
-  margin-top: 0;
-  font-size: 1rem;
+  margin-top: 0; /* 上余白なし */
+  font-size: 1rem; /* 見出しサイズ */
 }
 
 .field {
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.8rem; /* フィールド間の余白 */
 }
 
 label {
-  display: block;
-  font-size: 0.85rem;
-  margin-bottom: 0.25rem;
+  display: block; /* ラベルをブロック表示 */
+  font-size: 0.85rem; /* ラベルの文字サイズ */
+  margin-bottom: 0.25rem; /* ラベル下余白 */
 }
 
 select {
-  width: 100%;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.9rem;
-  border-radius: 4px;
-  border: 1px solid #4b5563;
-  background: #020617;
-  color: #e5e7eb;
+  width: 100%; /* セレクトボックスを幅いっぱいに */
+  padding: 0.25rem 0.5rem; /* 内側余白 */
+  font-size: 0.9rem; /* 文字サイズ */
+  border-radius: 4px; /* 角丸 */
+  border: 1px solid #4b5563; /* 枠線 */
+  background: #020617; /* 背景色 */
+  color: #e5e7eb; /* 文字色 */
 }
 
 #region-info {
-  font-size: 0.85rem;
-  line-height: 1.4;
+  font-size: 0.85rem; /* 地域情報の文字サイズ */
+  line-height: 1.4; /* 行間 */
 }
 
+/* アイヌ地名リストのスタイル */
 .ainu-list {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-  font-size: 0.85rem;
-  max-height: 260px;
-  overflow-y: auto;
+  list-style: none; /* リストマーカーなし */
+  padding-left: 0; /* 左余白なし */
+  margin: 0; /* 余白なし */
+  font-size: 0.85rem; /* 文字サイズ */
+  max-height: 260px; /* 最大高さ（スクロール） */
+  overflow-y: auto; /* 縦スクロール可能 */
 }
 
 .ainu-list li {
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px dashed #374151;
+  margin-bottom: 0.5rem; /* リスト項目間の余白 */
+  padding-bottom: 0.4rem; /* 下側余白 */
+  border-bottom: 1px dashed #374151; /* 下線（点線） */
 }
 
 .ainu-list li .name {
-  font-weight: bold;
+  font-weight: bold; /* 地名を太字 */
 }
 
-.ainu-list li .code {
-  font-size: 0.75rem;
-  color: #9ca3af;
+.ainu-list li .key {
+  font-size: 0.75rem; /* コードの文字サイズ */
+  color: #9ca3af; /* コードの色 */
 }
 
 .ainu-list li .desc {
-  margin-top: 0.15rem;
-  font-size: 0.8rem;
-  color: #d1d5db;
+  margin-top: 0.15rem; /* 説明の上余白 */
+  font-size: 0.8rem; /* 説明の文字サイズ */
+  color: #d1d5db; /* 説明の色 */
 }
 
 .note {
-  margin-top: 0.8rem;
-  font-size: 0.8rem;
-  color: #9ca3af;
+  margin-top: 0.8rem; /* ノートの上余白 */
+  font-size: 0.8rem; /* ノートの文字サイズ */
+  color: #9ca3af; /* ノートの色 */
 }
 
-/* 右：星図エリア */
+.attention {
+  margin-top: 0.8rem; /* ノートの上余白 */
+  font-size: 0.8rem; /* ノートの文字サイズ */
+  color: #ffcc66; /* ノートの色 */
+}
+
+/* 右側: 星図表示エリア */
 .map-area {
-  flex: 1 1 0;
-  min-width: 0;
-  padding: 0.5rem;
-  box-sizing: border-box;
+  flex: 1 1 0; /* 残りのスペースを使用 */
+  min-width: 0; /* 折り返し時の最小幅 */
+  padding: 0.5rem; /* 内側余白 */
+  box-sizing: border-box; /* パディングを含めたサイズ計算 */
 }
 
-/* d3-celestial のコンテナ */
+/* d3-celestial の星図コンテナ */
 #celestial-map {
-  width: 100%;
-  height: calc(100vh - 90px);
-  max-height: 900px;
+  width: 100%; /* 幅いっぱい */
+  height: calc(100vh - 90px); /* ヘッダー分を除いた高さ */
+  max-height: 900px; /* 最大高さ */
 }
 
 /* d3-celestial の背景を暗くする */
 .celestial-map canvas {
-  background-color: #000000;
+  background-color: #000000; /* 星図の背景を黒に */
 }
 
-/* 地図エリア用 */
+/* 地図プレビュー用のスタイル */
 .area-map-preview {
-  width: 250px;
-  height: auto;
-  border: 1px solid #aaa;
-  background: #fff;
-  padding: 4px;
-  border-radius: 6px;
-  opacity: 0.9;
-  z-index: 2000;
-  display: none;       /* 初期は非表示 */
-  margin: 0 auto;
+  width: 250px; /* プレビュー画像の幅 */
+  height: auto; /* 高さは自動 */
+  border: 1px solid #aaa; /* 枠線 */
+  background: #fff; /* 背景色（白） */
+  padding: 4px; /* 内側余白 */
+  border-radius: 6px; /* 角丸 */
+  opacity: 0.9; /* 半透明 */
+  z-index: 2000; /* 前面表示 */
+  display: none; /* 初期は非表示 */
+  margin: 0 auto; /* 中央寄せ */
 }
 
-/* スマホサイズ対応 */
+/* スマホ・タブレット対応のレスポンシブデザイン */
 @media (max-width: 768px) {
   .layout {
-    flex-direction: column;
+    flex-direction: column; /* 縦並びに変更 */
   }
 
   .controls {
-    max-width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #1f2933;
+    max-width: 100%; /* 幅を100%に */
+    border-right: none; /* 右区切り線を消す */
+    border-bottom: 1px solid #1f2933; /* 下区切り線を追加 */
   }
 
   #celestial-map {
-    height: 60vh;
+    height: 60vh; /* 星図の高さを調整 */
   }
 }
