@@ -116,9 +116,14 @@ select {
 }
 
 .attention {
-  margin-top: 0.8rem; /* ノートの上余白 */
-  font-size: 0.8rem; /* ノートの文字サイズ */
-  color: #ffcc66; /* ノートの色 */
+  margin-top: 0.8rem; /* 注意事項の上余白 */
+  font-size: 0.8rem; /* 注意事項の文字サイズ */
+  color: #ffcc66; /* 注意事項の色 */
+}
+
+a[href*="x.com/trapezium_orion"] {
+  color: #66ccff; /* リンクの色 */
+  font-weight: bold;
 }
 
 /* 右側: 星図表示エリア */

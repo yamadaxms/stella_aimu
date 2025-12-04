@@ -13,8 +13,8 @@ let AINU_GEOJSON = null;          // 現在の地域に対応したアイヌ民�
 // 定数定義
 // ============================================================
 const DEFAULT_AREA_IMAGE = "img/Area0.png";             // 地図画像の未選択時ファイル名
-const AINU_LINE_COLOR = "#ee82ee";                      // アイヌ星座線の色
-const AINU_FILL_COLOR = "rgba(238, 130, 238, 0.18)";    // アイヌ星座塗り色
+const AINU_LINE_COLOR = "#ee66ee";                      // アイヌ星座線の色
+const AINU_FILL_COLOR = "rgba(240, 102, 240, 0.18)";    // アイヌ星座塗り色
 const AINU_FONT_SIZE = "bold 14px sans-serif";          // アイヌ星座ラベルフォントサイズ
 
 // ============================================================
@@ -362,22 +362,33 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 
     // 星座線（複数の線分）を生成
     for (const item of c.lines || []) {
-      if (Array.isArray(item) && item.length === 2) {
-        // 2点間の線分
-        const s1 = stars[item[0]];
-        const s2 = stars[item[1]];
-        if (!s1 || !s2) continue;
-
-        const p1 = raDecToLonLat(s1.ra, s1.dec);
-        const p2 = raDecToLonLat(s2.ra, s2.dec);
-        lineSegments.push([p1, p2]);
-        usedPoints.push(p1, p2);
-
+      if (Array.isArray(item)) {
+        // 2点なら従来通り
+        if (item.length === 2) {
+          const s1 = stars[item[0]];
+          const s2 = stars[item[1]];
+          if (!s1 || !s2) continue;
+          const p1 = raDecToLonLat(s1.ra, s1.dec);
+          const p2 = raDecToLonLat(s2.ra, s2.dec);
+          lineSegments.push([p1, p2]);
+          usedPoints.push(p1, p2);
+        }
+        // 3点以上なら隣り合うペアで線分を作成
+        else if (item.length > 2) {
+          for (let i = 0; i < item.length - 1; i++) {
+            const s1 = stars[item[i]];
+            const s2 = stars[item[i + 1]];
+            if (!s1 || !s2) continue;
+            const p1 = raDecToLonLat(s1.ra, s1.dec);
+            const p2 = raDecToLonLat(s2.ra, s2.dec);
+            lineSegments.push([p1, p2]);
+            usedPoints.push(p1, p2);
+          }
+        }
       } else if (typeof item === "string") {
         // 単独点（ラベル用）
         const s = stars[item];
         if (!s) continue;
-
         const p = raDecToLonLat(s.ra, s.dec);
         lineSegments.push([p, p]);
         usedPoints.push(p);
