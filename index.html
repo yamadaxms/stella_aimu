@@ -2,9 +2,11 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
+  <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
+
   <!-- レスポンシブ -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <!-- d3-celestial の CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css">
   <!-- 自前の CSS -->
@@ -12,38 +14,47 @@
 </head>
 <body>
   <header class="site-header">
-    <h1>アイヌ民族星文化ビューア ～カムイの星図～ ver.0.0.7</h1>
-    <p class="subtitle">D3-Celestial + アイヌ民族星文化（八十八星座と重ね描き）</p>
+    <h1>アイヌ民族星文化ビューア ～カムイの星図～ ver.0.0.4</h1>
+    <p class="subtitle">
+      D3-Celestial ＋ アイヌ民族星座データ（八十八星座と重ね描き）
+    </p>
   </header>
 
-  <!-- 画面設定 -->
   <main class="layout">
-    <!-- 左コントロールエリア -->
     <section class="controls">
-      <h2>市町村選択</h2>
+      <h2>地域選択</h2>
+
       <div class="field">
         <select id="city-select">
-          <option value="">……</option>
+          <option value="">読み込み中…</option>
         </select>
       </div>
-      <img id="area-map-preview" class="area-map-preview" alt="エリアマップ">
+
+      <div class="field">
+        <div id="region-info">
+          地域情報：未選択
+        </div>
+      </div>
+
+      <img id="area-map-preview" class="area-map-preview" src="" alt="area map">
+
       <hr>
+
       <h2>アイヌ民族星文化一覧</h2>
       <ul id="ainu-list" class="ainu-list">
-        <li>……</li>
+        <li>読み込み中…</li>
       </ul>
-      <p class="note">※ 星図上では紫色の線でアイヌ民族の星文化を描画しています。
-        <br>※ マウスドラッグで移動、ホイールで拡大縮小できます。
+
+      <p class="note">
+        ※ 星図上では黄色の線でアイヌ民族の星文化を描画しています。<br>
+        ※ マウスドラッグで移動、ホイールで拡大縮小できます。
       </p>
+
     </section>
-    <!-- 左マップエリア -->
+
     <section class="map-area">
       <!-- d3-celestial がここにキャンバスを作る -->
       <div id="celestial-map"></div>
-      <p class="attention">当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
-        <br>ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a> までご連絡ください。
-        <br>© 2026 Ainu Star Culture プロジェクト
-      </p>
     </section>
   </main>
 
