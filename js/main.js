@@ -335,9 +335,12 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
     const labelLon = usedPoints.reduce((a, p) => a + p[0], 0) / usedPoints.length;
     const labelLat = usedPoints.reduce((a, p) => a + p[1], 0) / usedPoints.length;
 
+    // `constellation_data.json` uses `key` as the identifier (not `code`), so use that to avoid duplicate/undefined IDs
+    const featureId = c.key || c.code || name;
+
     features.push({
       type: "Feature",
-      id: c.code,
+      id: featureId,
       properties: { n: name, loc: [labelLon, labelLat], desc },
       geometry: { type: "MultiLineString", coordinates: lineSegments },
     });
