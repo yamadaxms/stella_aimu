@@ -85,11 +85,9 @@ async function initApp() {
     setupCitySelect(AINU_DATA.cityMap);
     setupCelestial();
 
-    const firstCity = Object.keys(AINU_DATA.cityMap.cities)[0];
-    if (firstCity) {
-      document.getElementById("city-select").value = firstCity;
-      onCityChange(firstCity);
-    }
+    // 初期状態は市町村未選択のまま、全体マップ(Area0)を表示
+    updateAreaMapPreview("Area0");
+    updateRegionInfo();
   } catch (err) {
     console.error(err);
     alert("データの読み込みに失敗しました。");
