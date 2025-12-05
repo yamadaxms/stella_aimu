@@ -118,7 +118,12 @@ function setupCitySelect(cityMap) {
   }
 
   select.addEventListener("change", (e) => {
-    if (e.target.value) onCityChange(e.target.value);
+    const selected = e.target.value;
+    if (selected) {
+      onCityChange(selected);
+    } else {
+      resetSelection();
+    }
   });
 }
 
@@ -151,6 +156,20 @@ function setCelestialTimeToJST() {
   const now = new Date();
   const utc = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   Celestial.date(utc);
+}
+
+function resetSelection() {
+  CURRENT_CITY = null;
+  CURRENT_FORECAST_AREA = null;
+  CURRENT_AREA_KEY = null;
+  AINU_GEOJSON = null;
+
+  // clear drawn features and reset UI to initial state
+  Celestial.container?.selectAll(".ainu-constellation").remove();
+  updateAreaMapPreview("Area0");
+  updateRegionInfo();
+  updateAinuList();
+  Celestial.redraw();
 }
 
 
