@@ -3,18 +3,18 @@
 // ============================================================
 
 let AINU_DATA = null;
-let CURRENT_AREA_KEY = null;      // "area1" 〜 "area5"
-let CURRENT_FORECAST_AREA = null; // 気象庁の細分区分（例: "石狩中部"）
-let CURRENT_CITY = null;          // 市町村名
-let AINU_GEOJSON = null;          // 現在の地域に対応した GeoJSON
+let CURRENT_AREA_KEY = null;
+let CURRENT_FORECAST_AREA = null;
+let CURRENT_CITY = null;
+let AINU_GEOJSON = null;
 
 // ============================================================
 // スタイル設定
 // ============================================================
 
 const AINU_LINE_STYLE = {
-  stroke: "#ee82ee",
-  fill: "rgba(255, 204, 0, 0.18)",
+  stroke: "#ee66ee",
+  fill: "rgba(240, 102, 240, 0.18)",
   width: 2,
 };
 
@@ -85,7 +85,6 @@ async function initApp() {
     setupCitySelect(AINU_DATA.cityMap);
     setupCelestial();
 
-    // ▼ 初期選択：JSON の最初
     const firstCity = Object.keys(AINU_DATA.cityMap.cities)[0];
     if (firstCity) {
       document.getElementById("city-select").value = firstCity;
@@ -136,21 +135,17 @@ function onCityChange(cityName) {
 
   CURRENT_CITY = cityName;
   CURRENT_FORECAST_AREA = cityInfo.forecast;
-  CURRENT_AREA_KEY = AINU_DATA.cityMap.forecastAreaToArea[cityInfo.forecast];
+  CURRENT_AREA_KEY = AINU_DATA.cityMap.forecastToArea[cityInfo.forecast];
 
-  // 地図画像を更新する
   updateAreaMapPreview(CURRENT_AREA_KEY);
 	
-	// ▼ 星図センタリング
   Celestial.location([cityInfo.lon, cityInfo.lat]);
   setCelestialTimeToJST();
 
-  // ▼ データ更新
   updateRegionInfo();
   updateAinuGeoJSON();
   updateAinuList();
 
-  // ▼ redraw
   Celestial.redraw();
 }
 
@@ -193,7 +188,6 @@ function updateAinuList() {
     const li = document.createElement("li");
     li.innerHTML = `
       <div class="name">${f.properties.n}</div>
-      <div class="code">コード: ${f.id}</div>
       <div class="desc">${f.properties.desc || ""}</div>
     `;
     list.appendChild(li);
@@ -207,7 +201,6 @@ function updateAinuList() {
 
 function setupCelestial() {
 
-  // ▼ カスタムアイヌ星座の追加（線＋ラベル）
   Celestial.add({
     type: "line",
 
@@ -219,7 +212,6 @@ function setupCelestial() {
     redraw: () => {
       const ctx = Celestial.context;
 
-      // --- 線描画 ---
       const sel = Celestial.container.selectAll(".ainu-constellation");
       sel.each(function (d) {
         Celestial.setStyle(AINU_LINE_STYLE);
@@ -228,7 +220,6 @@ function setupCelestial() {
         ctx.stroke();
       });
 
-      // --- ★ 星座名（ラベル）描画 ★ ---
       if (!AINU_GEOJSON) return;
       const transformed = Celestial.getData(AINU_GEOJSON, CELESTIAL_CONFIG.transform);
 
@@ -308,16 +299,27 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
     const usedPoints = [];
 
     for (const item of c.lines || []) {
-      if (Array.isArray(item) && item.length === 2) {
-        const s1 = stars[item[0]];
-        const s2 = stars[item[1]];
-        if (!s1 || !s2) continue;
-
-        const p1 = raDecToLonLat(s1.ra, s1.dec);
-        const p2 = raDecToLonLat(s2.ra, s2.dec);
-        lineSegments.push([p1, p2]);
-        usedPoints.push(p1, p2);
-
+      if (Array.isArray(item)) {
+        if (item.length === 2) {
+          const s1 = stars[item[0]];
+          const s2 = stars[item[1]];
+          if (!s1 || !s2) continue;
+          const p1 = raDecToLonLat(s1.ra, s1.dec);
+          const p2 = raDecToLonLat(s2.ra, s2.dec);
+          lineSegments.push([p1, p2]);
+          usedPoints.push(p1, p2);
+        }
+        else if (item.length > 2) {
+          for (let i = 0; i < item.length - 1; i++) {
+            const s1 = stars[item[i]];
+            const s2 = stars[item[i + 1]];
+            if (!s1 || !s2) continue;
+            const p1 = raDecToLonLat(s1.ra, s1.dec);
+            const p2 = raDecToLonLat(s2.ra, s2.dec);
+            lineSegments.push([p1, p2]);
+            usedPoints.push(p1, p2);
+          }
+        }
       } else if (typeof item === "string") {
         const s = stars[item];
         if (!s) continue;

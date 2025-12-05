@@ -18,6 +18,6 @@ async function loadAllAinuData() {
   return {
     stars,           // { hipXXXX: { ra, dec, name }, ... }
     constellations,  // [ { code, lines, names:{area1..}, description:{area1..} }, ... ]
-    cityMap,         // { cityToForecastArea:{}, forecastAreaToArea:{} }
+    cityMap,         // { cityToForecast:{}, forecastToArea:{} }
   };
 }
