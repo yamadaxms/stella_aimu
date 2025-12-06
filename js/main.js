@@ -181,7 +181,11 @@ function updateRegionInfo() {
   const div = document.getElementById("region-info");
 
   if (!CURRENT_CITY) {
-    div.textContent = "地域情報：未選択";
+    div.innerHTML = `
+      <div><strong>市町村：</strong>未選択</div>
+      <div><strong>地域区分：</strong>未選択</div>
+      <div><strong>文化地域：</strong>未選択</div>
+    `;
     return;
   }
 
