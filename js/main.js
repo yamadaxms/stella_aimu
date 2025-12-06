@@ -16,9 +16,9 @@ let AINU_GEOJSON = null;
 // Celestial.js で描くアイヌ星座ライン用の色・太さなど。
 
 const AINU_LINE_STYLE = {
-  stroke: "#ee66ee",
-  fill: "rgba(240, 102, 240, 0.18)",
-  width: 2,
+  stroke: "#ee66ee",                  // 星座の線色
+  fill: "rgba(240, 102, 240, 0.18)",  // 線で囲んだ領域の塗り色（半透明）
+  width: 2,                           // 線幅
 };
 
 // ============================================================
@@ -27,51 +27,51 @@ const AINU_LINE_STYLE = {
 // d3-celestial の設定。投影法や中心、星の描画ルールなどをまとめて定義。
 
 const CELESTIAL_CONFIG = {
-  width: 0,
-  projection: "aitoff",
-  transform: "equatorial",
-  center: null,
-  orientationfixed: true,
-  geopos: null,
-  follow: "zenith",
-  zoomlevel: null,
-  zoomextend: 10,
-  adaptable: true,
-  interactive: true,
-  form: false,
-  controls: true,
-  lang: "ja",
-  culture: "iau",
-  container: "celestial-map",
+  width: 0,                         // 0 ならコンテナ幅に合わせる
+  projection: "aitoff",             // 全天用投影法
+  transform: "equatorial",          // 座標系（赤道座標）
+  center: null,                     // 中心座標（null で自動）
+  orientationfixed: true,           // 地平座標への回転を固定
+  geopos: null,                     // 地上位置（null で自動）
+  follow: "zenith",                 // 画面中心を常に天頂に追従
+  zoomlevel: null,                  // 初期ズーム（null で自動）
+  zoomextend: 10,                   // ズーム範囲の上限
+  adaptable: true,                  // コンテナサイズに自動追従
+  interactive: true,                // ドラッグ・ズームなどの操作を有効化
+  form: false,                      // 画面内にフォーム UI を表示しない
+  controls: true,                   // 右上のコントロール UI を表示
+  lang: "ja",                       // UI 表示言語
+  culture: "iau",                   // 既定の星座文化
+  container: "celestial-map",       // 描画先コンテナ ID
 
-  datapath: "https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/data/",
+  datapath: "https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/data/", // 付属データの取得元
 
   stars: {
-    show: true,
-    limit: 6,
-    colors: true,
-    style: { fill: "#ffffff", opacity: 1 },
-    designation: false,
-    propername: false,
-    size: 7,
-    exponent: -0.28,
-    data: "stars.6.json",
+    show: true,                              // 星を表示
+    limit: 6,                                // 視等級の上限（6 等級まで）
+    colors: true,                            // 色を有効化
+    style: { fill: "#ffffff", opacity: 1 },  // 星の塗りと透明度
+    designation: false,                      // Bayer 記号などの表示
+    propername: false,                       // 固有名の表示
+    size: 7,                                 // 星の最大小サイズ
+    exponent: -0.28,                         // 明るさ→サイズへの変換係数
+    data: "stars.6.json",                    // 使用する星データファイル
   },
 
-  dsos: { show: false },
+  dsos: { show: false },  // 星雲・銀河など Deep Sky Objects の表示
 
   constellations: {
-    show: true,
-    names: true,
-    desig: false,
-    lines: true,
-    linestyle: { stroke: "#555555", width: 1, opacity: 0.7 },
-    bounds: false,
+    show: true,                                         // 星座情報を表示
+    names: true,                                        // 星座名を表示
+    desig: false,                                       // 星座略号を非表示
+    lines: true,                                        // 星座線を表示
+    linestyle: { stroke: "#555555", width: 1, opacity: 0.7 }, // 星座線のスタイル
+    bounds: false,                                      // 星座境界線の表示
   },
 
   mw: {
-    show: true,
-    style: { fill: "#ffffff", opacity: 0.04 },
+    show: true,                          // 天の川の表示
+    style: { fill: "#ffffff", opacity: 0.04 }, // 天の川の塗りスタイル
   },
 };
 
