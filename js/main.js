@@ -84,6 +84,7 @@ const CELESTIAL_CONFIG = {
 document.addEventListener("DOMContentLoaded", initApp);
 
 async function initApp() {
+  setLoadingMessage("SIMBADデータ検索中…");
   try {
     // 必要な JSON をまとめて取得し、以降の UI 更新に使う。
     AINU_DATA = await loadAllAinuData();
@@ -102,6 +103,8 @@ async function initApp() {
   } catch (err) {
     console.error(err);
     alert("データの読み込みに失敗しました。");
+  } finally {
+    setLoadingMessage("");
   }
 }
 
@@ -194,6 +197,19 @@ function resetSelection() {
   updateRegionInfo();
   updateAinuList();
   Celestial.redraw();
+}
+
+// ローディング表示を切り替える。
+function setLoadingMessage(text) {
+  const el = document.getElementById("loading-indicator");
+  if (!el) return;
+  if (text) {
+    el.textContent = text;
+    el.style.display = "block";
+  } else {
+    el.textContent = "";
+    el.style.display = "none";
+  }
 }
 
 
