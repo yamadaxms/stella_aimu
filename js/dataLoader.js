@@ -83,7 +83,7 @@ async function fetchHipPositionsFromSimbad(hipIds) {
     const query = `
       SELECT i.id AS hip_id, b.ra AS ra_deg, b.dec AS dec_deg
       FROM ident AS i
-      JOIN basic AS b ON b.oid = i.oid
+      JOIN basic AS b ON b.oid = i.oidref
       WHERE i.id IN (${idList})
     `;
 
