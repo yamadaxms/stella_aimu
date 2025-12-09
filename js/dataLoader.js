@@ -31,6 +31,15 @@ async function loadAllAinuData() {
   };
 }
 
+// fetch 失敗時にもテキストを安全に取り出すユーティリティ。
+async function safeReadText(res) {
+  try {
+    return await res.text();
+  } catch (_) {
+    return "no detail";
+  }
+}
+
 // constellation_data.json 内から HIP 番号を抜き出す。
 function collectHipIds(constellations) {
   const hipIds = new Set();
@@ -60,7 +69,7 @@ async function fetchHipPositionsFromSimbad(hipIds) {
   if (!hipIds.length) return {};
 
   const SIMBAD_TAP_URL = "https://simbad.cds.unistra.fr/simbad/sim-tap/sync";
-  const CHUNK_SIZE = 40; // URL 長すぎを避けるため分割
+  const CHUNK_SIZE = 20; // URL 長すぎ・400 回避のため控えめに分割
   const stars = {};
   const missing = [];
 
@@ -92,7 +101,9 @@ async function fetchHipPositionsFromSimbad(hipIds) {
       body: params.toString(),
     });
     if (!res.ok) {
-      throw new Error(`SIMBAD から座標を取得できませんでした (${res.status})`);
+      // エラー内容を取得してメッセージに含める（TAP は 400 時に詳細を返す）
+      const detail = await safeReadText(res);
+      throw new Error(`SIMBAD から座標を取得できませんでした (${res.status}): ${detail}`);
     }
 
     const json = await res.json();
