@@ -71,7 +71,12 @@ async function fetchHipPositionsFromSimbad(hipIds) {
 
   for (const chunk of chunks) {
     const idList = chunk.map((id) => `'HIP ${id}'`).join(", ");
-    const query = `SELECT id AS hip_id, ra AS ra_deg, dec AS dec_deg FROM basic WHERE id IN (${idList})`;
+    const query = `
+      SELECT i.id AS hip_id, b.ra AS ra_deg, b.dec AS dec_deg
+      FROM ident AS i
+      JOIN basic AS b ON b.oid = i.oid
+      WHERE i.id IN (${idList})
+    `;
 
     const params = new URLSearchParams({
       request: "doQuery",
@@ -80,7 +85,12 @@ async function fetchHipPositionsFromSimbad(hipIds) {
       query,
     });
 
-    const res = await fetch(`${SIMBAD_TAP_URL}?${params.toString()}`);
+    // POST で送ることで長いクエリでも安定させる。
+    const res = await fetch(SIMBAD_TAP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
     if (!res.ok) {
       throw new Error(`SIMBAD から座標を取得できませんでした (${res.status})`);
     }
