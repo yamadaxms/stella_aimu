@@ -320,8 +320,8 @@ function setupCelestial() {
         const loc = f.properties?.loc;
         if (!name || !loc) return;
 
-        // 構成天体数で色分け
-        const numPoints = f.geometry.coordinates.length;
+        // 使用した星の数で色分け
+        const numPoints = f.properties?.starCount ?? f.geometry.coordinates.length;
         ctx.fillStyle = numPoints === 1 ? AINU_LABEL_COLOR_STAR : AINU_LABEL_COLOR_CONST;
         ctx.font = AINU_LABEL_FONT;
         ctx.textAlign = AINU_LABEL_TEXT_ALIGN;
@@ -436,13 +436,16 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
       labelLat = usedPoints.reduce((a, p) => a + p[1], 0) / usedPoints.length;
     }
 
+    // 使用した星のユニーク数を算出（重複座標は1点として扱う）
+    const uniqueStarCount = new Set(usedPoints.map((p) => `${p[0]},${p[1]}`)).size;
+
     // `constellation_data.json` uses `key` as the identifier (not `code`), so use that to avoid duplicate/undefined IDs
     const featureId = c.key || c.code || name;
 
     features.push({
       type: "Feature",
       id: featureId,
-      properties: { n: name, loc: [labelLon, labelLat], desc },
+      properties: { n: name, loc: [labelLon, labelLat], desc, starCount: uniqueStarCount },
       geometry: { type: "MultiLineString", coordinates: lineSegments },
     });
   }
