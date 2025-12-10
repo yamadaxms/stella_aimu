@@ -70,6 +70,7 @@ select {
   line-height: 1.4; /* 行間で読みやすく */
 }
 
+/* アイヌ民族星文化リスト */
 .ainu-list {
   list-style: none; /* 行頭マーカーを消す */
   padding-left: 0; /* 左インデントをなくす */
@@ -79,48 +80,55 @@ select {
   overflow-y: auto; /* 内容が溢れたら縦スクロール */
 }
 
+/* アイヌ民族星文化リストの各項目 */
 .ainu-list li {
   margin-bottom: 0.5rem; /* 項目間の下余白 */
   padding-bottom: 0.4rem; /* 下ボーダーとの距離 */
   border-bottom: 1px dashed #374151; /* 点線の区切り線 */
 }
 
+/* アイヌ民族星文化リストの名称部分 */
 .ainu-list li .name {
   font-weight: bold; /* 名称を強調 */
 }
 
+/* アイヌ民族星文化リストのコード部分 */
 .ainu-list li .code {
   font-size: 0.75rem; /* コードを小さめに */
   color: #9ca3af; /* 淡めの文字色 */
 }
 
+/* アイヌ民族星文化リストの説明部分 */
 .ainu-list li .desc {
   margin-top: 0.15rem; /* 説明とタイトルの間隔 */
   font-size: 0.8rem; /* 説明テキストのサイズ */
   color: #d1d5db; /* 説明文の文字色 */
 }
 
+/* 備考表示用 */
 .note {
   margin-top: 0.8rem; /* 備考の上余白 */
   font-size: 0.8rem; /* 備考の文字サイズ */
   color: #9ca3af; /* 備考の文字色 */
 }
 
+/* 注意事項表示用 */
 .attention {
   margin-top: 0.8rem; /* 注意事項の上余白 */
   font-size: 0.8rem; /* 注意事項の文字サイズ */
   color: #ffcc66; /* 注意事項の色 */
 }
 
+/* ローディングインジケーター（データ取得中などに表示） */
 #loading-indicator {
   display: none; /* ロード中のみ表示 */
-  margin-bottom: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  background: #0b152b;
-  border-left: 3px solid #66ccff;
-  border-radius: 4px;
-  color: #d9e6ff;
-  font-size: 0.9rem;
+  margin-bottom: 0.75rem; /* 下余白で他要素と区切る */
+  padding: 0.5rem 0.75rem; /* 内側余白で見やすく */
+  background: #0b152b; /* 背景色（暗め） */
+  border-left: 3px solid #66ccff; /* 左側にアクセントの線 */
+  border-radius: 4px; /* 角を丸めて柔らかい印象に */
+  color: #d9e6ff; /* 文字色（明るめの青白） */
+  font-size: 0.9rem; /* 文字サイズ（やや大きめ） */
 }
 
 a[href*="x.com/trapezium_orion"] {
