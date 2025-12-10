@@ -110,7 +110,7 @@ async function initApp() {
     // 天球図を初期化し、独自レイヤーを登録。
     setupCelestial();
     // 初回描画前に現地時間へ合わせておくことで、ロード直後の追従アニメを抑える。
-    setCelestialTimeToLocal();
+    setCelestialTimeToJST();
     Celestial.redraw();
 
     // 初期状態は市町村未選択のまま、全体マップ(Area0)を表示
