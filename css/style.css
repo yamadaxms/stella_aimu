@@ -61,7 +61,7 @@ label {
 
 /* 投影法ラベルの折り返し防止・幅指定 */
 .field label[for="projection-select"] {
-  min-width: 7em;        /* ラベルの最小幅（折り返し防止） */
+  min-width: 6em;        /* ラベルの最小幅（折り返し防止） */
   white-space: nowrap;   /* ラベル内のテキストを折り返さない */
 }
 
@@ -86,7 +86,7 @@ select {
   padding-left: 0; /* 左インデントをなくす */
   margin: 0; /* 周囲の余白をゼロに */
   font-size: 0.85rem; /* リスト文字サイズ */
-  max-height: 260px; /* 高さを制限 */
+  max-height: 160px; /* 高さを制限 */
   overflow-y: auto; /* 内容が溢れたら縦スクロール */
 }
 

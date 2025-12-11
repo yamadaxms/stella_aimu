@@ -104,10 +104,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("reset-celestial-view");
   if (btn) {
     btn.addEventListener("click", () => {
-      // ズーム・パン・中心座標・時刻を初期状態に戻す
-      Celestial.reset(); // d3-celestialの標準リセット
-      setCelestialTimeToJST(); // 時刻も初期化
-      Celestial.redraw();
+      resetCelestialView();
     });
   }
 
@@ -233,6 +230,36 @@ function setCelestialTimeToJST() {
   const now = new Date();
   const utc = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   Celestial.date(utc);
+}
+
+// ============================================================
+// 星図ビューのリセット
+// ============================================================
+// d3-celestialには「全部初期化」用のresetがないため、初期設定を再適用する。
+function resetCelestialView() {
+  // UI側も初期値に戻す
+  const projSelect = document.getElementById("projection-select");
+  if (projSelect) {
+    projSelect.value = CELESTIAL_CONFIG.projection;
+  }
+  const constChk = document.getElementById("toggle-constellations");
+  if (constChk) {
+    constChk.checked = CELESTIAL_CONFIG.constellations.show;
+  }
+
+  Celestial.apply({
+    projection: CELESTIAL_CONFIG.projection,
+    transform: CELESTIAL_CONFIG.transform,
+    center: CELESTIAL_CONFIG.center,
+    orientationfixed: CELESTIAL_CONFIG.orientationfixed,
+    geopos: CELESTIAL_CONFIG.geopos,
+    follow: CELESTIAL_CONFIG.follow,
+    zoomlevel: CELESTIAL_CONFIG.zoomlevel,
+    constellations: CELESTIAL_CONFIG.constellations,
+  });
+
+  setCelestialTimeToJST();
+  Celestial.redraw();
 }
 
 // ============================================================
