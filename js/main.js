@@ -247,16 +247,13 @@ function resetCelestialView() {
     constChk.checked = CELESTIAL_CONFIG.constellations.show;
   }
 
-  Celestial.apply({
-    projection: CELESTIAL_CONFIG.projection,
-    transform: CELESTIAL_CONFIG.transform,
-    center: CELESTIAL_CONFIG.center,
-    orientationfixed: CELESTIAL_CONFIG.orientationfixed,
-    geopos: CELESTIAL_CONFIG.geopos,
-    follow: CELESTIAL_CONFIG.follow,
-    zoomlevel: CELESTIAL_CONFIG.zoomlevel,
-    constellations: CELESTIAL_CONFIG.constellations,
-  });
+  // displayを再実行してズーム・パン状態も含めて描画を作り直す
+  Celestial.display(CELESTIAL_CONFIG);
+
+  // 既に選択中の独自レイヤーがあれば再バインド
+  if (AppState.AINU_GEOJSON) {
+    bindAinuFeatures();
+  }
 
   setCelestialTimeToJST();
   Celestial.redraw();
