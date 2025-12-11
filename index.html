@@ -32,8 +32,15 @@
         </select>
       </div>
 
-      <div class="field">
-        <!-- 投影法選択プルダウン -->
+      <div id="region-info">
+        星文化地域：未選択
+      </div>
+
+      <img id="area-map-preview" class="area-map-preview" alt="エリアマップ">
+      <br>
+
+      <!-- 投影法選択プルダウン -->
+      <!--<div class="field">
         <label for="projection-select">星図投影法：</label>
         <select id="projection-select">
           <option value="aitoff">アイトフ投影（標準）</option>
@@ -49,19 +56,14 @@
           <option value="mercator">メルカトル投影</option>
           <option value="equirectangular">正距円筒図法</option>
         </select>
+      </div>-->
+
+      <div class="field">
+        <!-- 星図リセットボタン -->
+        <button id="reset-celestial-view" type="button">星図表示リセット</button>
+        <!-- 88星座表示ON/OFFチェックボックス -->
+        <label for="projection-select"><input type="checkbox" id="toggle-constellations" checked> 88星座表示</label>
       </div>
-
-      <!-- 88星座表示ON/OFFチェックボックス -->
-      <label for="projection-select"><input type="checkbox" id="toggle-constellations" checked> 88星座表示</label>
-
-      <!-- 星図リセットボタン -->
-      <button id="reset-celestial-view" type="button">星図表示リセット</button>
-
-      <div id="region-info">
-        星文化地域：未選択
-      </div>
-
-      <img id="area-map-preview" class="area-map-preview" alt="エリアマップ">
 
       <hr>
 

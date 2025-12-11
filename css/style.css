@@ -86,7 +86,7 @@ select {
   padding-left: 0; /* 左インデントをなくす */
   margin: 0; /* 周囲の余白をゼロに */
   font-size: 0.85rem; /* リスト文字サイズ */
-  max-height: 160px; /* 高さを制限 */
+  max-height: 200px; /* 高さを制限 */
   overflow-y: auto; /* 内容が溢れたら縦スクロール */
 }
 

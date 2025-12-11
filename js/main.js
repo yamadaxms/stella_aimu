@@ -114,7 +114,7 @@ window.addEventListener("DOMContentLoaded", () => {
     projSelect.addEventListener("change", (e) => {
       const val = e.target.value;
       if (val) {
-        Celestial.apply({ projection: val });
+        applyProjection(val);
       }
     });
   }
@@ -207,10 +207,6 @@ function onCityChange(cityName) {
   // 地図プレビュー画像を選択地域に切り替え。
   updateAreaMapPreview(AppState.CURRENT_AREA_KEY);
 
-  // 天球図の中心座標を市町村の位置に設定し、日本時間に揃える。
-//  Celestial.location([cityInfo.lon, cityInfo.lat]);    2025/12/11(Ver.0.1.0)：中心座標変更を抑止
-  setCelestialTimeToJST();
-
   // 地域情報・星文化リスト・GeoJSONレイヤーを選択内容で更新。
   updateRegionInfo();
   updateAinuGeoJSON();
@@ -230,6 +226,24 @@ function setCelestialTimeToJST() {
   const now = new Date();
   const utc = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   Celestial.date(utc);
+}
+
+// ============================================================
+// 投影法の適用
+// ============================================================
+// d3-celestialの描画を作り直して投影法を変更する。
+function applyProjection(projection) {
+  // 現行設定をベースに投影法だけ差し替えて再描画
+  const nextConfig = { ...CELESTIAL_CONFIG, projection };
+  Celestial.display(nextConfig);
+
+  // 既存の独自レイヤーを再バインド
+  if (AppState.AINU_GEOJSON) {
+    bindAinuFeatures();
+  }
+
+  setCelestialTimeToJST();
+  Celestial.redraw();
 }
 
 // ============================================================
