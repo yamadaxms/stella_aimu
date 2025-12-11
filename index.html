@@ -14,8 +14,12 @@
 </head>
 <body>
   <header class="site-header">
-    <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.0.9</h1>
-    <p class="subtitle">D3-Celestial + アイヌ民族の星文化（八十八星座と重ね描き）</p>
+    <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.1.0</h1>
+    <p class="subtitle">
+      D3-Celestial + アイヌ民族の星文化（八十八星座と重ね描き）
+      <br>
+      ※ 北海道内でも地域ごとに異なる星文化が伝わっています。本ビューアでは「今いる街」から各地の星文化の多様性を探ることができます。
+    </p>
   </header>
 
   <main class="layout">
@@ -28,8 +32,32 @@
         </select>
       </div>
 
+      <div class="field">
+        <!-- 投影法選択プルダウン -->
+        <label for="projection-select">星図投影法：</label>
+        <select id="projection-select">
+          <option value="aitoff">アイトフ投影（標準）</option>
+          <option value="mollweide">モルワイデ投影</option>
+          <option value="hammer">ハンマー投影</option>
+          <option value="orthographic">正射投影</option>
+          <option value="stereographic">ステレオグラフ投影</option>
+          <option value="gnomonic">グノモニック投影</option>
+          <option value="sinusoidal">サインスイダル投影</option>
+          <option value="albers">アルバース投影</option>
+          <option value="azimuthal equal area">方位等積投影</option>
+          <option value="azimuthal equidistant">方位等距離投影</option>
+          <option value="mercator">メルカトル投影</option>
+          <option value="equirectangular">正距円筒図法</option>
+        </select>
+        <!-- 88星座表示ON/OFFチェックボックス -->
+        <label for="projection-select"><input type="checkbox" id="toggle-constellations" checked> 88星座表示</label>
+      </div>
+
+      <!-- 星図リセットボタン -->
+      <button id="reset-celestial-view" type="button">星図表示リセット</button>
+
       <div id="region-info">
-        地域情報：未選択
+        星文化地域：未選択
       </div>
 
       <img id="area-map-preview" class="area-map-preview" alt="エリアマップ">
@@ -41,8 +69,10 @@
         <li>……</li>
       </ul>
 
-      <p class="note">※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています。
-        <br>※ マウスドラッグで移動、ホイールで拡大縮小できます。
+      <p class="note">
+        ※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています。
+        <br>
+        ※ 星文化地域は行政区分（市町村）に照らし合わせていますが、実際の星文化収集地域とは異なる場合があります。
       </p>
     </section>
 
@@ -51,9 +81,12 @@
       <div id="celestial-map"></div>
 
       <!-- d3-celestial キャンバス下 -->
-      <p class="attention">当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
-        <br>ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a> までお問い合わせください。
-        <br>© 2025 Ainu Star Culture プロジェクト
+      <p class="attention">
+        当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
+        <br>
+        ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a> までお問い合わせください。
+        <br>
+        © 2025 Ainu Star Culture プロジェクト
       </p>
     </section>
   </main>
@@ -67,5 +100,11 @@
   <!-- キャッシュ更新用にバージョンを付与 -->
   <script src="js/dataLoader.js?v=2"></script>
   <script src="js/main.js?v=2"></script>
+  <script>
+    // 右クリック（コンテキストメニュー）を抑止
+    document.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+    });
+  </script>
 </body>
 </html>

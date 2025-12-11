@@ -12,7 +12,7 @@
 // ============================================================
 const AREA_DEFAULT = "Area0";
 const MSG_NO_AINU = "この地域に対応するアイヌ民族の星文化はありません。";
-const CITY_SELECT_PLACEHOLDER = "市町村を選択してください";
+const CITY_SELECT_PLACEHOLDER = "現在地を選択してください";
 const AINU_LABEL_COLOR_STAR= "#66ee66"; // 天体色
 const AINU_LABEL_COLOR_CONST = "#ee66ee"; // 星座色
 const AINU_LABEL_FONT = "bold 14px sans-serif";
@@ -99,8 +99,41 @@ const CELESTIAL_CONFIG = {
 // データ取得失敗時はエラーメッセージを表示します。
 document.addEventListener("DOMContentLoaded", initApp);
 
+// 星図リセットボタンのイベント登録
+window.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("reset-celestial-view");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      // ズーム・パン・中心座標・時刻を初期状態に戻す
+      Celestial.reset(); // d3-celestialの標準リセット
+      setCelestialTimeToJST(); // 時刻も初期化
+      Celestial.redraw();
+    });
+  }
+
+  // 投影法プルダウンのイベント登録
+  const projSelect = document.getElementById("projection-select");
+  if (projSelect) {
+    projSelect.addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (val) {
+        Celestial.apply({ projection: val });
+      }
+    });
+  }
+
+  // 88星座ON/OFFチェックボックスのイベント登録
+  const constChk = document.getElementById("toggle-constellations");
+  if (constChk) {
+    constChk.addEventListener("change", (e) => {
+      const show = e.target.checked;
+      Celestial.apply({ constellations: { show: show, names: show, lines: show } });
+    });
+  }
+});
+
 async function initApp() {
-  setLoadingMessage("SIMBADデータ検索中…");
+  setLoadingMessage("SIMBADデータ検索中……");
   try {
     // 必要な JSON をまとめて取得し、以降の UI 更新に使う。
     AppState.AINU_DATA = await loadAllAinuData();
@@ -178,7 +211,7 @@ function onCityChange(cityName) {
   updateAreaMapPreview(AppState.CURRENT_AREA_KEY);
 
   // 天球図の中心座標を市町村の位置に設定し、日本時間に揃える。
-  Celestial.location([cityInfo.lon, cityInfo.lat]);
+//  Celestial.location([cityInfo.lon, cityInfo.lat]);    2025/12/11(Ver.0.1.0)：中心座標変更を抑止
   setCelestialTimeToJST();
 
   // 地域情報・星文化リスト・GeoJSONレイヤーを選択内容で更新。
@@ -246,16 +279,16 @@ function updateRegionInfo() {
   const div = document.getElementById("region-info");
   if (!AppState.CURRENT_CITY) {
     div.innerHTML = [
-      '<div><strong>市町村：</strong>未選択</div>',
-      '<div><strong>地域区分：</strong>未選択</div>',
-      '<div><strong>文化地域：</strong>未選択</div>'
+//      '<div><strong>市町村：</strong>未選択</div>',     2025/12/11(Ver.0.1.0)：一時的に抑止
+//      '<div><strong>地域区分：</strong>未選択</div>',   2025/12/11(Ver.0.1.0)：一時的に抑止
+      '<div><strong>星文化地域：</strong>未選択</div>'
     ].join("");
     return;
   }
   div.innerHTML = [
-    `<div><strong>市町村：</strong>${AppState.CURRENT_CITY}</div>`,
-    `<div><strong>地域区分：</strong>${AppState.CURRENT_REGION_AREA}</div>`,
-    `<div><strong>文化地域：</strong>${AppState.CURRENT_AREA_KEY}</div>`
+//    `<div><strong>市町村：</strong>${AppState.CURRENT_CITY}</div>`,              2025/12/11(Ver.0.1.0)：一時的に抑止
+//    `<div><strong>地域区分：</strong>${AppState.CURRENT_REGION_AREA}</div>`,     2025/12/11(Ver.0.1.0)：一時的に抑止
+    `<div><strong>星文化地域：</strong>${AppState.CURRENT_AREA_KEY}</div>`
   ].join("");
 }
 

@@ -41,7 +41,7 @@ async function loadAllAinuData() {
 
   return {
     stars,           // { HIP_xxxxx: { ra, dec }, ... }  Hipparcos番号→座標（赤経・赤緯）
-    constellations,  // [ { code, lines, names:{area1..}, description:{area1..} }, ... ] 地域別星文化定義
+    constellations,  // [ { code, lines, namesPos, names:{area1..}, description:{area1..} }, ... ] 地域別星文化定義
     cityMap,         // { cities:{...}, regionToArea:{...} } 市町村→地域→文化地域の対応表
   };
 }

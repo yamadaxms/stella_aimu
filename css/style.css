@@ -45,14 +45,24 @@ body {
   font-size: 1rem; /* h2 の文字サイズ */
 }
 
+/* 入力フィールド全体のレイアウト（横並び・間隔調整） */
 .field {
   margin-bottom: 0.8rem; /* フィールド同士の間隔 */
+  display: flex;         /* 横並びにする */
+  align-items: center;   /* 垂直方向中央揃え */
+  gap: 0.5em;            /* 子要素間の隙間 */
 }
 
 label {
   display: block; /* ラベルをブロック表示に */
   font-size: 0.85rem; /* ラベル文字サイズ */
   margin-bottom: 0.25rem; /* ラベルと入力の間隔 */
+}
+
+/* 投影法ラベルの折り返し防止・幅指定 */
+.field label[for="projection-select"] {
+  min-width: 7em;        /* ラベルの最小幅（折り返し防止） */
+  white-space: nowrap;   /* ラベル内のテキストを折り返さない */
 }
 
 select {
