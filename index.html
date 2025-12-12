@@ -14,7 +14,7 @@
 </head>
 <body>
   <header class="site-header">
-    <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.1.0</h1>
+    <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.1.1</h1>
     <p class="subtitle">
       D3-Celestial + アイヌ民族の星文化（八十八星座と重ね描き）
       <br>
@@ -40,7 +40,7 @@
       <br>
 
       <!-- 投影法選択プルダウン -->
-      <!--<div class="field">
+      <div class="field">
         <label for="projection-select">星図投影法：</label>
         <select id="projection-select">
           <option value="aitoff">アイトフ投影（標準）</option>
@@ -48,15 +48,15 @@
           <option value="hammer">ハンマー投影</option>
           <option value="orthographic">正射投影</option>
           <option value="stereographic">ステレオグラフ投影</option>
-          <option value="gnomonic">グノモニック投影</option>
-          <option value="sinusoidal">サインスイダル投影</option>
-          <option value="albers">アルバース投影</option>
-          <option value="azimuthal equal area">方位等積投影</option>
-          <option value="azimuthal equidistant">方位等距離投影</option>
+          <!--<option value="gnomonic">グノモニック投影</option>-->
+          <!--<option value="sinusoidal">サインスイダル投影</option>-->
+          <!--<option value="albers">アルバース投影</option>-->
+          <!--<option value="azimuthal equal area">方位等積投影</option>-->
+          <!--<option value="azimuthal equidistant">方位等距離投影</option>-->
           <option value="mercator">メルカトル投影</option>
           <option value="equirectangular">正距円筒図法</option>
         </select>
-      </div>-->
+      </div>
 
       <div class="field">
         <!-- 星図リセットボタン -->
@@ -71,19 +71,19 @@
       <ul id="ainu-list" class="ainu-list">
         <li>……</li>
       </ul>
-
-      <p class="note">
-        ※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています。
-        <br>
-        ※ 星文化地域は行政区分（市町村）に照らし合わせていますが、実際の星文化収集地域とは異なる場合があります。
-      </p>
     </section>
 
     <section class="map-area">
       <!-- d3-celestial がここにキャンバスを作る -->
       <div id="celestial-map"></div>
 
-      <!-- d3-celestial キャンバス下 -->
+      <!-- d3-celestial キャンバス下 note -->
+      <p class="note">
+        ※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています。
+        <br>
+        ※ 星文化地域は行政区分（市町村）に照らし合わせていますが、実際の星文化収集地域とは異なる場合があります。
+      </p>
+      <!-- d3-celestial キャンバス下 attention -->
       <p class="attention">
         当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
         <br>

@@ -10,13 +10,23 @@
 // ============================================================
 // 定数定義
 // ============================================================
-const AREA_DEFAULT = "Area0";
+const AREA_DEFAULT = "area0";
 const MSG_NO_AINU = "この地域に対応するアイヌ民族の星文化はありません。";
 const CITY_SELECT_PLACEHOLDER = "現在地を選択してください";
 const AINU_LABEL_COLOR_STAR= "#66ee66"; // 天体色
 const AINU_LABEL_COLOR_CONST = "#ee66ee"; // 星座色
 const AINU_LABEL_FONT = "bold 14px sans-serif";
 const AINU_LABEL_TEXT_ALIGN = "center";
+
+// areaキー→区分名の変換テーブル
+const AREA_LABEL_MAP = {
+  area0: "全域",
+  area1: "区分Ⅰ",
+  area2: "区分Ⅱ",
+  area3: "区分Ⅲ",
+  area4: "区分Ⅳ",
+  area5: "区分Ⅴ",
+};
 
 // ============================================================
 // アプリ状態管理オブジェクト
@@ -143,7 +153,7 @@ async function initApp() {
     setCelestialTimeToJST();
     Celestial.redraw();
 
-    // 初期状態は市町村未選択のまま、全体マップ(Area0)を表示
+    // 初期状態は市町村未選択のまま、全体マップ(area0)を表示
     updateAreaMapPreview(AREA_DEFAULT);
     updateRegionInfo();
   } catch (err) {
@@ -323,10 +333,12 @@ function updateRegionInfo() {
     ].join("");
     return;
   }
+  // areaキーを区分名に変換して表示
+  const areaLabel = AREA_LABEL_MAP[AppState.CURRENT_AREA_KEY] || AppState.CURRENT_AREA_KEY;
   div.innerHTML = [
 //    `<div><strong>市町村：</strong>${AppState.CURRENT_CITY}</div>`,              2025/12/11(Ver.0.1.0)：一時的に抑止
 //    `<div><strong>地域区分：</strong>${AppState.CURRENT_REGION_AREA}</div>`,     2025/12/11(Ver.0.1.0)：一時的に抑止
-    `<div><strong>星文化地域：</strong>${AppState.CURRENT_AREA_KEY}</div>`
+    `<div><strong>星文化地域：</strong>${areaLabel}</div>`
   ].join("");
 }
 
