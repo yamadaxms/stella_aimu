@@ -17,6 +17,7 @@ const AINU_LABEL_COLOR_STAR= "#66ee66"; // 天体色
 const AINU_LABEL_COLOR_CONST = "#ee66ee"; // 星座色
 const AINU_LABEL_FONT = "bold 14px sans-serif";
 const AINU_LABEL_TEXT_ALIGN = "center";
+const DEFAULT_CITY_LOCATION = "札幌市"; // 緯度経度が欠損している場合のフォールバック先
 
 // areaキー→区分名の変換テーブル
 const AREA_LABEL_MAP = {
@@ -36,6 +37,7 @@ const AppState = {
   CURRENT_AREA_KEY: null,
   CURRENT_REGION_AREA: null,
   CURRENT_CITY: null,
+  CURRENT_GEO_POS: null,
   AINU_GEOJSON: null,
 };
 
@@ -167,11 +169,11 @@ async function initApp() {
 // ============================================================
 // 市町村選択 UI の構築
 // ============================================================
-// city_map.json をもとにプルダウンリストを生成。
+// city_to_area.json をもとにプルダウンリストを生成。
 // 選択変更時は onCityChange で描画・情報を更新します。
 function setupCitySelect(cityMap) {
   const select = document.getElementById("city-select");
-  const cities = Object.keys(cityMap.cities);
+  const cities = Object.keys(cityMap || {});
 
   // 既存の option をクリアしてからプレースホルダーを追加。
   select.innerHTML = "";
@@ -181,7 +183,7 @@ function setupCitySelect(cityMap) {
   placeholder.textContent = CITY_SELECT_PLACEHOLDER;
   select.appendChild(placeholder);
 
-  // city_map.json に登録されている市町村名をすべて挿入。
+  // city_to_area.json に登録されている市町村名をすべて挿入。
   for (const city of cities) {
     const opt = document.createElement("option");
     opt.value = city;
@@ -206,13 +208,18 @@ function setupCitySelect(cityMap) {
 // 選択された市町村から予報区・文化地域を特定し、
 // 地図プレビュー・星文化描画・情報表示を選択内容に合わせて更新します。
 function onCityChange(cityName) {
-  const cityInfo = AppState.AINU_DATA.cityMap.cities[cityName];
+  const cityMap = AppState.AINU_DATA.cityMap || {};
+  const cityInfo = cityMap[cityName];
   if (!cityInfo) return;
 
   // 市町村名から予報区・文化地域キーを取得し、グローバル状態を更新。
   AppState.CURRENT_CITY = cityName;
-  AppState.CURRENT_REGION_AREA = cityInfo.region;
-  AppState.CURRENT_AREA_KEY = AppState.AINU_DATA.cityMap.regionToArea[cityInfo.region];
+  AppState.CURRENT_REGION_AREA = null;
+  AppState.CURRENT_AREA_KEY = cityInfo.area || AREA_DEFAULT;
+
+  // 選択市町村に緯度経度がない場合は札幌市をフォールバック。
+  const { lat, lon } = resolveCityCoordinates(cityName, cityMap);
+  applyGeoposition(lat, lon);
 
   // 地図プレビュー画像を選択地域に切り替え。
   updateAreaMapPreview(AppState.CURRENT_AREA_KEY);
@@ -552,4 +559,28 @@ function updateAreaMapPreview(areaKey) {
 
   img.src = `img/${areaKey}.png`;
   img.style.display = "block";
+}
+
+// ============================================================
+// 緯度経度解決・天球図への反映
+// ============================================================
+// city_to_area.json から選択市町村の緯度経度を取得し、欠損している場合は札幌市をフォールバックする。
+function resolveCityCoordinates(cityName, cityMap) {
+  const map = cityMap || {};
+  const fallback = map[DEFAULT_CITY_LOCATION] || {};
+  const target = map[cityName] || {};
+
+  const lat = Number.isFinite(target.lat) ? target.lat : (Number.isFinite(fallback.lat) ? fallback.lat : null);
+  const lon = Number.isFinite(target.lon) ? target.lon : (Number.isFinite(fallback.lon) ? fallback.lon : null);
+
+  return { lat, lon };
+}
+
+// 取得した緯度経度を Celestial.js に適用し、設定を保持する。
+function applyGeoposition(lat, lon) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+
+  CELESTIAL_CONFIG.geopos = [lat, lon];
+  AppState.CURRENT_GEO_POS = [lat, lon];
+  Celestial.apply({ geopos: [lat, lon] });
 }

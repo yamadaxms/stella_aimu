@@ -25,14 +25,14 @@ async function loadJSON(path) {
  * @returns {Promise<{stars: Object, constellations: Array, cityMap: Object}>}
  *   stars: Hipparcos番号→座標（赤経・赤緯）
  *   constellations: 地域別星文化定義
- *   cityMap: 市町村→地域→文化地域の対応表
+ *   cityMap: 市町村→文化地域と緯度経度の対応表
  * @throws {Error} - いずれかの取得失敗時
  */
 async function loadAllAinuData() {
   // 星文化定義・市町村→エリア対応表を並列で取得
   const [constellations, cityMap] = await Promise.all([
     loadJSON("data/constellation_data.json"),
-    loadJSON("data/city_map.json"),
+    loadJSON("data/city_to_area.json"),
   ]);
 
   // constellation_data.json内で使用されているHipparcos番号を抽出し、SIMBADのTAP APIから座標情報を取得
@@ -42,7 +42,7 @@ async function loadAllAinuData() {
   return {
     stars,           // { HIP_xxxxx: { ra, dec }, ... }  Hipparcos番号→座標（赤経・赤緯）
     constellations,  // [ { code, lines, namesPos, names:{area1..}, description:{area1..} }, ... ] 地域別星文化定義
-    cityMap,         // { cities:{...}, regionToArea:{...} } 市町村→地域→文化地域の対応表
+    cityMap: cityMap.cityToArea || {}, // { 市町村名: { area, lat?, lon? } } 市町村→文化地域の対応表
   };
 }
 
