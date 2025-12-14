@@ -29,12 +29,15 @@ const AREA_LABEL_MAP = {
   area5: "区分Ⅴ",
 };
 
+// エリアプレビューのデフォルト重ね合わせ（市町村未選択時用）を保持
+let DEFAULT_STACK_HTML = null;
+
 // ============================================================
 // アプリ状態管理オブジェクト
 // ============================================================
 const AppState = {
   AINU_DATA: null,
-  CURRENT_AREA_KEY: null,
+  CURRENT_AREA_KEYS: [],
   CURRENT_REGION_AREA: null,
   CURRENT_CITY: null,
   CURRENT_GEO_POS: null,
@@ -156,7 +159,7 @@ async function initApp() {
     Celestial.redraw();
 
     // 初期状態は市町村未選択のまま、全体マップ(area0)を表示
-    updateAreaMapPreview(AREA_DEFAULT);
+    updateAreaMapPreview([AREA_DEFAULT]);
     updateRegionInfo();
   } catch (err) {
     console.error(err);
@@ -215,14 +218,14 @@ function onCityChange(cityName) {
   // 市町村名から予報区・文化地域キーを取得し、グローバル状態を更新。
   AppState.CURRENT_CITY = cityName;
   AppState.CURRENT_REGION_AREA = null;
-  AppState.CURRENT_AREA_KEY = cityInfo.area || AREA_DEFAULT;
+  AppState.CURRENT_AREA_KEYS = normalizeAreaKeys(cityInfo);
 
   // 選択市町村に緯度経度がない場合は札幌市をフォールバック。
   const { lat, lon } = resolveCityCoordinates(cityName, cityMap);
   applyGeoposition(lat, lon);
 
   // 地図プレビュー画像を選択地域に切り替え。
-  updateAreaMapPreview(AppState.CURRENT_AREA_KEY);
+  updateAreaMapPreview(AppState.CURRENT_AREA_KEYS);
 
   // 地域情報・星文化リスト・GeoJSONレイヤーを選択内容で更新。
   updateRegionInfo();
@@ -298,12 +301,12 @@ function resetSelection() {
   // 選択状態をリセットし、未選択に戻す。
   AppState.CURRENT_CITY = null;
   AppState.CURRENT_REGION_AREA = null;
-  AppState.CURRENT_AREA_KEY = null;
+  AppState.CURRENT_AREA_KEYS = [];
   AppState.AINU_GEOJSON = null;
 
   // clear drawn features and reset UI to initial state
   Celestial.container?.selectAll(".ainu-constellation").remove();
-  updateAreaMapPreview(AREA_DEFAULT);
+  updateAreaMapPreview([AREA_DEFAULT]);
   updateRegionInfo();
   updateAinuList();
   Celestial.redraw();
@@ -341,11 +344,13 @@ function updateRegionInfo() {
     return;
   }
   // areaキーを区分名に変換して表示
-  const areaLabel = AREA_LABEL_MAP[AppState.CURRENT_AREA_KEY] || AppState.CURRENT_AREA_KEY;
+  const areaLabels = (AppState.CURRENT_AREA_KEYS || [])
+    .map((key) => AREA_LABEL_MAP[key] || key)
+    .join(" / ");
   div.innerHTML = [
 //    `<div><strong>市町村：</strong>${AppState.CURRENT_CITY}</div>`,              2025/12/11(Ver.0.1.0)：一時的に抑止
 //    `<div><strong>地域区分：</strong>${AppState.CURRENT_REGION_AREA}</div>`,     2025/12/11(Ver.0.1.0)：一時的に抑止
-    `<div><strong>星文化地域：</strong>${areaLabel}</div>`
+    `<div><strong>星文化地域：</strong>${areaLabels}</div>`
   ].join("");
 }
 
@@ -452,13 +457,14 @@ function bindAinuFeatures() {
 // ============================================================
 // 現在の文化地域キーで星文化GeoJSONを再生成し、描画レイヤーを更新します。
 function updateAinuGeoJSON() {
-  if (!AppState.CURRENT_AREA_KEY) return;
+  const areaKeys = AppState.CURRENT_AREA_KEYS || [];
+  if (!areaKeys.length) return;
 
   // 現在の文化地域キーで GeoJSON を再生成。
   AppState.AINU_GEOJSON = buildAinuGeoJSON(
     AppState.AINU_DATA.constellations,
     AppState.AINU_DATA.stars,
-    AppState.CURRENT_AREA_KEY
+    areaKeys
   );
 
   // path 要素とデータの紐付けを更新。
@@ -477,67 +483,80 @@ function raDecToLonLat(raDeg, decDeg) {
 // アイヌ民族星文化データ → GeoJSON生成
 // ============================================================
 // 地域ごとの星文化定義から線分・ラベル位置を算出し、MultiLineString形式でGeoJSON化します。
-function buildAinuGeoJSON(constellations, stars, areaKey) {
+function buildAinuGeoJSON(constellations, stars, areaKeys) {
+  const areaKeyList = Array.isArray(areaKeys)
+    ? areaKeys.filter(Boolean)
+    : (areaKeys ? [areaKeys] : []);
+  if (!areaKeyList.length) {
+    return { type: "FeatureCollection", features: [] };
+  }
+
   const features = [];
+  const seenFeatureIds = new Set();
 
   for (const c of constellations) {
-    const name = c.names?.[areaKey];
-    if (!name) continue;
+    for (const areaKey of areaKeyList) {
+      const name = c.names?.[areaKey];
+      if (!name) continue;
 
-    const desc = c.description?.[areaKey] || "";
-    const lineSegments = [];
-    const usedPoints = [];
+      const desc = c.description?.[areaKey] || "";
+      const lineSegments = [];
+      const usedPoints = [];
 
-    // `lines` の各要素を共通ロジックで処理
-    for (const item of c.lines || []) {
-      const indices = Array.isArray(item) ? item : [item];
-      for (let i = 0; i < indices.length - 1; i++) {
-        const s1 = stars[indices[i]];
-        const s2 = stars[indices[i + 1]];
-        if (!s1 || !s2) continue;
-        const p1 = raDecToLonLat(s1.ra, s1.dec);
-        const p2 = raDecToLonLat(s2.ra, s2.dec);
-        lineSegments.push([p1, p2]);
-        usedPoints.push(p1, p2);
+      // `lines` の各要素を共通ロジックで処理
+      for (const item of c.lines || []) {
+        const indices = Array.isArray(item) ? item : [item];
+        for (let i = 0; i < indices.length - 1; i++) {
+          const s1 = stars[indices[i]];
+          const s2 = stars[indices[i + 1]];
+          if (!s1 || !s2) continue;
+          const p1 = raDecToLonLat(s1.ra, s1.dec);
+          const p2 = raDecToLonLat(s2.ra, s2.dec);
+          lineSegments.push([p1, p2]);
+          usedPoints.push(p1, p2);
+        }
+        // 単一点（配列長1）の場合は点線分で追加
+        if (indices.length === 1) {
+          const s = stars[indices[0]];
+          if (!s) continue;
+          const p = raDecToLonLat(s.ra, s.dec);
+          lineSegments.push([p, p]);
+          usedPoints.push(p);
+        }
       }
-      // 単一点（配列長1）の場合は点線分で追加
-      if (indices.length === 1) {
-        const s = stars[indices[0]];
-        if (!s) continue;
-        const p = raDecToLonLat(s.ra, s.dec);
-        lineSegments.push([p, p]);
-        usedPoints.push(p);
+
+      // 描く線分が一つもない場合はスキップ。
+      if (!lineSegments.length) continue;
+
+      // ラベル表示用の座標を決定。
+      // namesPos（[RA, Dec]）が定義されていればそれを優先し、なければ重心を使う。
+      let labelLon, labelLat;
+      if (Array.isArray(c.namesPos) && c.namesPos.length === 2 &&
+          typeof c.namesPos[0] === "number" && typeof c.namesPos[1] === "number") {
+        // namesPosは赤経・赤緯なので、そのまま経度・緯度に変換
+        [labelLon, labelLat] = raDecToLonLat(c.namesPos[0], c.namesPos[1]);
+      } else {
+        // 使用した点の平均値（重心）
+        labelLon = usedPoints.reduce((a, p) => a + p[0], 0) / usedPoints.length;
+        labelLat = usedPoints.reduce((a, p) => a + p[1], 0) / usedPoints.length;
       }
+
+      // 使用した星のユニーク数を算出（重複座標は1点として扱う）
+      const uniqueStarCount = new Set(usedPoints.map((p) => `${p[0]},${p[1]}`)).size;
+
+      // `constellation_data.json` uses `key` as the identifier (not `code`), so use that to avoid duplicate/undefined IDs
+      const featureIdBase = c.key || c.code || name;
+      const featureId = `${featureIdBase}-${areaKey}`;
+      if (seenFeatureIds.has(featureId)) continue;
+      seenFeatureIds.add(featureId);
+
+      features.push({
+        type: "Feature",
+        id: featureId,
+        properties: { n: name, loc: [labelLon, labelLat], desc, starCount: uniqueStarCount },
+        geometry: { type: "MultiLineString", coordinates: lineSegments },
+      });
     }
-
-    // 描く線分が一つもない場合はスキップ。
-    if (!lineSegments.length) continue;
-
-    // ラベル表示用の座標を決定。
-    // namesPos（[RA, Dec]）が定義されていればそれを優先し、なければ重心を使う。
-    let labelLon, labelLat;
-    if (Array.isArray(c.namesPos) && c.namesPos.length === 2 &&
-        typeof c.namesPos[0] === "number" && typeof c.namesPos[1] === "number") {
-      // namesPosは赤経・赤緯なので、そのまま経度・緯度に変換
-      [labelLon, labelLat] = raDecToLonLat(c.namesPos[0], c.namesPos[1]);
-    } else {
-      // 使用した点の平均値（重心）
-      labelLon = usedPoints.reduce((a, p) => a + p[0], 0) / usedPoints.length;
-      labelLat = usedPoints.reduce((a, p) => a + p[1], 0) / usedPoints.length;
-    }
-
-    // 使用した星のユニーク数を算出（重複座標は1点として扱う）
-    const uniqueStarCount = new Set(usedPoints.map((p) => `${p[0]},${p[1]}`)).size;
-
-    // `constellation_data.json` uses `key` as the identifier (not `code`), so use that to avoid duplicate/undefined IDs
-    const featureId = c.key || c.code || name;
-
-    features.push({
-      type: "Feature",
-      id: featureId,
-      properties: { n: name, loc: [labelLon, labelLat], desc, starCount: uniqueStarCount },
-      geometry: { type: "MultiLineString", coordinates: lineSegments },
-    });
   }
 
   return { type: "FeatureCollection", features };
@@ -547,15 +566,21 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 // 地図エリアプレビュー画像の切り替え
 // ============================================================
 // 選択地域に応じて地図画像を表示・非表示します。
-function updateAreaMapPreview(areaKey) {
+function updateAreaMapPreview(areaKeys) {
   const wrapper = document.getElementById("area-map-preview");
   const single = document.getElementById("area-map-single");
   const stack = document.getElementById("area-map-stack");
   if (!wrapper || !single || !stack) return;
 
+  if (DEFAULT_STACK_HTML === null) {
+    DEFAULT_STACK_HTML = stack.innerHTML;
+  }
+
   const noCitySelected = !AppState.CURRENT_CITY;
 
   if (noCitySelected) {
+    // 未選択時は初期状態の比較暗合成を表示
+    stack.innerHTML = DEFAULT_STACK_HTML;
     // 未選択時は area0 を最上位に、area1-5 を重ねた比較暗合成を表示
     wrapper.style.display = "block";
     stack.style.display = "block";
@@ -563,7 +588,11 @@ function updateAreaMapPreview(areaKey) {
     return;
   }
 
-  if (!areaKey) {
+  const keys = Array.isArray(areaKeys)
+    ? areaKeys.filter(Boolean)
+    : (areaKeys ? [areaKeys] : []);
+
+  if (!keys.length) {
     wrapper.style.display = "none";
     single.style.display = "none";
     stack.style.display = "none";
@@ -571,17 +600,49 @@ function updateAreaMapPreview(areaKey) {
     return;
   }
 
-  // 市町村選択時は単一レイヤー表示
+  const uniqueKeys = Array.from(new Set(keys));
+
+  // エリアが複数なら比較暗合成で重ねて表示
+  if (uniqueKeys.length > 1) {
+    stack.innerHTML = "";
+    for (const key of uniqueKeys) {
+      const img = document.createElement("img");
+      img.src = `img/${key}.png`;
+      img.alt = `エリアマップ ${key}`;
+      img.className = "area-stack-layer";
+      stack.appendChild(img);
+    }
+    single.style.display = "none";
+    single.src = "";
+    stack.style.display = "block";
+    wrapper.style.display = "block";
+    return;
+  }
+
+  // エリアが1つなら単一レイヤー表示
+  const primaryKey = uniqueKeys[0];
   stack.style.display = "none";
   single.style.display = "block";
-  single.src = `img/${areaKey}.png`;
-  single.alt = `エリアマップ ${areaKey}`;
+  single.src = `img/${primaryKey}.png`;
+  single.alt = `エリアマップ ${primaryKey}`;
+  single.title = "";
   wrapper.style.display = "block";
 }
 
 // ============================================================
 // 緯度経度解決・天球図への反映
 // ============================================================
+// city_to_area.json の area/areas 定義を配列化して返却する。
+function normalizeAreaKeys(cityInfo) {
+  if (!cityInfo) return [AREA_DEFAULT];
+  if (Array.isArray(cityInfo.areas)) {
+    const arr = cityInfo.areas.filter(Boolean);
+    return arr.length ? arr : [AREA_DEFAULT];
+  }
+  if (cityInfo.area) return [cityInfo.area];
+  return [AREA_DEFAULT];
+}
+
 // city_to_area.json から選択市町村の緯度経度を取得し、欠損している場合は札幌市をフォールバックする。
 function resolveCityCoordinates(cityName, cityMap) {
   const map = cityMap || {};
