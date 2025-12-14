@@ -603,29 +603,28 @@ function updateAreaMapPreview(areaKeys) {
   const uniqueKeys = Array.from(new Set(keys));
 
   // エリアが複数なら比較暗合成で重ねて表示
-  if (uniqueKeys.length > 1) {
-    stack.innerHTML = "";
-    for (const key of uniqueKeys) {
-      const img = document.createElement("img");
-      img.src = `img/${key}.png`;
-      img.alt = `エリアマップ ${key}`;
-      img.className = "area-stack-layer";
-      stack.appendChild(img);
-    }
-    single.style.display = "none";
-    single.src = "";
-    stack.style.display = "block";
-    wrapper.style.display = "block";
-    return;
+  const layerOrder = [...uniqueKeys];
+  if (!layerOrder.includes("area0")) {
+    layerOrder.push("area0"); // 常に最上位にarea0を重ねる
+  } else {
+    // area0を最後尾（最上位）に移動
+    const filtered = layerOrder.filter((k) => k !== "area0");
+    layerOrder.length = 0;
+    layerOrder.push(...filtered, "area0");
   }
 
-  // エリアが1つなら単一レイヤー表示
-  const primaryKey = uniqueKeys[0];
-  stack.style.display = "none";
-  single.style.display = "block";
-  single.src = `img/${primaryKey}.png`;
-  single.alt = `エリアマップ ${primaryKey}`;
-  single.title = "";
+  stack.innerHTML = "";
+  for (const key of layerOrder) {
+    const img = document.createElement("img");
+    img.src = `img/${key}.png`;
+    img.alt = `エリアマップ ${key}`;
+    img.className = "area-stack-layer";
+    stack.appendChild(img);
+  }
+
+  single.style.display = "none";
+  single.src = "";
+  stack.style.display = "block";
   wrapper.style.display = "block";
 }
 
