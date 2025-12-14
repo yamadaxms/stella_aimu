@@ -14,7 +14,7 @@
 </head>
 <body>
   <header class="site-header">
-    <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.1.1</h1>
+    <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.1.2</h1>
     <p class="subtitle">
       D3-Celestial + アイヌ民族の星文化（八十八星座と重ね描き）
       <br>
@@ -36,7 +36,17 @@
         星文化地域：未選択
       </div>
 
-      <img id="area-map-preview" class="area-map-preview" alt="エリアマップ">
+      <div id="area-map-preview" class="area-map-preview" aria-label="エリアマップ">
+        <img id="area-map-single" class="area-map-image" alt="エリアマップ">
+        <div id="area-map-stack" class="area-map-stack" aria-hidden="true">
+          <img src="img/area1.png" class="area-stack-layer" alt="">
+          <img src="img/area2.png" class="area-stack-layer" alt="">
+          <img src="img/area3.png" class="area-stack-layer" alt="">
+          <img src="img/area4.png" class="area-stack-layer" alt="">
+          <img src="img/area5.png" class="area-stack-layer" alt="">
+          <img src="img/area0.png" class="area-stack-layer area-stack-top" alt="">
+        </div>
+      </div>
       <br>
 
       <!-- 投影法選択プルダウン -->

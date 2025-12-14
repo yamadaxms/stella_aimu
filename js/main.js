@@ -548,17 +548,35 @@ function buildAinuGeoJSON(constellations, stars, areaKey) {
 // ============================================================
 // 選択地域に応じて地図画像を表示・非表示します。
 function updateAreaMapPreview(areaKey) {
-  const img = document.getElementById("area-map-preview");
-  if (!img) return;
+  const wrapper = document.getElementById("area-map-preview");
+  const single = document.getElementById("area-map-single");
+  const stack = document.getElementById("area-map-stack");
+  if (!wrapper || !single || !stack) return;
 
-  if (!areaKey) {
-    img.style.display = "none";
-    img.src = "";
+  const noCitySelected = !AppState.CURRENT_CITY;
+
+  if (noCitySelected) {
+    // 未選択時は area0 を最上位に、area1-5 を重ねた比較暗合成を表示
+    wrapper.style.display = "block";
+    stack.style.display = "block";
+    single.style.display = "none";
     return;
   }
 
-  img.src = `img/${areaKey}.png`;
-  img.style.display = "block";
+  if (!areaKey) {
+    wrapper.style.display = "none";
+    single.style.display = "none";
+    stack.style.display = "none";
+    single.src = "";
+    return;
+  }
+
+  // 市町村選択時は単一レイヤー表示
+  stack.style.display = "none";
+  single.style.display = "block";
+  single.src = `img/${areaKey}.png`;
+  single.alt = `エリアマップ ${areaKey}`;
+  wrapper.style.display = "block";
 }
 
 // ============================================================

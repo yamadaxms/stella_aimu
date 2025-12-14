@@ -168,6 +168,7 @@ a[href*="x.com/trapezium_orion"] {
 
 /* 地図エリア用 */
 .area-map-preview {
+  position: relative;
   width: 250px; /* プレビューの表示幅 */
   height: auto; /* 高さは画像比率に追従 */
   border: 1px solid #aaa; /* 薄い枠線 */
@@ -178,6 +179,38 @@ a[href*="x.com/trapezium_orion"] {
   z-index: 2000; /* 星図より前面に配置 */
   display: none;       /* 初期は非表示 */
   margin: 0 auto; /* 中央寄せ */
+  overflow: hidden; /* はみ出し防止 */
+}
+
+.area-map-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.area-map-stack {
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: none;
+}
+
+.area-stack-layer {
+  width: 100%;
+  height: auto;
+  display: block;
+  mix-blend-mode: darken; /* 比較暗合成 */
+}
+
+.area-map-stack .area-stack-layer:not(:first-child) {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.area-stack-top {
+  position: relative;
+  z-index: 5;
 }
 
 /* スマホサイズ対応 */
