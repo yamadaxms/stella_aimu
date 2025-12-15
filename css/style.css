@@ -24,6 +24,16 @@ body {
   color: #cbd5f5; /* サブタイトルの文字色 */
 }
 
+.subtitle a {
+  color: #8ae2ff; /* 暗背景でも目立つ明るめのシアン */
+  font-weight: 600; /* 少し強調 */
+  text-decoration: none; /* 下線はデフォルト非表示 */
+}
+
+.subtitle a:hover {
+  text-decoration: underline; /* ホバーでリンクと分かりやすく */
+}
+
 .layout {
   display: flex; /* 横並びレイアウトにする */
   flex-wrap: wrap; /* 狭い幅では折り返しを許可 */
