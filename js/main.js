@@ -38,7 +38,6 @@ let DEFAULT_STACK_HTML = null;
 const AppState = {
   AINU_DATA: null,
   CURRENT_AREA_KEYS: [],
-  CURRENT_REGION_AREA: null,
   CURRENT_CITY: null,
   CURRENT_GEO_POS: null,
   AINU_GEOJSON: null,
@@ -217,8 +216,12 @@ function onCityChange(cityName) {
 
   // 市町村名から予報区・文化地域キーを取得し、グローバル状態を更新。
   AppState.CURRENT_CITY = cityName;
-  AppState.CURRENT_REGION_AREA = null;
   AppState.CURRENT_AREA_KEYS = normalizeAreaKeys(cityInfo);
+
+  // 追加: forecast, region, bureau を AppState にセット
+  AppState.CURRENT_FORECAST = cityInfo.forecast;
+  AppState.CURRENT_REGION = cityInfo.region;
+  AppState.CURRENT_BUREAU = cityInfo.bureau;
 
   // 選択市町村に緯度経度がない場合は札幌市をフォールバック。
   const { lat, lon } = resolveCityCoordinates(cityName, cityMap);
@@ -300,7 +303,6 @@ function resetCelestialView() {
 function resetSelection() {
   // 選択状態をリセットし、未選択に戻す。
   AppState.CURRENT_CITY = null;
-  AppState.CURRENT_REGION_AREA = null;
   AppState.CURRENT_AREA_KEYS = [];
   AppState.AINU_GEOJSON = null;
 
@@ -337,8 +339,9 @@ function updateRegionInfo() {
   const div = document.getElementById("region-info");
   if (!AppState.CURRENT_CITY) {
     div.innerHTML = [
-//      '<div><strong>市町村：</strong>未選択</div>',     2025/12/11(Ver.0.1.0)：一時的に抑止
-//      '<div><strong>地域区分：</strong>未選択</div>',   2025/12/11(Ver.0.1.0)：一時的に抑止
+      '<div><strong>振興局　　：</strong>未選択</div>',
+      '<div><strong>地方区分　：</strong>未選択</div>',
+      '<div><strong>気象予報区：</strong>未選択</div>',
       '<div><strong>星文化地域：</strong>未選択</div>'
     ].join("");
     return;
@@ -348,8 +351,9 @@ function updateRegionInfo() {
     .map((key) => AREA_LABEL_MAP[key] || key)
     .join(" / ");
   div.innerHTML = [
-//    `<div><strong>市町村：</strong>${AppState.CURRENT_CITY}</div>`,              2025/12/11(Ver.0.1.0)：一時的に抑止
-//    `<div><strong>地域区分：</strong>${AppState.CURRENT_REGION_AREA}</div>`,     2025/12/11(Ver.0.1.0)：一時的に抑止
+    `<div><strong>振興局　　：</strong>${AppState.CURRENT_BUREAU}</div>`,
+    `<div><strong>地方区分　：</strong>${AppState.CURRENT_REGION}</div>`,
+    `<div><strong>気象予報区：</strong>${AppState.CURRENT_FORECAST}</div>`,
     `<div><strong>星文化地域：</strong>${areaLabels}</div>`
   ].join("");
 }
