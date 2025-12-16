@@ -34,10 +34,39 @@ body {
   text-decoration: underline; /* ホバーでリンクと分かりやすく */
 }
 
+.utility-nav {
+  margin-top: 0.35rem; /* ヘッダー下部のナビ間隔 */
+  display: flex; /* 横並びに配置 */
+  gap: 0.75rem; /* リンク間の余白 */
+  font-size: 0.85rem; /* 少し小さめの文字 */
+}
+
+.utility-nav a {
+  color: #e5e7eb; /* 明るめの文字色 */
+  text-decoration: none; /* 下線を消す */
+  padding: 0.1rem 0.35rem; /* クリックしやすい余白 */
+  border-radius: 6px; /* 角丸 */
+  border: 1px solid transparent; /* 枠線を初期透明に */
+}
+
+.utility-nav a:hover {
+  border-color: #374151; /* ホバー時に薄く枠線 */
+  background: #0b1221; /* 背景色で浮かせる */
+}
+
+.utility-nav a[aria-current="page"] {
+  border-color: #66ccff; /* 現在ページを強調 */
+  background: #0b152b; /* 背景色を少し明るく */
+}
+
 .layout {
   display: flex; /* 横並びレイアウトにする */
   flex-wrap: wrap; /* 狭い幅では折り返しを許可 */
   min-height: calc(100vh - 64px); /* ヘッダー分を引いた高さを確保 */
+  max-width: 1600px; /* 1600px 幅で整える */
+  margin: 0 auto; /* 中央寄せ */
+  width: 100%; /* 余白を含めて横幅を占有 */
+  padding: 0 0.75rem 1rem; /* 端の余白と下余白 */
 }
 
 /* 左：コントロールパネル */
@@ -96,7 +125,7 @@ select {
   padding-left: 0; /* 左インデントをなくす */
   margin: 0; /* 周囲の余白をゼロに */
   font-size: 0.85rem; /* リスト文字サイズ */
-  max-height: 240px; /* 高さを制限 */
+  max-height: 210px; /* 高さを制限 */
   overflow-y: auto; /* 内容が溢れたら縦スクロール */
 }
 
@@ -167,8 +196,8 @@ a[href*="x.com/trapezium_orion"] {
 /* d3-celestial のコンテナ */
 #celestial-map {
   width: 100%; /* 横幅いっぱいに描画 */
-  height: calc(100vh - 90px); /* 画面高さからヘッダー分を差し引き */
-  max-height: 900px; /* 極端に高くなりすぎないよう制限 */
+  height: clamp(520px, calc(100vh - 230px), 720px); /* 1600x900で収まりやすい高さに調整 */
+  max-height: none; /* clampで制御するため上限は不要 */
 }
 
 /* d3-celestial の背景を暗くする */
@@ -221,6 +250,53 @@ a[href*="x.com/trapezium_orion"] {
 .area-stack-top {
   position: relative;
   z-index: 5;
+}
+
+.content-wrapper {
+  max-width: 960px; /* 横幅を中央で制限 */
+  margin: 0 auto; /* 中央寄せ */
+  padding: 1.5rem; /* 全体の余白 */
+  box-sizing: border-box; /* パディング込みで計算 */
+  line-height: 1.8; /* 読みやすい行間 */
+}
+
+.content-card {
+  background: #0b1221; /* 落ち着いた背景色 */
+  border: 1px solid #1f2933; /* 薄い枠線 */
+  border-radius: 12px; /* 少し丸みをつける */
+  padding: 1.5rem; /* 内側余白 */
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35); /* 立体感 */
+}
+
+.content-card h2 {
+  margin-top: 0; /* 上の余白を消す */
+  margin-bottom: 0.8rem; /* タイトル下の余白 */
+  font-size: 1.1rem; /* タイトルサイズ */
+}
+
+.content-card p {
+  margin: 0 0 1rem; /* 段落間の余白 */
+  font-size: 0.95rem; /* 読みやすい文字サイズ */
+  color: #e5e7eb; /* 明るい文字色 */
+}
+
+.content-card p:last-child {
+  margin-bottom: 0; /* 最後の段落は余白なし */
+}
+
+.back-link {
+  display: inline-block; /* ボタン風にする */
+  margin-top: 1rem; /* 上の余白 */
+  padding: 0.5rem 0.9rem; /* 内側余白 */
+  background: #0b152b; /* 背景色 */
+  color: #8ae2ff; /* 文字色 */
+  text-decoration: none; /* 下線を消す */
+  border-radius: 8px; /* 角丸 */
+  border: 1px solid #1f2933; /* 枠線 */
+}
+
+.back-link:hover {
+  border-color: #66ccff; /* ホバー時に枠線を強調 */
 }
 
 /* スマホサイズ対応 */
