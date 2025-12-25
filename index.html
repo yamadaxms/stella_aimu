@@ -1,125 +1,169 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
 
-  <!-- レスポンシブ -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- レスポンシブ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- d3-celestial の CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css">
-  <!-- 自前の CSS -->
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <header class="site-header">
-    <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.2.1</h1>
-    <p class="subtitle">
-      <a href="https://ofrohn.github.io/" target="_blank" rel="noopener">D3-Celestial</a> + アイヌ民族の星文化（八十八星座と重ね描き）
-      <br>
-      ※ 北海道内でも地域ごとに異なる星文化が伝わっています。本ビューアでは「今いる街」から各地の星文化の多様性を探ることができます。
-    </p>
+    <!-- d3-celestial の CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css"
+    />
+    <!-- 自前の CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.3.0</h1>
+      <p class="subtitle">
+        <a href="https://ofrohn.github.io/" target="_blank" rel="noopener"
+          >D3-Celestial</a
+        >
+        + アイヌ民族の星文化（八十八星座と重ね描き）
+        <br />
+        ※
+        北海道内でも地域ごとに異なる星文化が伝わっています。本ビューアでは「今いる街」から各地の星文化の多様性を探ることができます。
+      </p>
       <nav class="utility-nav" aria-label="補足情報">
-      <a href="index.html" aria-current="page">星図ビュー</a>
-      <a href="notes.html">アイヌ語表記・資料について</a>
-    </nav>
-</header>
+        <a href="index.html" aria-current="page">星図ビュー</a>
+        <a href="notes.html">アイヌ語表記・資料について</a>
+      </nav>
+    </header>
 
-  <main class="layout">
-    <section class="controls">
-      <div id="loading-indicator" class="loading" aria-live="polite"></div>
+    <main class="layout">
+      <section class="controls">
+        <div id="loading-indicator" class="loading" aria-live="polite"></div>
 
-      <div class="field">
-        <select id="city-select">
-          <option value="">……</option>
-        </select>
-      </div>
-
-      <div id="region-info">
-        星文化地域：未選択
-      </div>
-
-      <div id="area-map-preview" class="area-map-preview" aria-label="エリアマップ">
-        <img id="area-map-single" class="area-map-image" alt="エリアマップ">
-        <div id="area-map-stack" class="area-map-stack" aria-hidden="true">
-          <img src="img/area1.png" class="area-stack-layer" alt="エリアマップ">
-          <img src="img/area2.png" class="area-stack-layer" alt="エリアマップ">
-          <img src="img/area3.png" class="area-stack-layer" alt="エリアマップ">
-          <img src="img/area4.png" class="area-stack-layer" alt="エリアマップ">
-          <img src="img/area5.png" class="area-stack-layer" alt="エリアマップ">
-          <img src="img/area0.png" class="area-stack-layer area-stack-top" alt="エリアマップ">
+        <div class="field">
+          <select id="city-select">
+            <option value="">……</option>
+          </select>
         </div>
-      </div>
-      <br>
 
-      <!-- 投影法選択プルダウン -->
-      <div class="field">
-        <label for="projection-select">星図投影法：</label>
-        <select id="projection-select">
-          <option value="aitoff">アイトフ投影（標準）</option>
-          <option value="mollweide">モルワイデ投影</option>
-          <option value="hammer">ハンマー投影</option>
-          <option value="orthographic">正射投影</option>
-          <option value="stereographic">ステレオグラフ投影</option>
-          <!--<option value="gnomonic">グノモニック投影</option>-->
-          <!--<option value="sinusoidal">サインスイダル投影</option>-->
-          <!--<option value="albers">アルバース投影</option>-->
-          <!--<option value="azimuthal equal area">方位等積投影</option>-->
-          <!--<option value="azimuthal equidistant">方位等距離投影</option>-->
-          <option value="mercator">メルカトル投影</option>
-          <option value="equirectangular">正距円筒図法</option>
-        </select>
-      </div>
+        <div id="region-info">星文化地域：未選択</div>
 
-      <div class="field">
-        <!-- 星図リセットボタン -->
-        <button id="reset-celestial-view" type="button">星図表示リセット</button>
-        <!-- 88星座表示ON/OFFチェックボックス -->
-        <label for="projection-select"><input type="checkbox" id="toggle-constellations" checked> 88星座表示</label>
-      </div>
+        <div
+          id="area-map-preview"
+          class="area-map-preview"
+          aria-label="エリアマップ"
+        >
+          <img id="area-map-single" class="area-map-image" alt="エリアマップ" />
+          <div id="area-map-stack" class="area-map-stack" aria-hidden="true">
+            <img
+              src="img/area1.png"
+              class="area-stack-layer"
+              alt="エリアマップ"
+            />
+            <img
+              src="img/area2.png"
+              class="area-stack-layer"
+              alt="エリアマップ"
+            />
+            <img
+              src="img/area3.png"
+              class="area-stack-layer"
+              alt="エリアマップ"
+            />
+            <img
+              src="img/area4.png"
+              class="area-stack-layer"
+              alt="エリアマップ"
+            />
+            <img
+              src="img/area5.png"
+              class="area-stack-layer"
+              alt="エリアマップ"
+            />
+            <img
+              src="img/area0.png"
+              class="area-stack-layer area-stack-top"
+              alt="エリアマップ"
+            />
+          </div>
+        </div>
+        <br />
 
-      <hr>
+        <!-- 投影法選択プルダウン -->
+        <div class="field">
+          <label for="projection-select">星図投影法：</label>
+          <select id="projection-select">
+            <option value="aitoff">アイトフ投影（標準）</option>
+            <option value="mollweide">モルワイデ投影</option>
+            <option value="hammer">ハンマー投影</option>
+            <option value="orthographic">正射投影</option>
+            <option value="stereographic">ステレオグラフ投影</option>
+            <!--<option value="gnomonic">グノモニック投影</option>-->
+            <!--<option value="sinusoidal">サインスイダル投影</option>-->
+            <!--<option value="albers">アルバース投影</option>-->
+            <!--<option value="azimuthal equal area">方位等積投影</option>-->
+            <!--<option value="azimuthal equidistant">方位等距離投影</option>-->
+            <option value="mercator">メルカトル投影</option>
+            <option value="equirectangular">正距円筒図法</option>
+          </select>
+        </div>
 
-      <h2>アイヌ民族星文化一覧</h2>
-      <ul id="ainu-list" class="ainu-list">
-        <li>……</li>
-      </ul>
-    </section>
+        <div class="field">
+          <!-- 星図リセットボタン -->
+          <button id="reset-celestial-view" type="button">
+            星図表示リセット
+          </button>
+          <!-- 88星座表示ON/OFFチェックボックス -->
+          <label for="projection-select"
+            ><input type="checkbox" id="toggle-constellations" checked />
+            88星座表示</label
+          >
+        </div>
 
-    <section class="map-area">
-      <!-- d3-celestial がここにキャンバスを作る -->
-      <div id="celestial-map"></div>
+        <hr />
 
-      <!-- d3-celestial キャンバス下 note -->
-      <p class="note">
-        ※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています。
-      </p>
-      <!-- d3-celestial キャンバス下 attention -->
-      <p class="attention">
-        当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
-        <br>
-        ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a> までお問い合わせください。
-        <br>
-        © 2025 Ainu Star Culture プロジェクト
-      </p>
-    </section>
-  </main>
+        <h2>アイヌ民族星文化一覧</h2>
+        <ul id="ainu-list" class="ainu-list">
+          <li>……</li>
+        </ul>
+      </section>
 
-  <!-- d3-celestial 関連ライブラリ -->
-  <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/lib/d3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/lib/d3.geo.projection.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.min.js"></script>
+      <section class="map-area">
+        <!-- d3-celestial がここにキャンバスを作る -->
+        <div id="celestial-map"></div>
 
-  <!-- 自前の JS -->
-  <!-- キャッシュ更新用にバージョンを付与 -->
-  <script src="js/dataLoader.js?v=2"></script>
-  <script src="js/main.js?v=2"></script>
+        <!-- d3-celestial キャンバス下 note -->
+        <p class="note">
+          ※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています。
+        </p>
+        <!-- d3-celestial キャンバス下 attention -->
+        <p class="attention">
+          当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
+          <br />
+          ご利用を希望される場合は、必ず管理者：<a
+            href="https://x.com/trapezium_orion"
+            target="_blank"
+            rel="noopener"
+            >@trapezium_orion (X/Twitter)</a
+          >
+          までお問い合わせください。
+          <br />
+          © 2025 Ainu Star Culture プロジェクト
+        </p>
+      </section>
+    </main>
+
+    <!-- d3-celestial 関連ライブラリ -->
+    <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/lib/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/lib/d3.geo.projection.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.min.js"></script>
+
+    <!-- 自前の JS -->
+    <!-- キャッシュ更新用にバージョンを付与 -->
+    <script src="js/dataLoader.js?v=2"></script>
+    <script src="js/main.js?v=2"></script>
     <script>
-    // 右クリック（コンテキストメニュー）を抑止
-    document.addEventListener("contextmenu", function(e) {
-      e.preventDefault();
-    });
-  </script>
-</body>
+      // 右クリック（コンテキストメニュー）を抑止
+      document.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+      });
+    </script>
+  </body>
 </html>

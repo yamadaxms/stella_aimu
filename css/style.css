@@ -1,11 +1,20 @@
+/* =========================================================
+ * Base / 全体
+ * ========================================================= */
+
 /* 全体レイアウト */
 body {
   margin: 0; /* ページ全体の余白をリセット */
   padding: 0; /* デフォルトの内側余白をリセット */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; /* どの環境でも読みやすいシステムフォント */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif; /* どの環境でも読みやすいシステムフォント */
   background: #060612; /* 夜空をイメージした濃い背景色 */
   color: #f5f5f5; /* 全体の文字色を淡い白に統一 */
 }
+
+/* =========================================================
+ * Header / ヘッダー
+ * ========================================================= */
 
 .site-header {
   padding: 0.8rem 1.2rem; /* ヘッダー内の余白 */
@@ -34,6 +43,7 @@ body {
   text-decoration: underline; /* ホバーでリンクと分かりやすく */
 }
 
+/* ヘッダー内の補足ナビ（星図ビュー／ノートページ等） */
 .utility-nav {
   margin-top: 0.35rem; /* ヘッダー下部のナビ間隔 */
   display: flex; /* 横並びに配置 */
@@ -54,11 +64,17 @@ body {
   background: #0b1221; /* 背景色で浮かせる */
 }
 
+/* 現在ページの強調（ARIA属性で判定） */
 .utility-nav a[aria-current="page"] {
   border-color: #66ccff; /* 現在ページを強調 */
   background: #0b152b; /* 背景色を少し明るく */
 }
 
+/* =========================================================
+ * Layout / 2カラム
+ * ========================================================= */
+
+/* 全体の2カラムレイアウト（左:操作、右:星図） */
 .layout {
   display: flex; /* 横並びレイアウトにする */
   flex-wrap: wrap; /* 狭い幅では折り返しを許可 */
@@ -68,6 +84,10 @@ body {
   width: 100%; /* 余白を含めて横幅を占有 */
   padding: 0 0.75rem 1rem; /* 端の余白と下余白 */
 }
+
+/* =========================================================
+ * Controls / 左サイドパネル
+ * ========================================================= */
 
 /* 左：コントロールパネル */
 .controls {
@@ -84,26 +104,28 @@ body {
   font-size: 1rem; /* h2 の文字サイズ */
 }
 
-/* 入力フィールド全体のレイアウト（横並び・間隔調整） */
+/* 入力フィールド全体のレイアウト（ラベル＋UIを横並び、間隔調整） */
 .field {
   margin-bottom: 0.8rem; /* フィールド同士の間隔 */
-  display: flex;         /* 横並びにする */
-  align-items: center;   /* 垂直方向中央揃え */
-  gap: 0.5em;            /* 子要素間の隙間 */
+  display: flex; /* 横並びにする */
+  align-items: center; /* 垂直方向中央揃え */
+  gap: 0.5em; /* 子要素間の隙間 */
 }
 
+/* 共通ラベル（※.field内では横並び用に別途指定あり） */
 label {
   display: block; /* ラベルをブロック表示に */
   font-size: 0.85rem; /* ラベル文字サイズ */
   margin-bottom: 0.25rem; /* ラベルと入力の間隔 */
 }
 
-/* 投影法ラベルの折り返し防止・幅指定 */
+/* 投影法ラベルの折り返し防止・幅指定（UI崩れ防止） */
 .field label[for="projection-select"] {
-  min-width: 6em;        /* ラベルの最小幅（折り返し防止） */
-  white-space: nowrap;   /* ラベル内のテキストを折り返さない */
+  min-width: 6em; /* ラベルの最小幅（折り返し防止） */
+  white-space: nowrap; /* ラベル内のテキストを折り返さない */
 }
 
+/* プルダウン（市町村／投影法など） */
 select {
   width: 100%; /* セレクトボックスを横いっぱいに */
   padding: 0.25rem 0.5rem; /* セレクト内の余白 */
@@ -114,10 +136,15 @@ select {
   color: #e5e7eb; /* 文字色 */
 }
 
+/* 選択中の地域情報（市町村／予報区／文化地域など） */
 #region-info {
   font-size: 0.85rem; /* 情報テキストのサイズ */
   line-height: 1.4; /* 行間で読みやすく */
 }
+
+/* =========================================================
+ * List / 星文化一覧
+ * ========================================================= */
 
 /* アイヌ民族星文化リスト */
 .ainu-list {
@@ -141,7 +168,7 @@ select {
   font-weight: bold; /* 名称を強調 */
 }
 
-/* アイヌ民族星文化リストのコード部分 */
+/* アイヌ民族星文化リストのコード部分（将来用／表示する場合に使用） */
 .ainu-list li .code {
   font-size: 0.75rem; /* コードを小さめに */
   color: #9ca3af; /* 淡めの文字色 */
@@ -154,19 +181,27 @@ select {
   color: #d1d5db; /* 説明文の文字色 */
 }
 
-/* 備考表示用 */
+/* =========================================================
+ * Notes / 画面右側の注記
+ * ========================================================= */
+
+/* 備考表示用（星図の直下に表示する短い説明） */
 .note {
   margin-top: 0.8rem; /* 備考の上余白 */
   font-size: 0.8rem; /* 備考の文字サイズ */
   color: #9ca3af; /* 備考の文字色 */
 }
 
-/* 注意事項表示用 */
+/* 注意事項表示用（利用規約／免責など強調文） */
 .attention {
   margin-top: 0.8rem; /* 注意事項の上余白 */
   font-size: 0.8rem; /* 注意事項の文字サイズ */
   color: #ffcc66; /* 注意事項の色 */
 }
+
+/* =========================================================
+ * Loading / ローディング
+ * ========================================================= */
 
 /* ローディングインジケーター（データ取得中などに表示） */
 #loading-indicator {
@@ -180,12 +215,17 @@ select {
   font-size: 0.9rem; /* 文字サイズ（やや大きめ） */
 }
 
+/* 問い合わせ先リンク（X/Twitter）を強調 */
 a[href*="x.com/trapezium_orion"] {
   color: #66ccff; /* リンクの色 */
   font-weight: bold; /* リンクを強調 */
 }
 
-/* 右：星図エリア */
+/* =========================================================
+ * Map area / 右ペイン（星図）
+ * ========================================================= */
+
+/* 右：星図エリア（余ったスペースを占有） */
 .map-area {
   flex: 1 1 0; /* 余ったスペースを占有 */
   min-width: 0; /* はみ出し防止の最小幅リセット */
@@ -193,19 +233,38 @@ a[href*="x.com/trapezium_orion"] {
   box-sizing: border-box; /* パディング込みで計算 */
 }
 
-/* d3-celestial のコンテナ */
+/* d3-celestial のコンテナ（星図の「枠」）
+   - 高さを事前に確保し、描画要素の挿入前後で下の文章位置がズレるのを抑止
+   - 内部の canvas は absolute で全面フィットさせ、レイアウト計算から外す
+ */
 #celestial-map {
-  width: 100%; /* 横幅いっぱいに描画 */
-  height: clamp(520px, calc(100vh - 230px), 720px); /* 1600x900で収まりやすい高さに調整 */
+  width: 95%; /* 横幅いっぱいに描画 */
+  height: clamp(520px, calc(100vh - 230px), 720px);
   max-height: none; /* clampで制御するため上限は不要 */
+  position: relative; /* 子要素(canvas)の絶対配置の基準にするためrelativeを指定 */
+  overflow: hidden; /* はみ出し分でレイアウトが崩れないようにする */
 }
 
-/* d3-celestial の背景を暗くする */
+/* d3-celestial が挿入する canvas を常にコンテナにフィットさせる */
+#celestial-map canvas {
+  position: absolute; /* 親(#celestial-map)内で上下左右にピッタリ重ねるためabsolute */
+  inset: 0; /* top/right/bottom/left:0; と同じ。全体にフィットさせる */
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  background-color: #000000; /* 星空表示用に真っ黒背景 */
+}
+
+/* d3-celestial の背景（ライブラリ側のクラスが付与される場合の保険） */
 .celestial-map canvas {
   background-color: #000000; /* 星空表示用に真っ黒背景 */
 }
 
-/* 地図エリア用 */
+/* =========================================================
+ * Area map preview / エリアマップ（左ペイン）
+ * ========================================================= */
+
+/* 地図エリア用（市町村選択に応じて表示／非表示） */
 .area-map-preview {
   position: relative;
   width: 250px; /* プレビューの表示幅 */
@@ -215,42 +274,53 @@ a[href*="x.com/trapezium_orion"] {
   padding: 4px; /* 内側余白 */
   border-radius: 6px; /* 角丸 */
   opacity: 0.9; /* 少し透けさせる */
-  z-index: 2000; /* 星図より前面に配置 */
-  display: none;       /* 初期は非表示 */
+  z-index: 2000; /* 星図より前面に配置（将来重なった場合の保険） */
+  display: none; /* 初期は非表示（JSで表示制御） */
   margin: 0 auto; /* 中央寄せ */
   overflow: hidden; /* はみ出し防止 */
 }
 
+/* 単一表示用の画像 */
 .area-map-image {
   width: 100%;
   height: auto;
   display: block;
+  /* 画像は親の枠内で100%表示。position指定なし（通常フロー） */
 }
 
+/* 複数エリア重ね合わせ表示用のコンテナ */
 .area-map-stack {
-  position: relative;
+  position: relative; /* 子(.area-stack-layer)の絶対配置の基準にするためrelativeを指定 */
   width: 100%;
   height: auto;
   display: none;
 }
 
+/* 重ね合わせ各レイヤー（CSSの比較暗合成で重ねる） */
 .area-stack-layer {
   width: 100%;
   height: auto;
   display: block;
-  mix-blend-mode: darken; /* 比較暗合成 */
+  mix-blend-mode: darken; /* 比較暗合成で重ねる */
+  /* 1枚目は通常フロー、2枚目以降はabsoluteで重ねる（下記参照） */
 }
 
+/* 2枚目以降は同一座標に重ねる */
 .area-map-stack .area-stack-layer:not(:first-child) {
-  position: absolute;
+  position: absolute; /* 2枚目以降の画像を親(.area-map-stack)の同じ位置に重ねるためabsolute */
   top: 0;
   left: 0;
 }
 
+/* 一番上のレイヤー（area0等） */
 .area-stack-top {
-  position: relative;
+  position: relative; /* z-indexを効かせて最上位レイヤーにするためrelative */
   z-index: 5;
 }
+
+/* =========================================================
+ * Notes page / notes.html 用
+ * ========================================================= */
 
 .content-wrapper {
   max-width: 960px; /* 横幅を中央で制限 */
@@ -299,19 +369,25 @@ a[href*="x.com/trapezium_orion"] {
   border-color: #66ccff; /* ホバー時に枠線を強調 */
 }
 
-/* スマホサイズ対応 */
+/* =========================================================
+ * Responsive / スマホ対応
+ * ========================================================= */
+
 @media (max-width: 768px) {
+  /* スマホでは縦積みに変更 */
   .layout {
-    flex-direction: column; /* モバイルでは縦積みに変更 */
+    flex-direction: column;
   }
 
+  /* 左パネルを全面幅へ */
   .controls {
-    max-width: 100%; /* 横幅いっぱいに */
-    border-right: none; /* 右の仕切り線を外す */
-    border-bottom: 1px solid #1f2933; /* 下側の仕切り線を追加 */
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #1f2933;
   }
 
+  /* 星図コンテナはviewport高ベースに */
   #celestial-map {
-    height: 60vh; /* モバイルは高さを少し低めに */
+    height: 60vh;
   }
 }
