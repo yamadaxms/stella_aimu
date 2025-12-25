@@ -627,10 +627,10 @@ function updateAreaMapPreview(areaKeys) {
 
   // エリアが複数なら比較暗合成で重ねて表示
   const layerOrder = [...uniqueKeys];
+  // area0 は常に最上位に来るように順序を整える
   if (!layerOrder.includes("area0")) {
-    layerOrder.push("area0"); // 常に最上位にarea0を重ねる
+    layerOrder.push("area0");
   } else {
-    // area0を最後尾（最上位）に移動
     const filtered = layerOrder.filter((k) => k !== "area0");
     layerOrder.length = 0;
     layerOrder.push(...filtered, "area0");
@@ -671,6 +671,7 @@ function resolveCityCoordinates(cityName, cityMap) {
   const fallback = map[DEFAULT_CITY_LOCATION] || {};
   const target = map[cityName] || {};
 
+  // 緯度経度が欠損している場合は札幌の値で補完
   const lat = Number.isFinite(target.lat)
     ? target.lat
     : Number.isFinite(fallback.lat)
@@ -695,6 +696,7 @@ function applyGeoposition(lat, lon) {
 }
 
 function mapAreaKeysToAinuCodes(areaKeys) {
+  // UI用のareaキーをデータ定義用のainuコードへ変換（重複を除外）
   const map = {
     area1: "ainu1",
     area2: "ainu2",

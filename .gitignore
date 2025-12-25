@@ -4431,3 +4431,7 @@ scripts/fetch_star_data.py
 .venv/lib/python3.9/site-packages/astropy/wcs/src/wcslib_tabprm_wrap.c
 .venv/lib/python3.9/site-packages/astropy/wcs/src/wcslib_wrap.c
 .venv/lib/python3.9/site-packages/astropy/wcs/src/wcslib_wtbarr_wrap.c
+.venv/.DS_Store
+.venv/lib/python3.9/site-packages/.DS_Store
+.DS_Store
+.gitignore

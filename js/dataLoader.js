@@ -75,6 +75,7 @@ function buildCityMap(cityList) {
 }
 
 function ainuCodesToAreaKeys(codes) {
+  // city.json 内のアイヌコードを星文化用のエリアキーへ変換（重複は1件にまとめる）
   const map = {
     ainu1: "area1",
     ainu2: "area2",
@@ -87,6 +88,7 @@ function ainuCodesToAreaKeys(codes) {
   const keys = new Set();
   for (const code of codes) {
     const areaKey = map[code];
+    // 不明なコードは無視し、Setで重複を除外
     if (areaKey) keys.add(areaKey);
   }
   return Array.from(keys);
