@@ -3,6 +3,12 @@
  * ========================================================= */
 
 /* 全体レイアウト */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* パディングを含めて幅計算し、はみ出しを防ぐ */
+}
+
 body {
   margin: 0; /* ページ全体の余白をリセット */
   padding: 0; /* デフォルトの内側余白をリセット */
@@ -78,7 +84,6 @@ body {
 .layout {
   display: flex; /* 横並びレイアウトにする */
   flex-wrap: wrap; /* 狭い幅では折り返しを許可 */
-  min-height: calc(100vh - 64px); /* ヘッダー分を引いた高さを確保 */
   max-width: 1600px; /* 1600px 幅で整える */
   margin: 0 auto; /* 中央寄せ */
   width: 100%; /* 余白を含めて横幅を占有 */
@@ -238,7 +243,7 @@ a[href*="x.com/trapezium_orion"] {
    - 内部の canvas は absolute で全面フィットさせ、レイアウト計算から外す
  */
 #celestial-map {
-  width: 95%; /* 横幅いっぱいに描画 */
+  width: 100%; /* 横幅いっぱいに描画 */
   height: clamp(520px, calc(100vh - 230px), 720px);
   max-height: none; /* clampで制御するため上限は不要 */
   position: relative; /* 子要素(canvas)の絶対配置の基準にするためrelativeを指定 */
