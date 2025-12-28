@@ -244,7 +244,6 @@ a[href*="x.com/trapezium_orion"] {
  */
 #celestial-map {
   width: 100%; /* 横幅いっぱいに描画 */
-  height: clamp(520px, calc(100vh - 230px), 720px);
   max-height: none; /* clampで制御するため上限は不要 */
   position: relative; /* 子要素(canvas)の絶対配置の基準にするためrelativeを指定 */
   overflow: hidden; /* はみ出し分でレイアウトが崩れないようにする */
