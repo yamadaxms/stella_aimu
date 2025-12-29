@@ -276,18 +276,27 @@ function applyProjection(projection) {
 // ============================================================
 // d3-celestialには「全部初期化」用のresetがないため、初期設定を再適用する。
 function resetCelestialView() {
-  // UI側も初期値に戻す
+  // 現在のUI選択を保持したまま display を再実行してズーム・パンをリセット
   const projSelect = document.getElementById("projection-select");
-  if (projSelect) {
-    projSelect.value = CELESTIAL_CONFIG.projection;
-  }
   const constChk = document.getElementById("toggle-constellations");
-  if (constChk) {
-    constChk.checked = CELESTIAL_CONFIG.constellations.show;
-  }
 
-  // displayを再実行してズーム・パン状態も含めて描画を作り直す
-  Celestial.display(CELESTIAL_CONFIG);
+  const currentProjection =
+    projSelect?.value || CELESTIAL_CONFIG.projection;
+  const showConstellations =
+    constChk?.checked ?? CELESTIAL_CONFIG.constellations.show;
+
+  const nextConfig = {
+    ...CELESTIAL_CONFIG,
+    projection: currentProjection,
+    constellations: {
+      ...CELESTIAL_CONFIG.constellations,
+      show: showConstellations,
+      names: showConstellations,
+      lines: showConstellations,
+    },
+  };
+
+  Celestial.display(nextConfig);
 
   // 既に選択中の独自レイヤーがあれば再バインド
   if (AppState.AINU_GEOJSON) {
