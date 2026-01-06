@@ -17,7 +17,7 @@
   </head>
   <body>
     <header class="site-header">
-      <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.3.0</h1>
+      <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.3.1</h1>
       <p class="subtitle">
         <a href="https://ofrohn.github.io/" target="_blank" rel="noopener"
           >D3-Celestial</a
@@ -162,7 +162,38 @@
     <script>
       // 右クリック（コンテキストメニュー）を抑止
       document.addEventListener("contextmenu", function (e) {
-        e.preventDefault();
+        // 画像上の右クリックも抑止
+        if (e.target.tagName === "IMG") {
+          e.preventDefault();
+        }
+      });
+
+      // 画像のドラッグ開始を抑止
+      document.addEventListener("dragstart", function (e) {
+        if (e.target.tagName === "IMG") {
+          e.preventDefault();
+        }
+      });
+
+      // 画像の選択・コピーを抑止
+      document.addEventListener("selectstart", function (e) {
+        if (e.target.tagName === "IMG") {
+          e.preventDefault();
+        }
+      });
+
+      // キーボード操作抑止（PrintScreen, Ctrl+C, Ctrl+S, Ctrl+U, F12 など）
+      document.addEventListener("keydown", function (e) {
+        // PrintScreen
+        if (e.key === "PrintScreen") {
+          e.preventDefault();
+          alert("画面コピーは禁止されています。");
+        }
+        // Ctrl+C, Ctrl+S, Ctrl+U, F12
+        if ((e.ctrlKey && ["c", "s", "u"].includes(e.key.toLowerCase())) || e.key === "F12") {
+          e.preventDefault();
+          alert("この操作は禁止されています。");
+        }
       });
     </script>
   </body>
