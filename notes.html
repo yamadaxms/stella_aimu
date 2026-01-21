@@ -2,36 +2,39 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <title>アイヌ語表記・資料について | アイヌ民族星文化ビューア</title>
+    <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
 
     <!-- レスポンシブ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex, nofollow, noarchive" />
 
+    <!-- d3-celestial の CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css"
+    />
     <!-- 自前の CSS -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header class="site-header">
-      <h1>アイヌ民族星文化ビューア ～カムイの星図～</h1>
+      <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.3.2</h1>
       <p class="subtitle">
         <a href="https://ofrohn.github.io/" target="_blank" rel="noopener"
           >D3-Celestial</a
         >
         + アイヌ民族の星文化（八十八星座と重ね描き）
-        <br />
-        ※
-        北海道内でも地域ごとに異なる星文化が伝わっています。本ビューアでは「今いる街」から各地の星文化の多様性を探ることができます。
+        <br />※北海道内でも地域ごとに異なる星文化が伝わっています。本ビューアでは「今いる街」から各地の星文化の多様性を探ることができます。
       </p>
       <nav class="utility-nav" aria-label="補足情報">
         <a href="index.html">星図ビュー</a>
-        <a href="notes.html" aria-current="page">アイヌ語表記・資料について</a>
+        <a href="notes.html" aria-current="page">アイヌ語表記について</a>
+        <a href="references.html">参考文献</a>
       </nav>
     </header>
 
     <main class="content-wrapper">
       <article class="content-card">
-        <h2>アイヌ語表記・資料について</h2>
+        <h2>アイヌ語表記について</h2>
         <p>
           星図中のアイヌ語表記は、末岡外美夫氏（Sueoka
           Tomio）の著書『アイヌの星』および『人間達（アイヌタリ）のみた星座と伝承』を主な参考文献とし、国立アイヌ民族博物館アイヌ語アーカイブや各種アイヌ語辞典などの資料を照合してまとめています。
@@ -47,8 +50,8 @@
         </p>
         <p>
           アイヌ民族の星文化が、皆さまの自然や星空へのまなざしに新たな視点をもたらすきっかけとなれば幸いです。
+          <a class="back-link" href="index.html">星図へ戻る</a>
         </p>
-        <a class="back-link" href="index.html">星図へ戻る</a>
       </article>
     </main>
   </body>

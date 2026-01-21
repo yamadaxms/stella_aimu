@@ -6,7 +6,6 @@
 
     <!-- レスポンシブ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex, nofollow, noarchive" />
 
     <!-- d3-celestial の CSS -->
     <link
@@ -18,19 +17,18 @@
   </head>
   <body>
     <header class="site-header">
-      <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.3.1</h1>
+      <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.3.2</h1>
       <p class="subtitle">
         <a href="https://ofrohn.github.io/" target="_blank" rel="noopener"
           >D3-Celestial</a
         >
         + アイヌ民族の星文化（八十八星座と重ね描き）
-        <br />
-        ※
-        北海道内でも地域ごとに異なる星文化が伝わっています。本ビューアでは「今いる街」から各地の星文化の多様性を探ることができます。
+        <br />※北海道内でも地域ごとに異なる星文化が伝わっています。本ビューアでは「今いる街」から各地の星文化の多様性を探ることができます。
       </p>
       <nav class="utility-nav" aria-label="補足情報">
         <a href="index.html" aria-current="page">星図ビュー</a>
-        <a href="notes.html">アイヌ語表記・資料について</a>
+        <a href="notes.html">アイヌ語表記について</a>
+        <a href="references.html">参考文献</a>
       </nav>
     </header>
 
@@ -113,8 +111,11 @@
           </button>
           <!-- 88星座表示ON/OFFチェックボックス -->
           <label for="projection-select"
-            ><input type="checkbox" id="toggle-constellations" checked />
-            88星座表示</label
+            ><input
+              type="checkbox"
+              id="toggle-constellations"
+              checked
+            />88星座表示</label
           >
         </div>
 
@@ -137,16 +138,13 @@
         <!-- d3-celestial キャンバス下 attention -->
         <p class="attention">
           当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
-          <br />
-          ご利用を希望される場合は、必ず管理者：<a
+          <br />ご利用を希望される場合は、必ず管理者：<a
             href="https://x.com/trapezium_orion"
             target="_blank"
             rel="noopener"
             >@trapezium_orion (X/Twitter)</a
-          >
-          までお問い合わせください。
-          <br />
-          &copy; 2025–2026 Ainu Star Culture プロジェクト
+          >までお問い合わせください。 <br />&copy; 2025–2026 Ainu Star Culture
+          プロジェクト
         </p>
       </section>
     </main>
@@ -191,7 +189,10 @@
           alert("画面コピーは禁止されています。");
         }
         // Ctrl+C, Ctrl+S, Ctrl+U, F12
-        if ((e.ctrlKey && ["c", "s", "u"].includes(e.key.toLowerCase())) || e.key === "F12") {
+        if (
+          (e.ctrlKey && ["c", "s", "u"].includes(e.key.toLowerCase())) ||
+          e.key === "F12"
+        ) {
           e.preventDefault();
           alert("この操作は禁止されています。");
         }
