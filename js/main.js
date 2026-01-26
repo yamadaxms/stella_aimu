@@ -113,15 +113,7 @@ const CELESTIAL_CONFIG = {
 // データ取得失敗時はエラーメッセージを表示します。
 document.addEventListener("DOMContentLoaded", initApp);
 
-// 星図リセットボタンのイベント登録
 window.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("reset-celestial-view");
-  if (btn) {
-    btn.addEventListener("click", () => {
-      resetCelestialView();
-    });
-  }
-
   // 投影法プルダウンのイベント登録
   const projSelect = document.getElementById("projection-select");
   if (projSelect) {
@@ -258,8 +250,20 @@ function setCelestialTimeToJST() {
 // ============================================================
 // d3-celestialの描画を作り直して投影法を変更する。
 function applyProjection(projection) {
+  // 投影法変更は Celestial.display() により再初期化が走るため、
+  // 直前の表示状態（回転中心/ズーム）を退避して復元する。
+  //
+  // NOTE: follow=zenith の場合、settings.center が null のままでも画面中心は動くため、
+  // settings.center ではなく rotate()/zoomBy() から現在ビューを取得する。
+  const prevRotate =
+    typeof Celestial?.rotate === "function" ? Celestial.rotate() : null; // [lon, lat, orient]
+  const prevZoom =
+    typeof Celestial?.zoomBy === "function" ? Celestial.zoomBy() : null;
+
   // 現行設定をベースに投影法だけ差し替えて再描画
-  const nextConfig = { ...CELESTIAL_CONFIG, projection };
+  // center維持を最優先するため、追従は "center" に固定する（zenith追従だと中心が動く）
+  CELESTIAL_CONFIG.projection = projection;
+  const nextConfig = { ...CELESTIAL_CONFIG, projection, follow: "center" };
   Celestial.display(nextConfig);
 
   // 既存の独自レイヤーを再バインド
@@ -267,43 +271,28 @@ function applyProjection(projection) {
     bindAinuFeatures();
   }
 
-  setCelestialTimeToJST();
-  Celestial.redraw();
-}
+  // 投影法変更それ自体で時刻を更新すると表示が動くため、ここでは date を触らない
 
-// ============================================================
-// 星図ビューのリセット
-// ============================================================
-// d3-celestialには「全部初期化」用のresetがないため、初期設定を再適用する。
-function resetCelestialView() {
-  // 現在のUI選択を保持したまま display を再実行してズーム・パンをリセット
-  const projSelect = document.getElementById("projection-select");
-  const constChk = document.getElementById("toggle-constellations");
-
-  const currentProjection =
-    projSelect?.value || CELESTIAL_CONFIG.projection;
-  const showConstellations =
-    constChk?.checked ?? CELESTIAL_CONFIG.constellations.show;
-
-  const nextConfig = {
-    ...CELESTIAL_CONFIG,
-    projection: currentProjection,
-    constellations: {
-      ...CELESTIAL_CONFIG.constellations,
-      show: showConstellations,
-      names: showConstellations,
-      lines: showConstellations,
-    },
-  };
-
-  Celestial.display(nextConfig);
-
-  // 既に選択中の独自レイヤーがあれば再バインド
-  if (AppState.AINU_GEOJSON) {
-    bindAinuFeatures();
+  // 直前のビュー（回転中心/ズーム）を復元
+  if (prevRotate && typeof Celestial?.rotate === "function") {
+    Celestial.rotate({ center: prevRotate });
   }
 
-  setCelestialTimeToJST();
+  if (
+    typeof prevZoom === "number" &&
+    Number.isFinite(prevZoom) &&
+    typeof Celestial?.zoomBy === "function"
+  ) {
+    const afterZoom = Celestial.zoomBy();
+    if (
+      typeof afterZoom === "number" &&
+      Number.isFinite(afterZoom) &&
+      afterZoom
+    ) {
+      Celestial.zoomBy(prevZoom / afterZoom);
+    }
+  }
+
   Celestial.redraw();
 }
 
@@ -425,7 +414,7 @@ function setupCelestial() {
       if (!AppState.AINU_GEOJSON) return;
       const transformed = Celestial.getData(
         AppState.AINU_GEOJSON,
-        CELESTIAL_CONFIG.transform
+        CELESTIAL_CONFIG.transform,
       );
 
       transformed.features.forEach((f) => {
@@ -451,6 +440,8 @@ function setupCelestial() {
 
   // 設定を元に Celestial の描画を開始。
   Celestial.display(CELESTIAL_CONFIG);
+
+  // NOTE: 初期中心スナップショットは initApp() 側で（時刻反映後に）取得する。
 }
 
 // ============================================================
@@ -463,7 +454,7 @@ function bindAinuFeatures() {
   // GeoJSON を現在の投影設定に合わせて変換。
   const transformed = Celestial.getData(
     AppState.AINU_GEOJSON,
-    CELESTIAL_CONFIG.transform
+    CELESTIAL_CONFIG.transform,
   );
 
   // Feature ごとに path を紐づけ。id をキーに差分更新する。
@@ -487,7 +478,7 @@ function updateAinuGeoJSON() {
   AppState.AINU_GEOJSON = buildAinuGeoJSON(
     AppState.AINU_DATA.constellations,
     AppState.AINU_DATA.stars,
-    areaKeys
+    areaKeys,
   );
 
   // path 要素とデータの紐付けを更新。
@@ -510,8 +501,8 @@ function buildAinuGeoJSON(constellations, stars, areaKeys) {
   const areaKeyList = Array.isArray(areaKeys)
     ? areaKeys.filter(Boolean)
     : areaKeys
-    ? [areaKeys]
-    : [];
+      ? [areaKeys]
+      : [];
   if (!areaKeyList.length) {
     return { type: "FeatureCollection", features: [] };
   }
@@ -621,8 +612,8 @@ function updateAreaMapPreview(areaKeys) {
   const keys = Array.isArray(areaKeys)
     ? areaKeys.filter(Boolean)
     : areaKeys
-    ? [areaKeys]
-    : [];
+      ? [areaKeys]
+      : [];
 
   if (!keys.length) {
     wrapper.style.display = "none";
@@ -684,13 +675,13 @@ function resolveCityCoordinates(cityName, cityMap) {
   const lat = Number.isFinite(target.lat)
     ? target.lat
     : Number.isFinite(fallback.lat)
-    ? fallback.lat
-    : null;
+      ? fallback.lat
+      : null;
   const lon = Number.isFinite(target.lon)
     ? target.lon
     : Number.isFinite(fallback.lon)
-    ? fallback.lon
-    : null;
+      ? fallback.lon
+      : null;
 
   return { lat, lon };
 }

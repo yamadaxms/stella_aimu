@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
@@ -16,21 +16,7 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header class="site-header">
-      <h1>アイヌ民族星文化ビューア ～カムイの星図～ Ver.0.3.2</h1>
-      <p class="subtitle">
-        <a href="https://ofrohn.github.io/" target="_blank" rel="noopener"
-          >D3-Celestial</a
-        >
-        + アイヌ民族の星文化（八十八星座と重ね描き）
-        <br />※北海道内でも地域ごとに異なる星文化が伝わっています。本ビューアでは「今いる街」から各地の星文化の多様性を探ることができます。
-      </p>
-      <nav class="utility-nav" aria-label="補足情報">
-        <a href="index.html" aria-current="page">星図ビュー</a>
-        <a href="notes.html">アイヌ語表記について</a>
-        <a href="references.html">参考文献</a>
-      </nav>
-    </header>
+    <div id="site-header-include"></div>
 
     <main class="layout">
       <section class="controls">
@@ -105,12 +91,8 @@
         </div>
 
         <div class="field">
-          <!-- 星図リセットボタン -->
-          <button id="reset-celestial-view" type="button">
-            星図表示リセット
-          </button>
           <!-- 88星座表示ON/OFFチェックボックス -->
-          <label for="projection-select"
+          <label for="toggle-constellations"
             ><input
               type="checkbox"
               id="toggle-constellations"
@@ -158,45 +140,170 @@
     <!-- キャッシュ更新用にバージョンを付与 -->
     <script src="js/dataLoader.js?v=2"></script>
     <script src="js/main.js?v=2"></script>
+    <script src="js/includes.js?v=2"></script>
     <script>
-      // 右クリック（コンテキストメニュー）を抑止
-      document.addEventListener("contextmenu", function (e) {
-        // 画像上の右クリックも抑止
-        if (e.target.tagName === "IMG") {
-          e.preventDefault();
-        }
-      });
+      // --- コンテンツ保護（軽い抑止） ---
+      // ※静的配信では「完全な抜き取り防止」は不可能です。
+      //   ここでは UI 操作（右クリック/ドラッグ/選択/一部ショートカット）を抑止し、注意喚起します。
 
-      // 画像のドラッグ開始を抑止
-      document.addEventListener("dragstart", function (e) {
-        if (e.target.tagName === "IMG") {
-          e.preventDefault();
-        }
-      });
+      // これらの領域上では保護を適用する（画像 + 星図）
+      const PROTECT_SELECTORS = [
+        "#area-map-preview img", // エリア画像
+        "#celestial-map", // 星図コンテナ（配下の canvas/svg を含む）
+      ];
 
-      // 画像の選択・コピーを抑止
-      document.addEventListener("selectstart", function (e) {
-        if (e.target.tagName === "IMG") {
-          e.preventDefault();
-        }
-      });
+      const isInProtectedArea = (target) => {
+        if (!target || !target.closest) return false;
+        return PROTECT_SELECTORS.some((sel) => !!target.closest(sel));
+      };
 
-      // キーボード操作抑止（PrintScreen, Ctrl+C, Ctrl+S, Ctrl+U, F12 など）
-      document.addEventListener("keydown", function (e) {
-        // PrintScreen
-        if (e.key === "PrintScreen") {
-          e.preventDefault();
-          alert("画面コピーは禁止されています。");
-        }
-        // Ctrl+C, Ctrl+S, Ctrl+U, F12
-        if (
-          (e.ctrlKey && ["c", "s", "u"].includes(e.key.toLowerCase())) ||
-          e.key === "F12"
-        ) {
-          e.preventDefault();
-          alert("この操作は禁止されています。");
-        }
-      });
+      // alert() はUXが悪いので廃止し、簡易トーストで通知（連打防止あり）
+      const toast = (() => {
+        let el;
+        let lastAt = 0;
+        let timer;
+        const ensure = () => {
+          if (el) return el;
+          el = document.createElement("div");
+          el.id = "protect-toast";
+          el.setAttribute("role", "status");
+          el.setAttribute("aria-live", "polite");
+          // インラインで最小限（CSSファイル改変不要）
+          Object.assign(el.style, {
+            position: "fixed",
+            left: "50%",
+            bottom: "16px",
+            transform: "translateX(-50%)",
+            maxWidth: "min(92vw, 720px)",
+            background: "rgba(0,0,0,0.78)",
+            color: "#fff",
+            padding: "10px 12px",
+            borderRadius: "10px",
+            fontSize: "14px",
+            lineHeight: "1.4",
+            zIndex: "99999",
+            boxShadow: "0 8px 22px rgba(0,0,0,0.35)",
+            opacity: "0",
+            pointerEvents: "none",
+            transition: "opacity 120ms ease",
+          });
+          document.body.appendChild(el);
+          return el;
+        };
+
+        return (message) => {
+          const now = Date.now();
+          // 連打防止（キー押しっぱなし/連続イベント対策）
+          if (now - lastAt < 1200) return;
+          lastAt = now;
+
+          const node = ensure();
+          node.textContent = message;
+          node.style.opacity = "1";
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            node.style.opacity = "0";
+          }, 1600);
+        };
+      })();
+
+      const preventWithNotice = (e, message) => {
+        e.preventDefault();
+        // 一部イベントでは stopPropagation も併用（右クリックメニュー等）
+        if (typeof e.stopPropagation === "function") e.stopPropagation();
+        if (message) toast(message);
+      };
+
+      // 右クリック（コンテキストメニュー）を抑止（画像 + 星図）
+      document.addEventListener(
+        "contextmenu",
+        function (e) {
+          if (!isInProtectedArea(e.target)) return;
+          preventWithNotice(
+            e,
+            "当サイト掲載コンテンツの複製・保存（スクリーンショット等を含む）は禁止されています。",
+          );
+        },
+        true,
+      );
+
+      // ドラッグ開始を抑止（画像 + 星図）
+      document.addEventListener(
+        "dragstart",
+        function (e) {
+          if (!isInProtectedArea(e.target)) return;
+          preventWithNotice(e);
+        },
+        true,
+      );
+
+      // 選択開始を抑止（画像 + 星図）
+      // ※テキスト選択まで潰すと不便なので、保護領域に限定
+      document.addEventListener(
+        "selectstart",
+        function (e) {
+          if (!isInProtectedArea(e.target)) return;
+          preventWithNotice(e);
+        },
+        true,
+      );
+
+      // 主要ショートカット抑止（完全ではない）
+      document.addEventListener(
+        "keydown",
+        function (e) {
+          // 入力欄を巻き込まない（UX/アクセシビリティ配慮）
+          const tag =
+            e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
+          if (
+            tag === "INPUT" ||
+            tag === "TEXTAREA" ||
+            (e.target && e.target.isContentEditable)
+          )
+            return;
+
+          const key = (e.key || "").toLowerCase();
+          const isCtrlOrMeta = e.ctrlKey || e.metaKey; // Windows/Linux: Ctrl, macOS: Cmd
+          const isOnProtected =
+            isInProtectedArea(e.target) ||
+            isInProtectedArea(document.activeElement);
+
+          // 保護領域にフォーカス/操作があるときだけ強めに抑止
+          if (!isOnProtected) {
+            // ただし DevTools 系はページ全体で軽く抑止（抜け道は多数）
+            // F12 / Ctrl+Shift+I/C/J / Cmd+Opt+I 相当
+          }
+
+          const isDevtools =
+            e.key === "F12" ||
+            (isCtrlOrMeta &&
+              e.shiftKey &&
+              (key === "i" || key === "j" || key === "c"));
+
+          const isViewSource = isCtrlOrMeta && key === "u";
+          const isSave = isCtrlOrMeta && key === "s";
+          const isCopy = isCtrlOrMeta && key === "c";
+          const isPrint = isCtrlOrMeta && key === "p";
+
+          // PrintScreen（OS機能のため抑止できないケースが多い）
+          if (e.key === "PrintScreen") {
+            preventWithNotice(e, "画面コピーは禁止されています。");
+            return;
+          }
+
+          // Devtools/ソース表示はページ全体で抑止（効果は限定的）
+          if (isDevtools || isViewSource) {
+            preventWithNotice(e, "この操作は禁止されています。");
+            return;
+          }
+
+          // コピー/保存/印刷は「保護領域に関連する操作のときだけ」抑止
+          if (isOnProtected && (isCopy || isSave || isPrint)) {
+            preventWithNotice(e, "この操作は禁止されています。");
+          }
+        },
+        true,
+      );
     </script>
   </body>
 </html>
