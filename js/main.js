@@ -41,6 +41,8 @@ const AppState = {
   CURRENT_CITY: null,
   CURRENT_GEO_POS: null,
   AINU_GEOJSON: null,
+  DEFAULT_VIEW_ROTATE: [0, 0, 0],
+  VIEW_RESET_TOKEN: 0,
 };
 
 // ============================================================
@@ -64,7 +66,7 @@ const CELESTIAL_CONFIG = {
   center: null, // 中心座標（null で自動）
   orientationfixed: true, // 地平座標への回転を固定
   geopos: null, // 地上位置（null で自動）
-  follow: "zenith", // 画面中心を常に天頂に追従
+  follow: "center", // 初期表示は天の赤道が中央で水平になるよう中心固定
   zoomlevel: null, // 初期ズーム（null で自動）
   zoomextend: 10, // ズーム範囲の上限
   adaptable: true, // コンテナサイズに自動追従
@@ -125,6 +127,12 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // 星図ビュー（ズーム/スクロール）を初期状態へ戻す
+  const resetBtn = document.getElementById("reset-view");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => resetCelestialView());
+  }
+
   // 88星座ON/OFFチェックボックスのイベント登録
   const constChk = document.getElementById("toggle-constellations");
   if (constChk) {
@@ -136,6 +144,45 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+function resetCelestialView() {
+  // d3-celestial のズームは「スケール」だけでなく内部の transform（平行移動）も持つため、
+  // zoomBy() の比率計算だけだと戻り切らずズレることがある。
+  // ここでは display() でビュー自体を再初期化してから既定の回転へ戻す。
+  const projection = CELESTIAL_CONFIG.projection;
+  const nextConfig = { ...CELESTIAL_CONFIG, projection, follow: "center" };
+  const token = (AppState.VIEW_RESET_TOKEN += 1);
+
+  // date() の getter が存在する場合のみ状態を退避（実装差分に備えて安全側）
+  const currentDate =
+    typeof Celestial?.date === "function" ? Celestial.date() : null;
+
+  Celestial.display(nextConfig);
+
+  // display() の内部初期化が落ち着いた後に、ビューを確定させる
+  setTimeout(() => {
+    if (token !== AppState.VIEW_RESET_TOKEN) return;
+    // 独自レイヤーを再バインド
+    if (AppState.AINU_GEOJSON) {
+      bindAinuFeatures();
+    }
+
+    // 時刻を可能なら復元
+    if (currentDate instanceof Date && typeof Celestial?.date === "function") {
+      Celestial.date(currentDate);
+    }
+
+    // 観測地が分かる場合は、その地点のローカル子午線（真南）を中央に合わせる
+    const lon = AppState.CURRENT_GEO_POS?.[1];
+    if (Number.isFinite(lon)) {
+      setDefaultViewToLocalMeridian(lon);
+    } else if (typeof Celestial?.rotate === "function") {
+      Celestial.rotate({ center: AppState.DEFAULT_VIEW_ROTATE });
+    }
+
+    Celestial.redraw();
+  }, 0);
+}
 
 async function initApp() {
   setLoadingMessage("データ読み込み中……");
@@ -149,7 +196,10 @@ async function initApp() {
     setupCelestial();
     // 初回描画前に現地時間へ合わせておくことで、ロード直後の追従アニメを抑える。
     setCelestialTimeToJST();
-    Celestial.redraw();
+
+    // 初期表示はブラウザの現在地を観測地として、ローカル子午線（真南）を中央に合わせる。
+    // 位置情報が取れない場合はフォールバック地点（札幌市）で初期化。
+    initDefaultViewFromBrowserLocation();
 
     // 初期状態は市町村未選択のまま、全体マップ(area0)を表示
     updateAreaMapPreview([AREA_DEFAULT]);
@@ -220,6 +270,10 @@ function onCityChange(cityName) {
   // 選択市町村に緯度経度がない場合は札幌市をフォールバック。
   const { lat, lon } = resolveCityCoordinates(cityName, cityMap);
   applyGeoposition(lat, lon);
+  // 市町村選択後は、その地点のローカル子午線を中央に合わせる
+  if (Number.isFinite(lon)) {
+    setDefaultViewToLocalMeridian(lon);
+  }
 
   // 地図プレビュー画像を選択地域に切り替え。
   updateAreaMapPreview(AppState.CURRENT_AREA_KEYS);
@@ -234,15 +288,89 @@ function onCityChange(cityName) {
 }
 
 // ============================================================
-// 天球図の時刻を日本標準時(JST)に設定
+// 天球図の時刻を現在時刻に設定
 // ============================================================
-// ブラウザのローカルタイムからUTCを算出し、Celestial.jsに渡します。
+// JavaScript の Date は内部的に UTC エポックを保持しているため、
+// getTimezoneOffset() などで「UTCへ変換」し直すと二重補正になりズレます。
 function setCelestialTimeToJST() {
-  // ブラウザのローカルタイムから UTC を導出し、Celestial に渡す。
-  // Celestial は内部で経度を考慮してローカル時間表示を行う。
-  const now = new Date();
-  const utc = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-  Celestial.date(utc);
+  Celestial.date(new Date());
+}
+
+function getCelestialDateSafe() {
+  if (typeof Celestial?.date !== "function") return new Date();
+  const d = Celestial.date();
+  return d instanceof Date && !Number.isNaN(d.getTime()) ? d : new Date();
+}
+
+function normalizeDeg0To360(deg) {
+  const d = deg % 360;
+  return d < 0 ? d + 360 : d;
+}
+
+// 参考: Meeus, Astronomical Algorithms（簡易GMST）
+function computeLocalSiderealTimeDeg(date, lonDegEast) {
+  const timeMs = date instanceof Date ? date.getTime() : Date.now();
+  const jd = timeMs / 86400000 + 2440587.5; // Unix epoch -> JD
+  const d = jd - 2451545.0; // days since J2000.0
+  const t = d / 36525.0;
+  const gmst =
+    280.46061837 +
+    360.98564736629 * d +
+    0.000387933 * t * t -
+    (t * t * t) / 38710000.0;
+  const lst = gmst + lonDegEast;
+  return normalizeDeg0To360(lst);
+}
+
+function setDefaultViewToLocalMeridian(lonDegEast) {
+  const date = getCelestialDateSafe();
+  const lstDeg = computeLocalSiderealTimeDeg(date, lonDegEast);
+  // center は [-180, 180] 系で扱う（既存の raDecToLonLat と同じ）
+  const lon = lstDeg > 180 ? lstDeg - 360 : lstDeg;
+  AppState.DEFAULT_VIEW_ROTATE = [lon, 0, 0];
+  if (typeof Celestial?.rotate === "function") {
+    Celestial.rotate({ center: AppState.DEFAULT_VIEW_ROTATE });
+  }
+}
+
+function initDefaultViewFromBrowserLocation() {
+  const fallback = resolveCityCoordinates(
+    DEFAULT_CITY_LOCATION,
+    AppState.AINU_DATA?.cityMap,
+  );
+
+  // 既に市町村が選択済みなら、初期位置の上書きはしない
+  const canApply = () => !AppState.CURRENT_CITY;
+
+  // 位置情報許可待ちでも画面が空/不定にならないよう、まずはフォールバックで初期化しておく
+  if (canApply()) {
+    applyGeoposition(fallback.lat, fallback.lon);
+    if (Number.isFinite(fallback.lon)) setDefaultViewToLocalMeridian(fallback.lon);
+    Celestial.redraw();
+  }
+
+  if (!("geolocation" in navigator) || typeof navigator.geolocation !== "object") {
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      if (!canApply()) return;
+      const lat = pos?.coords?.latitude;
+      const lon = pos?.coords?.longitude;
+      applyGeoposition(lat, lon);
+      if (Number.isFinite(lon)) setDefaultViewToLocalMeridian(lon);
+      Celestial.redraw();
+    },
+    () => {
+      // 失敗時はフォールバックで初期化済みなので何もしない
+    },
+    {
+      enableHighAccuracy: false,
+      timeout: 8000,
+      maximumAge: 5 * 60 * 1000,
+    },
+  );
 }
 
 // ============================================================
@@ -311,7 +439,9 @@ function resetSelection() {
   updateAreaMapPreview([AREA_DEFAULT]);
   updateRegionInfo();
   updateAinuList();
-  Celestial.redraw();
+
+  // 未選択状態に戻ったら、ブラウザの現在地（またはフォールバック）で子午線中心に戻す
+  initDefaultViewFromBrowserLocation();
 }
 
 // ============================================================
