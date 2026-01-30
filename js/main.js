@@ -15,6 +15,7 @@ const MSG_NO_AINU = "この地域に対応するアイヌ民族の星文化は�
 const CITY_SELECT_PLACEHOLDER = "現在地を選択してください";
 const AINU_LABEL_COLOR_STAR = "#66ee66"; // 天体色
 const AINU_LABEL_COLOR_CONST = "#ee66ee"; // 星座色
+const AINU_LABEL_COLOR_HIGHLIGHT = "#ffeb3b"; // 選択中の強調色（黄）
 const AINU_LABEL_FONT = "bold 14px sans-serif";
 const AINU_LABEL_TEXT_ALIGN = "center";
 const DEFAULT_CITY_LOCATION = "札幌市"; // 緯度経度が欠損している場合のフォールバック先
@@ -41,6 +42,8 @@ const AppState = {
   CURRENT_CITY: null,
   CURRENT_GEO_POS: null,
   AINU_GEOJSON: null,
+  SELECTED_AINU_FEATURE_ID: null,
+  VISIBLE_AINU_FEATURE_IDS: new Set(),
   DEFAULT_VIEW_ROTATE: [0, 0, 0],
   VIEW_RESET_TOKEN: 0,
 };
@@ -53,6 +56,12 @@ const AINU_LINE_STYLE = {
   stroke: "#ee66ee", // 星座の線色
   fill: "rgba(240, 102, 240, 0.18)", // 線で囲んだ領域の塗り色（半透明）
   width: 2, // 線幅
+};
+
+const AINU_HIGHLIGHT_LINE_STYLE = {
+  stroke: "#ffeb3b",
+  fill: "rgba(255, 235, 59, 0.18)",
+  width: 3,
 };
 
 // ============================================================
@@ -116,6 +125,8 @@ const CELESTIAL_CONFIG = {
 document.addEventListener("DOMContentLoaded", initApp);
 
 window.addEventListener("DOMContentLoaded", () => {
+  setupAinuListInteraction();
+
   // 投影法プルダウンのイベント登録
   const projSelect = document.getElementById("projection-select");
   if (projSelect) {
@@ -125,6 +136,32 @@ window.addEventListener("DOMContentLoaded", () => {
         applyProjection(val);
       }
     });
+  }
+
+  // 恒星の等級（視等級）表示上限スライダー
+  const magSlider = document.getElementById("star-mag-limit");
+  const magOut = document.getElementById("star-mag-limit-value");
+  if (magSlider) {
+    const initial = Number(CELESTIAL_CONFIG?.stars?.limit);
+    if (Number.isFinite(initial)) {
+      magSlider.value = String(initial);
+      if (magOut) magOut.textContent = formatMagLimit(initial);
+    }
+
+    let debounceTimer = null;
+    const applyFromSlider = () => {
+      const next = Number(magSlider.value);
+      if (!Number.isFinite(next)) return;
+      if (magOut) magOut.textContent = formatMagLimit(next);
+      applyStarMagnitudeLimit(next);
+    };
+
+    magSlider.addEventListener("input", () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(applyFromSlider, 60);
+    });
+
+    magSlider.addEventListener("change", applyFromSlider);
   }
 
   // 星図ビュー（ズーム/スクロール）を初期状態へ戻す
@@ -144,6 +181,32 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+function clampNumber(value, min, max) {
+  if (!Number.isFinite(value)) return min;
+  return Math.min(max, Math.max(min, value));
+}
+
+function formatMagLimit(value) {
+  const v = Number(value);
+  if (!Number.isFinite(v)) return "";
+  return `${v.toFixed(1)}等級`;
+}
+
+function applyStarMagnitudeLimit(limit) {
+  const next = clampNumber(limit, -1, 6);
+  if (CELESTIAL_CONFIG?.stars) {
+    CELESTIAL_CONFIG.stars.limit = next;
+  }
+
+  if (typeof Celestial?.apply === "function") {
+    Celestial.apply({ stars: { limit: next } });
+  }
+
+  if (typeof Celestial?.redraw === "function") {
+    Celestial.redraw();
+  }
+}
 
 function resetCelestialView() {
   // d3-celestial のズームは「スケール」だけでなく内部の transform（平行移動）も持つため、
@@ -433,6 +496,7 @@ function resetSelection() {
   AppState.CURRENT_CITY = null;
   AppState.CURRENT_AREA_KEYS = [];
   AppState.AINU_GEOJSON = null;
+  AppState.SELECTED_AINU_FEATURE_ID = null;
 
   // clear drawn features and reset UI to initial state
   Celestial.container?.selectAll(".ainu-constellation").remove();
@@ -488,6 +552,86 @@ function updateRegionInfo() {
   ].join("");
 }
 
+function getAinuFeatureId(feature) {
+  const id = feature?.id ?? feature?.properties?.id;
+  return id == null ? "" : String(id);
+}
+
+let AINU_LIST_VIEWPORT_SYNC_RAF = 0;
+
+function scheduleAinuListViewportSync() {
+  if (AINU_LIST_VIEWPORT_SYNC_RAF) return;
+  AINU_LIST_VIEWPORT_SYNC_RAF = requestAnimationFrame(() => {
+    AINU_LIST_VIEWPORT_SYNC_RAF = 0;
+    syncAinuListToViewport();
+  });
+}
+
+function syncAinuListToViewport() {
+  const list = document.getElementById("ainu-list");
+  if (!list) return;
+
+  const visibleSet = AppState.VISIBLE_AINU_FEATURE_IDS;
+  const canFilter = true; // 常に「画面内の星文化だけ表示」
+
+  for (const li of list.querySelectorAll("li")) {
+    const btn = li.querySelector("button[data-ainu-id]");
+    if (!btn) continue;
+    const id = String(btn.dataset.ainuId || "");
+    const isInView = !!id && visibleSet?.has(id);
+    li.hidden = canFilter ? !isInView : false;
+  }
+}
+
+function updateVisibleAinuFeatureIds(transformedFeatures, ctx) {
+  if (!Array.isArray(transformedFeatures)) return;
+  const canvas = ctx?.canvas;
+  const w = canvas?.width;
+  const h = canvas?.height;
+  if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) return;
+
+  const margin = 14;
+  const next = AppState.VISIBLE_AINU_FEATURE_IDS;
+  if (!(next instanceof Set)) return;
+  next.clear();
+
+  for (const f of transformedFeatures) {
+    const id = getAinuFeatureId(f);
+    const loc = f?.properties?.loc;
+    if (!id || !loc) continue;
+    const xy = Celestial.mapProjection(loc);
+    if (!xy) continue;
+    const x = xy[0];
+    const y = xy[1];
+    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    if (x < -margin || x > w + margin) continue;
+    if (y < -margin || y > h + margin) continue;
+    next.add(id);
+  }
+
+  scheduleAinuListViewportSync();
+}
+
+function setupAinuListInteraction() {
+  const list = document.getElementById("ainu-list");
+  if (!list) return;
+  if (list.dataset.ainuClickBound === "1") return;
+  list.dataset.ainuClickBound = "1";
+
+  list.addEventListener("click", (e) => {
+    const btn = e.target?.closest?.("button[data-ainu-id]");
+    if (!btn || !list.contains(btn)) return;
+    const id = String(btn.dataset.ainuId || "");
+    if (!id) return;
+
+    AppState.SELECTED_AINU_FEATURE_ID =
+      AppState.SELECTED_AINU_FEATURE_ID === id ? null : id;
+
+    updateAinuList();
+    if (typeof Celestial?.redraw === "function") Celestial.redraw();
+  });
+}
+
 // ============================================================
 // アイヌ民族星文化リスト表示の更新
 // ============================================================
@@ -500,18 +644,48 @@ function updateAinuList() {
   if (!AppState.AINU_GEOJSON?.features?.length) {
     // 該当地域がなければメッセージだけ表示。
     list.innerHTML = `<li>${MSG_NO_AINU}</li>`;
+    AppState.SELECTED_AINU_FEATURE_ID = null;
+    AppState.VISIBLE_AINU_FEATURE_IDS?.clear?.();
     return;
+  }
+
+  // 選択中IDがリストに存在しない場合は解除
+  const idSet = new Set(AppState.AINU_GEOJSON.features.map(getAinuFeatureId));
+  if (
+    AppState.SELECTED_AINU_FEATURE_ID &&
+    !idSet.has(AppState.SELECTED_AINU_FEATURE_ID)
+  ) {
+    AppState.SELECTED_AINU_FEATURE_ID = null;
   }
 
   // 各星文化をリストアイテムとして描画。
   for (const f of AppState.AINU_GEOJSON.features) {
+    const id = getAinuFeatureId(f);
+    const name = f.properties?.n || "";
+    const desc = f.properties?.desc || "";
+    const isSelected =
+      id && id === String(AppState.SELECTED_AINU_FEATURE_ID || "");
+
     const li = document.createElement("li");
-    li.innerHTML = `
-      <div class="name">${f.properties.n}</div>
-      <div class="desc">${f.properties.desc || ""}</div>
-    `;
+    if (isSelected) li.classList.add("is-selected");
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "ainu-name-btn";
+    btn.dataset.ainuId = id;
+    btn.textContent = name;
+    btn.setAttribute("aria-pressed", isSelected ? "true" : "false");
+
+    const descDiv = document.createElement("div");
+    descDiv.className = "desc";
+    descDiv.textContent = desc;
+
+    li.appendChild(btn);
+    li.appendChild(descDiv);
     list.appendChild(li);
   }
+
+  syncAinuListToViewport();
 }
 
 // ============================================================
@@ -530,15 +704,30 @@ function setupCelestial() {
 
     redraw: () => {
       const ctx = Celestial.context;
+      const selectedId = String(AppState.SELECTED_AINU_FEATURE_ID || "");
 
       // path 要素に紐づくデータを Canvas に描画。
       const sel = Celestial.container.selectAll(".ainu-constellation");
-      sel.each(function (d) {
-        Celestial.setStyle(AINU_LINE_STYLE);
+      const drawFeature = (d, style) => {
+        Celestial.setStyle(style);
         Celestial.map(d);
         ctx.fill();
         ctx.stroke();
-      });
+      };
+
+      // 非選択を先に描画し、選択中があれば最後に重ねる（見えやすさ優先）
+      sel
+        .filter((d) => !selectedId || getAinuFeatureId(d) !== selectedId)
+        .each(function (d) {
+          drawFeature(d, AINU_LINE_STYLE);
+        });
+      if (selectedId) {
+        sel
+          .filter((d) => getAinuFeatureId(d) === selectedId)
+          .each(function (d) {
+            drawFeature(d, AINU_HIGHLIGHT_LINE_STYLE);
+          });
+      }
 
       // ラベル用に GeoJSON を再投影し、中心座標に文字を描画。
       if (!AppState.AINU_GEOJSON) return;
@@ -547,7 +736,7 @@ function setupCelestial() {
         CELESTIAL_CONFIG.transform,
       );
 
-      transformed.features.forEach((f) => {
+      const drawLabel = (f, isSelected) => {
         const name = f.properties?.n;
         const loc = f.properties?.loc;
         if (!name || !loc) return;
@@ -555,8 +744,11 @@ function setupCelestial() {
         // 使用した星の数で色分け
         const numPoints =
           f.properties?.starCount ?? f.geometry.coordinates.length;
-        ctx.fillStyle =
-          numPoints === 1 ? AINU_LABEL_COLOR_STAR : AINU_LABEL_COLOR_CONST;
+        ctx.fillStyle = isSelected
+          ? AINU_LABEL_COLOR_HIGHLIGHT
+          : numPoints === 1
+            ? AINU_LABEL_COLOR_STAR
+            : AINU_LABEL_COLOR_CONST;
         ctx.font = AINU_LABEL_FONT;
         ctx.textAlign = AINU_LABEL_TEXT_ALIGN;
 
@@ -564,7 +756,20 @@ function setupCelestial() {
         if (!xy) return;
 
         ctx.fillText(name, xy[0], xy[1]);
-      });
+      };
+
+      // ラベルも同様に「選択中を最後に」描画
+      transformed.features
+        .filter((f) => !selectedId || getAinuFeatureId(f) !== selectedId)
+        .forEach((f) => drawLabel(f, false));
+      if (selectedId) {
+        transformed.features
+          .filter((f) => getAinuFeatureId(f) === selectedId)
+          .forEach((f) => drawLabel(f, true));
+      }
+
+      // 現在ビュー（ズーム/スクロール）で画面内に入っている星文化を一覧へ反映
+      updateVisibleAinuFeatureIds(transformed.features, ctx);
     },
   });
 
@@ -590,10 +795,14 @@ function bindAinuFeatures() {
   // Feature ごとに path を紐づけ。id をキーに差分更新する。
   const sel = Celestial.container
     .selectAll(".ainu-constellation")
-    .data(transformed.features, (d) => d.id);
+    .data(transformed.features, (d) => getAinuFeatureId(d));
 
   sel.exit().remove();
-  sel.enter().append("path").attr("class", "ainu-constellation");
+  sel
+    .enter()
+    .append("path")
+    .attr("class", "ainu-constellation")
+    .attr("data-ainu-id", (d) => getAinuFeatureId(d));
 }
 
 // ============================================================
@@ -701,6 +910,7 @@ function buildAinuGeoJSON(constellations, stars, areaKeys) {
       type: "Feature",
       id: featureId,
       properties: {
+        id: featureId,
         n: name,
         loc: [labelLon, labelLat],
         desc,

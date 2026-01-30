@@ -142,8 +142,8 @@ body::after {
 
 /* 左：コントロールパネル */
 .controls {
-  flex: 0 0 280px; /* 固定幅ベースのサイドパネル */
-  max-width: 320px; /* 広がりすぎを防止 */
+  flex: 0 0 260px; /* 固定幅ベースのサイドパネル */
+  max-width: 300px; /* 広がりすぎを防止 */
   padding: 1rem; /* 内側余白 */
   background: #111827; /* 背景色 */
   border-right: 1px solid #1f2933; /* 右側に仕切り線 */
@@ -163,6 +163,11 @@ body::after {
   gap: 0.5em; /* 子要素間の隙間 */
 }
 
+/* 特定フィールドだけ縦間隔をコンパクトに */
+.field.field-compact {
+  margin-bottom: 0.45rem;
+}
+
 /* 共通ラベル（※.field内では横並び用に別途指定あり） */
 label {
   display: block; /* ラベルをブロック表示に */
@@ -174,6 +179,25 @@ label {
 .field label[for="projection-select"] {
   min-width: 6em; /* ラベルの最小幅（折り返し防止） */
   white-space: nowrap; /* ラベル内のテキストを折り返さない */
+}
+
+/* 恒星等級ラベルの折り返し防止・幅指定 */
+.field label[for="star-mag-limit"] {
+  min-width: 6em;
+  white-space: nowrap;
+}
+
+/* スライダーは横幅を取り、値表示を右寄せで固定幅に */
+.field input[type="range"] {
+  flex: 1;
+  min-width: 120px;
+}
+
+.field output {
+  min-width: 4.5em;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #cbd5f5;
 }
 
 /* プルダウン（市町村／投影法など） */
@@ -214,9 +238,36 @@ select {
   border-bottom: 1px dashed #374151; /* 点線の区切り線 */
 }
 
-/* アイヌ民族星文化リストの名称部分 */
-.ainu-list li .name {
+/* アイヌ民族星文化リストの名称（クリック可能） */
+.ainu-name-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.1rem 0.2rem;
+  margin: 0;
+  font: inherit;
   font-weight: bold; /* 名称を強調 */
+  color: #e5e7eb;
+  text-align: left;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  border-radius: 6px;
+}
+
+.ainu-name-btn:hover {
+  text-decoration: underline;
+  background: #0b1221;
+}
+
+.ainu-name-btn:focus-visible {
+  outline: 2px solid #ffeb3b;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.ainu-list li.is-selected .ainu-name-btn {
+  color: #ffeb3b;
 }
 
 /* アイヌ民族星文化リストのコード部分（将来用／表示する場合に使用） */

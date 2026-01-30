@@ -1,2 +1,4 @@
 .venv/
 scripts/
+.DS_Store
+.gitignore
