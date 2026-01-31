@@ -10,8 +10,7 @@
     // document / window / svg なども来るので安全側で判定
     if (!target) return false;
     if (target === document || target === window) return true;
-    if (target === document.documentElement || target === document.body)
-      return true;
+    if (target === document.documentElement || target === document.body) return true;
     if (!target.closest) return false;
     return PROTECT_SELECTORS.some((sel) => !!target.closest(sel));
   };
@@ -19,9 +18,7 @@
   // UI 操作に必要な要素は巻き込まない（最低限）
   const isExemptElement = (target) => {
     if (!target || !target.closest) return false;
-    return !!target.closest(
-      "input, textarea, select, option, button, label, [contenteditable='true']",
-    );
+    return !!target.closest("input, textarea, select, option, button, label, [contenteditable='true']");
   };
 
   // alert() はUXが悪いので廃止し、簡易トーストで通知（連打防止あり）
@@ -87,10 +84,7 @@
     function (e) {
       if (isExemptElement(e.target)) return;
       if (!isInProtectedArea(e.target)) return;
-      preventWithNotice(
-        e,
-        "当サイト掲載コンテンツの複製・保存（スクリーンショット等を含む）は禁止されています。",
-      );
+      preventWithNotice(e, "当サイト掲載コンテンツの複製・保存（スクリーンショット等を含む）は禁止されています。");
     },
     true,
   );
@@ -122,25 +116,14 @@
     "keydown",
     function (e) {
       // 入力欄を巻き込まない（UX/アクセシビリティ配慮）
-      const tag =
-        e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
-      if (
-        tag === "INPUT" ||
-        tag === "TEXTAREA" ||
-        tag === "SELECT" ||
-        (e.target && e.target.isContentEditable)
-      )
-        return;
+      const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (e.target && e.target.isContentEditable)) return;
 
       const key = (e.key || "").toLowerCase();
       const isCtrlOrMeta = e.ctrlKey || e.metaKey; // Windows/Linux: Ctrl, macOS: Cmd
-      const isOnProtected =
-        isInProtectedArea(e.target) ||
-        isInProtectedArea(document.activeElement);
+      const isOnProtected = isInProtectedArea(e.target) || isInProtectedArea(document.activeElement);
 
-      const isDevtools =
-        e.key === "F12" ||
-        (isCtrlOrMeta && e.shiftKey && (key === "i" || key === "j" || key === "c"));
+      const isDevtools = e.key === "F12" || (isCtrlOrMeta && e.shiftKey && (key === "i" || key === "j" || key === "c"));
 
       const isViewSource = isCtrlOrMeta && key === "u";
       const isSave = isCtrlOrMeta && key === "s";
@@ -167,4 +150,3 @@
     true,
   );
 })();
-

@@ -8,10 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- d3-celestial の CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css" />
     <!-- 自前の CSS -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
@@ -30,43 +27,15 @@
 
         <div id="region-info">星文化地域：未選択</div>
 
-        <div
-          id="area-map-preview"
-          class="area-map-preview"
-          aria-label="エリアマップ"
-        >
+        <div id="area-map-preview" class="area-map-preview" aria-label="エリアマップ">
           <img id="area-map-single" class="area-map-image" alt="エリアマップ" />
           <div id="area-map-stack" class="area-map-stack" aria-hidden="true">
-            <img
-              src="img/area1.png"
-              class="area-stack-layer"
-              alt="エリアマップ"
-            />
-            <img
-              src="img/area2.png"
-              class="area-stack-layer"
-              alt="エリアマップ"
-            />
-            <img
-              src="img/area3.png"
-              class="area-stack-layer"
-              alt="エリアマップ"
-            />
-            <img
-              src="img/area4.png"
-              class="area-stack-layer"
-              alt="エリアマップ"
-            />
-            <img
-              src="img/area5.png"
-              class="area-stack-layer"
-              alt="エリアマップ"
-            />
-            <img
-              src="img/area0.png"
-              class="area-stack-layer area-stack-top"
-              alt="エリアマップ"
-            />
+            <img src="img/area1.png" class="area-stack-layer" alt="エリアマップ" />
+            <img src="img/area2.png" class="area-stack-layer" alt="エリアマップ" />
+            <img src="img/area3.png" class="area-stack-layer" alt="エリアマップ" />
+            <img src="img/area4.png" class="area-stack-layer" alt="エリアマップ" />
+            <img src="img/area5.png" class="area-stack-layer" alt="エリアマップ" />
+            <img src="img/area0.png" class="area-stack-layer area-stack-top" alt="エリアマップ" />
           </div>
         </div>
         <br />
@@ -93,15 +62,7 @@
         <!-- 恒星の等級（視等級）表示上限 -->
         <div class="field field-compact">
           <label for="star-mag-limit">恒星等級：</label>
-          <input
-            id="star-mag-limit"
-            type="range"
-            min="-1"
-            max="6"
-            step="0.1"
-            value="6"
-            aria-label="恒星の視等級表示上限"
-          />
+          <input id="star-mag-limit" type="range" min="-1" max="6" step="0.1" value="6" aria-label="恒星の視等級表示上限" />
           <output id="star-mag-limit-value" for="star-mag-limit">6.0等級</output>
         </div>
 
@@ -109,13 +70,7 @@
           <!-- 星図リセットボタン -->
           <button id="reset-view" type="button">星図表示リセット</button>
           <!-- 88星座表示ON/OFFチェックボックス -->
-          <label for="toggle-constellations"
-            ><input
-              type="checkbox"
-              id="toggle-constellations"
-              checked
-            />88星座表示</label
-          >
+          <label for="toggle-constellations"><input type="checkbox" id="toggle-constellations" checked />88星座表示</label>
         </div>
 
         <hr />
@@ -131,19 +86,12 @@
         <div id="celestial-map"></div>
 
         <!-- d3-celestial キャンバス下 note -->
-        <p class="note">
-          ※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています（一覧で選択すると黄色で強調表示）。
-        </p>
+        <p class="note">※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています（一覧で選択すると黄色で強調表示）。</p>
         <!-- d3-celestial キャンバス下 attention -->
         <p class="attention">
           当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
-          <br />ご利用を希望される場合は、必ず管理者：<a
-            href="https://x.com/trapezium_orion"
-            target="_blank"
-            rel="noopener"
-            >@trapezium_orion (X/Twitter)</a
-          >までお問い合わせください。 <br />&copy; 2025–2026 Ainu Star Culture
-          プロジェクト
+          <br />ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a>までお問い合わせください。 <br />&copy;
+          2025–2026 Ainu Star Culture プロジェクト
         </p>
       </section>
     </main>

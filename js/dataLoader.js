@@ -29,11 +29,7 @@ async function loadJSON(path) {
  */
 async function loadAllAinuData() {
   // 星文化定義・市町村→エリア対応表・恒星座標を並列で取得
-  const [constellations, cityList, stars] = await Promise.all([
-    loadJSON("data/constellation.json"),
-    loadJSON("data/city.json"),
-    loadJSON("data/star.json"),
-  ]);
+  const [constellations, cityList, stars] = await Promise.all([loadJSON("data/constellation.json"), loadJSON("data/city.json"), loadJSON("data/star.json")]);
 
   return {
     stars, // { HIP_xxxxx: { ra, dec }, ... }  Hipparcos番号→座標（赤経・赤緯）

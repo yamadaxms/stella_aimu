@@ -16,11 +16,7 @@
     });
 
     const current = inferCurrentPage();
-    const link =
-      nav.querySelector(`a[href="${current}"]`) ||
-      (current === "" || current === "/"
-        ? nav.querySelector('a[href="index.html"]')
-        : null);
+    const link = nav.querySelector(`a[href="${current}"]`) || (current === "" || current === "/" ? nav.querySelector('a[href="index.html"]') : null);
     link?.setAttribute("aria-current", "page");
   }
 
@@ -44,8 +40,7 @@
       console.error(err);
       const placeholder = document.getElementById(HEADER_PLACEHOLDER_ID);
       if (placeholder) {
-        placeholder.textContent =
-          "ヘッダの読み込みに失敗しました（ローカルファイル直開きだと動かない場合があります）。";
+        placeholder.textContent = "ヘッダの読み込みに失敗しました（ローカルファイル直開きだと動かない場合があります）。";
       }
     });
   });
