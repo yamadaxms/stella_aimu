@@ -19,6 +19,8 @@ const AINU_LABEL_COLOR_HIGHLIGHT = "#ffeb3b"; // 選択中の強調色（黄）
 const AINU_LABEL_FONT = "bold 14px sans-serif";
 const AINU_LABEL_TEXT_ALIGN = "center";
 const DEFAULT_CITY_LOCATION = "札幌市"; // 緯度経度が欠損している場合のフォールバック先
+const PROJECTION_PLANISPHERE = "planisphere";
+const PLANISPHERE_BASE_PROJECTION = "stereographic";
 
 // areaキー→区分名の変換テーブル
 const AREA_LABEL_MAP = {
@@ -118,6 +120,62 @@ const CELESTIAL_CONFIG = {
 };
 
 // ============================================================
+// ステータスメッセージ（エラー/注意）の表示
+// ============================================================
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function setStatusMessage(message, { isError = true, persistent = true, actionLabel = null, onAction = null } = {}) {
+  const el = document.getElementById("status-message");
+  if (!el) return;
+
+  if (!message) {
+    el.hidden = true;
+    el.textContent = "";
+    delete el.dataset.actionBound;
+    return;
+  }
+
+  const safe = escapeHtml(message);
+  let actionHtml = "";
+  if (actionLabel) {
+    actionHtml = ` <button type="button" class="status-action" id="status-action-btn">${escapeHtml(actionLabel)}</button>`;
+  }
+
+  el.hidden = false;
+  el.dataset.kind = isError ? "error" : "info";
+  el.dataset.persistent = persistent ? "1" : "0";
+  el.innerHTML = `${safe}${actionHtml}`;
+
+  if (actionLabel && typeof onAction === "function") {
+    const btn = el.querySelector("#status-action-btn");
+    if (btn && el.dataset.actionBound !== "1") {
+      el.dataset.actionBound = "1";
+      btn.addEventListener("click", () => onAction());
+    }
+  }
+}
+
+function clearStatusMessage() {
+  setStatusMessage("");
+}
+
+function formatInitError(err) {
+  const msg = err?.message ? String(err.message) : String(err || "");
+  // ローカル直開き(file://)は fetch が失敗しやすいので補足
+  if (window.location.protocol === "file:") {
+    return `データの読み込みに失敗しました。ローカルファイル直開きだと動作しない場合があります（簡易サーバで開いてください）。\n詳細: ${msg}`;
+  }
+  return `データの読み込みに失敗しました。\n詳細: ${msg}`;
+}
+
+// ============================================================
 // アプリ初期化処理
 // ============================================================
 // ページロード時に必要なデータを取得し、UI・天球図を初期化します。
@@ -182,6 +240,48 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+async function initApp() {
+  clearStatusMessage();
+  setLoadingMessage("データ読み込み中……");
+
+  const tryInit = async () => {
+    // 必要な JSON をまとめて取得し、以降の UI 更新に使う。
+    AppState.AINU_DATA = await loadAllAinuData();
+
+    // 市町村リストをプルダウンに並べる。
+    setupCitySelect(AppState.AINU_DATA.cityMap);
+    // 天球図を初期化し、独自レイヤーを登録。
+    setupCelestial();
+    // 初回描画前に現在時刻へ合わせる
+    setCelestialTimeToJST();
+
+    initDefaultViewFromBrowserLocation();
+
+    // 初期状態は市町村未選択のまま、全体マップ(area0)を表示
+    updateAreaMapPreview([AREA_DEFAULT]);
+    updateRegionInfo();
+
+    clearStatusMessage();
+  };
+
+  try {
+    await tryInit();
+  } catch (err) {
+    console.error(err);
+    setStatusMessage(formatInitError(err), {
+      isError: true,
+      persistent: true,
+      actionLabel: "再試行",
+      onAction: async () => {
+        clearStatusMessage();
+        await initApp();
+      },
+    });
+  } finally {
+    setLoadingMessage("");
+  }
+}
+
 function clampNumber(value, min, max) {
   if (!Number.isFinite(value)) return min;
   return Math.min(max, Math.max(min, value));
@@ -213,7 +313,8 @@ function resetCelestialView() {
   // zoomBy() の比率計算だけだと戻り切らずズレることがある。
   // ここでは display() でビュー自体を再初期化してから既定の回転へ戻す。
   const projection = CELESTIAL_CONFIG.projection;
-  const nextConfig = { ...CELESTIAL_CONFIG, projection, follow: "center" };
+  const follow = CELESTIAL_CONFIG.follow || "center";
+  const nextConfig = { ...CELESTIAL_CONFIG, projection, follow };
   const token = (AppState.VIEW_RESET_TOKEN += 1);
 
   // date() の getter が存在する場合のみ状態を退避（実装差分に備えて安全側）
@@ -234,44 +335,18 @@ function resetCelestialView() {
       Celestial.date(currentDate);
     }
 
-    // 観測地が分かる場合は、その地点のローカル子午線（真南）を中央に合わせる
-    const lon = AppState.CURRENT_GEO_POS?.[1];
-    if (Number.isFinite(lon)) {
-      setDefaultViewToLocalMeridian(lon);
-    } else if (typeof Celestial?.rotate === "function") {
-      Celestial.rotate({ center: AppState.DEFAULT_VIEW_ROTATE });
+    // center追従時のみ、観測地のローカル子午線（真南）を中央に合わせる
+    if (follow === "center") {
+      const lon = AppState.CURRENT_GEO_POS?.[1];
+      if (Number.isFinite(lon)) {
+        setDefaultViewToLocalMeridian(lon);
+      } else if (typeof Celestial?.rotate === "function") {
+        Celestial.rotate({ center: AppState.DEFAULT_VIEW_ROTATE });
+      }
     }
 
     Celestial.redraw();
   }, 0);
-}
-
-async function initApp() {
-  setLoadingMessage("データ読み込み中……");
-  try {
-    // 必要な JSON をまとめて取得し、以降の UI 更新に使う。
-    AppState.AINU_DATA = await loadAllAinuData();
-
-    // 市町村リストをプルダウンに並べる。
-    setupCitySelect(AppState.AINU_DATA.cityMap);
-    // 天球図を初期化し、独自レイヤーを登録。
-    setupCelestial();
-    // 初回描画前に現地時間へ合わせておくことで、ロード直後の追従アニメを抑える。
-    setCelestialTimeToJST();
-
-    // 初期表示はブラウザの現在地を観測地として、ローカル子午線（真南）を中央に合わせる。
-    // 位置情報が取れない場合はフォールバック地点（札幌市）で初期化。
-    initDefaultViewFromBrowserLocation();
-
-    // 初期状態は市町村未選択のまま、全体マップ(area0)を表示
-    updateAreaMapPreview([AREA_DEFAULT]);
-    updateRegionInfo();
-  } catch (err) {
-    console.error(err);
-    alert("データの読み込みに失敗しました。");
-  } finally {
-    setLoadingMessage("");
-  }
 }
 
 // ============================================================
@@ -283,6 +358,11 @@ function setupCitySelect(cityMap) {
   const select = document.getElementById("city-select");
   const cities = Object.keys(cityMap || {});
 
+  if (!select) {
+    setStatusMessage("内部エラー: 市町村選択UIが見つかりません。", { isError: true, persistent: true });
+    return;
+  }
+
   // 既存の option をクリアしてからプレースホルダーを追加。
   select.innerHTML = "";
 
@@ -291,7 +371,6 @@ function setupCitySelect(cityMap) {
   placeholder.textContent = CITY_SELECT_PLACEHOLDER;
   select.appendChild(placeholder);
 
-  // city.json に登録されている市町村名をすべて挿入。
   for (const city of cities) {
     const opt = document.createElement("option");
     opt.value = city;
@@ -299,7 +378,6 @@ function setupCitySelect(cityMap) {
     select.appendChild(opt);
   }
 
-  // 選択変更イベントでハンドラを振り分け。
   select.addEventListener("change", (e) => {
     const selected = e.target.value;
     if (selected) {
@@ -308,6 +386,15 @@ function setupCitySelect(cityMap) {
       resetSelection();
     }
   });
+
+  // アクセシビリティ: ラベルが視覚的に隠れている場合でも読み上げ用に補強
+  const describedBy = select.getAttribute("aria-describedby") || "";
+  if (!describedBy.includes("city-select-help")) {
+    select.setAttribute("aria-describedby", [describedBy, "city-select-help"].filter(Boolean).join(" "));
+  }
+  if (!select.getAttribute("aria-label")) {
+    select.setAttribute("aria-label", "現在地（市町村）");
+  }
 }
 
 // ============================================================
@@ -380,11 +467,19 @@ function computeLocalSiderealTimeDeg(date, lonDegEast) {
   return normalizeDeg0To360(lst);
 }
 
-function setDefaultViewToLocalMeridian(lonDegEast) {
+function setDefaultViewToLocalMeridian(lonDegEast, latDeg = AppState.CURRENT_GEO_POS?.[0]) {
   const date = getCelestialDateSafe();
   const lstDeg = computeLocalSiderealTimeDeg(date, lonDegEast);
   // center は [-180, 180] 系で扱う（既存の raDecToLonLat と同じ）
   const lon = lstDeg > 180 ? lstDeg - 360 : lstDeg;
+  if (CELESTIAL_CONFIG.follow === "zenith") {
+    const clampedLat = clampNumber(Number(latDeg), -90, 90);
+    AppState.DEFAULT_VIEW_ROTATE = [lon, clampedLat, 0];
+    if (typeof Celestial?.rotate === "function") {
+      Celestial.rotate({ center: AppState.DEFAULT_VIEW_ROTATE });
+    }
+    return;
+  }
   AppState.DEFAULT_VIEW_ROTATE = [lon, 0, 0];
   if (typeof Celestial?.rotate === "function") {
     Celestial.rotate({ center: AppState.DEFAULT_VIEW_ROTATE });
@@ -440,11 +535,15 @@ function applyProjection(projection) {
   // settings.center ではなく rotate()/zoomBy() から現在ビューを取得する。
   const prevRotate = typeof Celestial?.rotate === "function" ? Celestial.rotate() : null; // [lon, lat, orient]
   const prevZoom = typeof Celestial?.zoomBy === "function" ? Celestial.zoomBy() : null;
+  const isPlanisphere = projection === PROJECTION_PLANISPHERE;
+  const actualProjection = isPlanisphere ? PLANISPHERE_BASE_PROJECTION : projection;
+  const follow = isPlanisphere ? "zenith" : "center";
 
   // 現行設定をベースに投影法だけ差し替えて再描画
-  // center維持を最優先するため、追従は "center" に固定する（zenith追従だと中心が動く）
-  CELESTIAL_CONFIG.projection = projection;
-  const nextConfig = { ...CELESTIAL_CONFIG, projection, follow: "center" };
+  // 「星座早見盤」のみ zenith 追従、それ以外は center 追従にする
+  CELESTIAL_CONFIG.projection = actualProjection;
+  CELESTIAL_CONFIG.follow = follow;
+  const nextConfig = { ...CELESTIAL_CONFIG, projection: actualProjection, follow };
   Celestial.display(nextConfig);
 
   // 既存の独自レイヤーを再バインド
@@ -452,10 +551,19 @@ function applyProjection(projection) {
     bindAinuFeatures();
   }
 
+  // 早見盤モードでは観測地に応じて中心を即時再計算
+  if (isPlanisphere) {
+    const lat = AppState.CURRENT_GEO_POS?.[0];
+    const lon = AppState.CURRENT_GEO_POS?.[1];
+    if (Number.isFinite(lon)) {
+      setDefaultViewToLocalMeridian(lon, lat);
+    }
+  }
+
   // 投影法変更それ自体で時刻を更新すると表示が動くため、ここでは date を触らない
 
   // 直前のビュー（回転中心/ズーム）を復元
-  if (prevRotate && typeof Celestial?.rotate === "function") {
+  if (!isPlanisphere && prevRotate && typeof Celestial?.rotate === "function") {
     Celestial.rotate({ center: prevRotate });
   }
 
@@ -922,6 +1030,24 @@ function updateAreaMapPreview(areaKeys) {
   single.src = "";
   stack.style.display = "block";
   wrapper.style.display = "block";
+
+  updateAreaMapA11y(areaKeys);
+}
+
+// ============================================================
+// エリアマッププレビュー更新（アクセシビリティも含む）
+// ============================================================
+function updateAreaMapA11y(areaKeys) {
+  const preview = document.getElementById("area-map-preview");
+  const img = document.getElementById("area-map-single");
+
+  const labels = (Array.isArray(areaKeys) ? areaKeys : [])
+    .map((k) => AREA_LABEL_MAP[k] || k)
+    .filter(Boolean);
+
+  const text = labels.length ? `エリアマップ: ${labels.join(" / ")}` : "エリアマップ（未選択）";
+  if (preview) preview.setAttribute("aria-label", text);
+  if (img) img.setAttribute("alt", text);
 }
 
 // ============================================================
@@ -958,6 +1084,9 @@ function applyGeoposition(lat, lon) {
   CELESTIAL_CONFIG.geopos = [lat, lon];
   AppState.CURRENT_GEO_POS = [lat, lon];
   Celestial.apply({ geopos: [lat, lon] });
+  if (CELESTIAL_CONFIG.follow === "zenith") {
+    setDefaultViewToLocalMeridian(lon, lat);
+  }
 }
 
 function mapAreaKeysToAinuCodes(areaKeys) {

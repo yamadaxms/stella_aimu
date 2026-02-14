@@ -19,16 +19,21 @@
       <section class="controls">
         <div id="loading-indicator" class="loading" aria-live="polite"></div>
 
+        <!-- エラー/注意の表示（スクリーンリーダーにも通知） -->
+        <div id="status-message" class="status-message" role="alert" aria-live="assertive" hidden></div>
+
         <div class="field">
-          <select id="city-select">
+          <label for="city-select" class="sr-only">現在地（市町村）</label>
+          <select id="city-select" aria-describedby="city-select-help">
             <option value="">……</option>
           </select>
         </div>
+        <p id="city-select-help" class="sr-only">市町村を選択すると、星文化地域・エリアマップ・星文化一覧が更新されます。</p>
 
         <div id="region-info">星文化地域：未選択</div>
 
         <div id="area-map-preview" class="area-map-preview" aria-label="エリアマップ">
-          <img id="area-map-single" class="area-map-image" alt="エリアマップ" />
+          <img id="area-map-single" class="area-map-image" alt="エリアマップ（未選択）" />
           <div id="area-map-stack" class="area-map-stack" aria-hidden="true">
             <img src="img/area1.png" class="area-stack-layer" alt="エリアマップ" />
             <img src="img/area2.png" class="area-stack-layer" alt="エリアマップ" />
@@ -49,13 +54,9 @@
             <option value="hammer">ハンマー投影</option>
             <option value="orthographic">正射投影</option>
             <option value="stereographic">ステレオグラフ投影</option>
-            <!--<option value="gnomonic">グノモニック投影</option>-->
-            <!--<option value="sinusoidal">サインスイダル投影</option>-->
-            <!--<option value="albers">アルバース投影</option>-->
-            <!--<option value="azimuthal equal area">方位等積投影</option>-->
-            <!--<option value="azimuthal equidistant">方位等距離投影</option>-->
             <option value="mercator">メルカトル投影</option>
             <option value="equirectangular">正距円筒図法</option>
+            <option value="planisphere">星座早見盤</option>
           </select>
         </div>
 
@@ -88,10 +89,7 @@
         <!-- d3-celestial キャンバス下 note -->
         <p class="note">※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています（一覧で選択すると黄色で強調表示）。</p>
         <!-- d3-celestial キャンバス下 attention -->
-        <p class="attention">
-          当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。
-          <br />ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a>までお問い合わせください。 <br />&copy;2025–2026 Ainu Star Culture プロジェクト
-        </p>
+        <p class="attention">当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。 <br />ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a>までお問い合わせください。 <br />&copy;2025–2026 Ainu Star Culture プロジェクト</p>
       </section>
     </main>
 
@@ -102,9 +100,9 @@
 
     <!-- 自前の JS -->
     <!-- キャッシュ更新用にバージョンを付与 -->
-    <script src="js/dataLoader.js?v=2"></script>
-    <script src="js/main.js?v=2"></script>
-    <script src="js/includes.js?v=2"></script>
-    <script src="js/contentProtection.js?v=1"></script>
+    <script src="js/dataLoader.js?v=20260214"></script>
+    <script src="js/main.js?v=20260214"></script>
+    <script src="js/includes.js?v=20260214"></script>
+    <script src="js/contentProtection.js?v=20260214"></script>
   </body>
 </html>
