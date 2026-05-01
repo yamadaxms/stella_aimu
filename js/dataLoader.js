@@ -2,7 +2,7 @@
 // 各関数は役割を明確に分離し、データ取得・検証・変換の責務を担います。
 // fetchによるデータ取得時のエラー検証やJSON変換は本モジュールで行い、呼び出し元はtry-catchで例外処理を一括管理できます。
 
-const AINU_DATA_API_PATH = "/api/ainu-data";
+const AINU_DATA_API_PATH = "/api/aynu-data";
 
 async function loadApiJSON(path) {
   const res = await fetch(path, { headers: { Accept: "application/json" }, cache: "no-store" });
@@ -28,8 +28,8 @@ async function loadApiJSON(path) {
  *   cityMap: 市町村→文化地域と緯度経度の対応表
  * @throws {Error} - いずれかの取得失敗時
  */
-async function loadAllAinuData() {
-  const data = await loadApiJSON(AINU_DATA_API_PATH);
+async function loadAllAynuData() {
+  const data = await loadApiJSON(AYNU_DATA_API_PATH);
   return {
     stars: data?.stars || {},
     constellations: Array.isArray(data?.constellations) ? data.constellations : [],

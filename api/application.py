@@ -41,17 +41,17 @@ def decimal_to_float(value: Any) -> Any:
     return value
 
 
-def s_area_to_ainu_code(value: Any) -> Optional[str]:
+def s_area_to_aynu_code(value: Any) -> Optional[str]:
     text = "" if value is None else str(value).strip()
     if text in {"1", "2", "3", "4", "5"}:
-        return f"ainu{text}"
-    if text in {"ainu1", "ainu2", "ainu3", "ainu4", "ainu5"}:
+        return f"aynu{text}"
+    if text in {"aynu1", "aynu2", "aynu3", "aynu4", "aynu5"}:
         return text
     return None
 
 
 def s_area_to_area_key(value: Any) -> Optional[str]:
-    code = s_area_to_ainu_code(value)
+    code = s_area_to_aynu_code(value)
     return f"area{code[-1]}" if code else None
 
 
@@ -87,7 +87,7 @@ def db_connect():
     return psycopg.connect(**{k: v for k, v in params.items() if v}, **kwargs)
 
 
-def fetch_ainu_data() -> dict[str, Any]:
+def fetch_aynu_data() -> dict[str, Any]:
     with db_connect() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -129,7 +129,7 @@ def fetch_ainu_data() -> dict[str, Any]:
                     "name": row["name_ja"],
                     "description": row["meaning"] or "",
                     "lines": [],
-                    "ainu": [],
+                    "aynu": [],
                 }
                 for row in cur.fetchall()
             }
@@ -168,9 +168,9 @@ def fetch_ainu_data() -> dict[str, Any]:
             )
             for row in cur.fetchall():
                 item = constellations.get(row["constellation_key"])
-                code = s_area_to_ainu_code(row["s_area"])
+                code = s_area_to_aynu_code(row["s_area"])
                 if item is not None and code:
-                    item["ainu"].append(code)
+                    item["aynu"].append(code)
 
             cur.execute(
                 """
@@ -226,16 +226,16 @@ class StellaHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = urlparse(self.path).path
-        if path == "/api/ainu-data":
-            self.handle_ainu_data()
+        if path == "/api/aynu-data":
+            self.handle_aynu_data()
             return
         if path == "/":
             self.path = "/index.html"
         super().do_GET()
 
-    def handle_ainu_data(self):
+    def handle_aynu_data(self):
         try:
-            payload = fetch_ainu_data()
+            payload = fetch_aynu_data()
             self.send_json(HTTPStatus.OK, payload)
         except ApiError as exc:
             self.send_json(exc.status, {"error": exc.message})
@@ -258,7 +258,7 @@ def main() -> None:
     port = int(os.environ.get("PORT", str(DEFAULT_PORT)))
     host = os.environ.get("HOST", "0.0.0.0")
     server = ThreadingHTTPServer((host, port), StellaHandler)
-    print(f"Serving Stella Ainu viewer at http://{host}:{port}/")
+    print(f"Serving Stella Aynu viewer at http://{host}:{port}/")
     server.serve_forever()
 
 

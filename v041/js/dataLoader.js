@@ -27,17 +27,13 @@ async function loadJSON(path) {
  *   cityMap: 市町村→文化地域と緯度経度の対応表
  * @throws {Error} - いずれかの取得失敗時
  */
-async function loadAllAinuData() {
+async function loadAllAynuData() {
   // 星文化定義・市町村→エリア対応表・恒星座標を並列で取得
-  const [constellations, cityList, stars] = await Promise.all([
-    loadJSON("data/constellation.json"),
-    loadJSON("data/city.json"),
-    loadJSON("data/star.json"),
-  ]);
+  const [constellations, cityList, stars] = await Promise.all([loadJSON("data/constellation.json"), loadJSON("data/city.json"), loadJSON("data/star.json")]);
 
   return {
     stars, // { HIP_xxxxx: { ra, dec }, ... }  Hipparcos番号→座標（赤経・赤緯）
-    constellations, // [ { key, ra, dec, name, description, lines, ainu }, ... ] 地域別星文化定義
+    constellations, // [ { key, ra, dec, name, description, lines, aynu }, ... ] 地域別星文化定義
     cityMap: buildCityMap(cityList), // { 市町村名: { area | areas, lat?, lon?, forecast?, region?, bureau? } }
   };
 }
@@ -53,7 +49,7 @@ function buildCityMap(cityList) {
 
   for (const item of cityList) {
     if (!item?.city) continue;
-    const areaKeys = ainuCodesToAreaKeys(item.ainu);
+    const areaKeys = aynuCodesToAreaKeys(item.aynu);
     const entry = {
       forecast: item.forecast,
       region: item.area,
@@ -74,14 +70,14 @@ function buildCityMap(cityList) {
   return map;
 }
 
-function ainuCodesToAreaKeys(codes) {
+function aynuCodesToAreaKeys(codes) {
   // city.json 内のアイヌコードを星文化用のエリアキーへ変換（重複は1件にまとめる）
   const map = {
-    ainu1: "area1",
-    ainu2: "area2",
-    ainu3: "area3",
-    ainu4: "area4",
-    ainu5: "area5",
+    aynu1: "area1",
+    aynu2: "area2",
+    aynu3: "area3",
+    aynu4: "area4",
+    aynu5: "area5",
   };
 
   if (!Array.isArray(codes)) return [];

@@ -11,13 +11,13 @@
 // 定数定義
 // ============================================================
 const AREA_DEFAULT = "area0";
-const MSG_NO_AINU = "この地域に対応するアイヌ民族の星文化はありません。";
+const MSG_NO_AYNU = "この地域に対応するアイヌ民族の星文化はありません。";
 const CITY_SELECT_PLACEHOLDER = "現在地を選択してください";
-const AINU_LABEL_COLOR_STAR = "#66ee66"; // 天体色
-const AINU_LABEL_COLOR_CONST = "#ee66ee"; // 星座色
-const AINU_LABEL_COLOR_HIGHLIGHT = "#ffeb3b"; // 選択中の強調色（黄）
-const AINU_LABEL_FONT = "bold 14px sans-serif";
-const AINU_LABEL_TEXT_ALIGN = "center";
+const AYNU_LABEL_COLOR_STAR = "#66ee66"; // 天体色
+const AYNU_LABEL_COLOR_CONST = "#ee66ee"; // 星座色
+const AYNU_LABEL_COLOR_HIGHLIGHT = "#ffeb3b"; // 選択中の強調色（黄）
+const AYNU_LABEL_FONT = "bold 14px sans-serif";
+const AYNU_LABEL_TEXT_ALIGN = "center";
 const DEFAULT_CITY_LOCATION = "札幌市"; // 緯度経度が欠損している場合のフォールバック先
 const PROJECTION_PLANISPHERE = "planisphere";
 const PLANISPHERE_BASE_PROJECTION = "stereographic";
@@ -39,13 +39,13 @@ let DEFAULT_STACK_HTML = null;
 // アプリ状態管理オブジェクト
 // ============================================================
 const AppState = {
-  AINU_DATA: null,
+  AYNU_DATA: null,
   CURRENT_AREA_KEYS: [],
   CURRENT_CITY: null,
   CURRENT_GEO_POS: null,
-  AINU_GEOJSON: null,
-  SELECTED_AINU_FEATURE_ID: null,
-  VISIBLE_AINU_FEATURE_IDS: new Set(),
+  AYNU_GEOJSON: null,
+  SELECTED_AYNU_FEATURE_ID: null,
+  VISIBLE_AYNU_FEATURE_IDS: new Set(),
   DEFAULT_VIEW_ROTATE: [0, 0, 0],
   VIEW_RESET_TOKEN: 0,
 };
@@ -54,13 +54,13 @@ const AppState = {
 // スタイル設定（アイヌ民族星文化ライン用）
 // ============================================================
 // Celestial.js で描画するアイヌ民族星文化の線・塗りのスタイルを定義します。
-const AINU_LINE_STYLE = {
+const AYNU_LINE_STYLE = {
   stroke: "#ee66ee", // 星座の線色
   fill: "rgba(240, 102, 240, 0.18)", // 線で囲んだ領域の塗り色（半透明）
   width: 2, // 線幅
 };
 
-const AINU_HIGHLIGHT_LINE_STYLE = {
+const AYNU_HIGHLIGHT_LINE_STYLE = {
   stroke: "#ffeb3b",
   fill: "rgba(255, 235, 59, 0.18)",
   width: 3,
@@ -123,12 +123,7 @@ const CELESTIAL_CONFIG = {
 // ステータスメッセージ（エラー/注意）の表示
 // ============================================================
 function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+  return String(str).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 }
 
 function setStatusMessage(message, { isError = true, persistent = true, actionLabel = null, onAction = null } = {}) {
@@ -183,7 +178,7 @@ function formatInitError(err) {
 document.addEventListener("DOMContentLoaded", initApp);
 
 window.addEventListener("DOMContentLoaded", () => {
-  setupAinuListInteraction();
+  setupAynuListInteraction();
 
   // 投影法プルダウンのイベント登録
   const projSelect = document.getElementById("projection-select");
@@ -246,10 +241,10 @@ async function initApp() {
 
   const tryInit = async () => {
     // 必要な JSON をまとめて取得し、以降の UI 更新に使う。
-    AppState.AINU_DATA = await loadAllAinuData();
+    AppState.AYNU_DATA = await loadAllAynuData();
 
     // 市町村リストをプルダウンに並べる。
-    setupCitySelect(AppState.AINU_DATA.cityMap);
+    setupCitySelect(AppState.AYNU_DATA.cityMap);
     // 天球図を初期化し、独自レイヤーを登録。
     setupCelestial();
     // 初回描画前に現在時刻へ合わせる
@@ -326,8 +321,8 @@ function resetCelestialView() {
   setTimeout(() => {
     if (token !== AppState.VIEW_RESET_TOKEN) return;
     // 独自レイヤーを再バインド
-    if (AppState.AINU_GEOJSON) {
-      bindAinuFeatures();
+    if (AppState.AYNU_GEOJSON) {
+      bindAynuFeatures();
     }
 
     // 時刻を可能なら復元
@@ -429,8 +424,8 @@ function onCityChange(cityName) {
 
   // 地域情報・星文化リスト・GeoJSONレイヤーを選択内容で更新。
   updateRegionInfo();
-  updateAinuGeoJSON();
-  updateAinuList();
+  updateAynuGeoJSON();
+  updateAynuList();
 
   // 変更内容を反映するため天球図を再描画。
   Celestial.redraw();
@@ -487,7 +482,7 @@ function setDefaultViewToLocalMeridian(lonDegEast, latDeg = AppState.CURRENT_GEO
 }
 
 function initDefaultViewFromBrowserLocation() {
-  const fallback = resolveCityCoordinates(DEFAULT_CITY_LOCATION, AppState.AINU_DATA?.cityMap);
+  const fallback = resolveCityCoordinates(DEFAULT_CITY_LOCATION, AppState.AYNU_DATA?.cityMap);
 
   // 既に市町村が選択済みなら、初期位置の上書きはしない
   const canApply = () => !AppState.CURRENT_CITY;
@@ -547,8 +542,8 @@ function applyProjection(projection) {
   Celestial.display(nextConfig);
 
   // 既存の独自レイヤーを再バインド
-  if (AppState.AINU_GEOJSON) {
-    bindAinuFeatures();
+  if (AppState.AYNU_GEOJSON) {
+    bindAynuFeatures();
   }
 
   // 早見盤モードでは観測地に応じて中心を即時再計算
@@ -585,14 +580,14 @@ function resetSelection() {
   // 選択状態をリセットし、未選択に戻す。
   AppState.CURRENT_CITY = null;
   AppState.CURRENT_AREA_KEYS = [];
-  AppState.AINU_GEOJSON = null;
-  AppState.SELECTED_AINU_FEATURE_ID = null;
+  AppState.AYNU_GEOJSON = null;
+  AppState.SELECTED_AYNU_FEATURE_ID = null;
 
   // clear drawn features and reset UI to initial state
-  Celestial.container?.selectAll(".ainu-constellation").remove();
+  Celestial.container?.selectAll(".aynu-constellation").remove();
   updateAreaMapPreview([AREA_DEFAULT]);
   updateRegionInfo();
-  updateAinuList();
+  updateAynuList();
 
   // 未選択状態に戻ったら、ブラウザの現在地（またはフォールバック）で子午線中心に戻す
   initDefaultViewFromBrowserLocation();
@@ -630,38 +625,38 @@ function updateRegionInfo() {
   div.innerHTML = [`<div><strong>振興局　　：</strong>${AppState.CURRENT_BUREAU}</div>`, `<div><strong>地方区分　：</strong>${AppState.CURRENT_REGION}</div>`, `<div><strong>気象予報区：</strong>${AppState.CURRENT_FORECAST}</div>`, `<div><strong>星文化地域：</strong>${areaLabels}</div>`].join("");
 }
 
-function getAinuFeatureId(feature) {
+function getAynuFeatureId(feature) {
   const id = feature?.id ?? feature?.properties?.id;
   return id == null ? "" : String(id);
 }
 
-let AINU_LIST_VIEWPORT_SYNC_RAF = 0;
+let AYNU_LIST_VIEWPORT_SYNC_RAF = 0;
 
-function scheduleAinuListViewportSync() {
-  if (AINU_LIST_VIEWPORT_SYNC_RAF) return;
-  AINU_LIST_VIEWPORT_SYNC_RAF = requestAnimationFrame(() => {
-    AINU_LIST_VIEWPORT_SYNC_RAF = 0;
-    syncAinuListToViewport();
+function scheduleAynuListViewportSync() {
+  if (AYNU_LIST_VIEWPORT_SYNC_RAF) return;
+  AYNU_LIST_VIEWPORT_SYNC_RAF = requestAnimationFrame(() => {
+    AYNU_LIST_VIEWPORT_SYNC_RAF = 0;
+    syncAynuListToViewport();
   });
 }
 
-function syncAinuListToViewport() {
-  const list = document.getElementById("ainu-list");
+function syncAynuListToViewport() {
+  const list = document.getElementById("aynu-list");
   if (!list) return;
 
-  const visibleSet = AppState.VISIBLE_AINU_FEATURE_IDS;
+  const visibleSet = AppState.VISIBLE_AYNU_FEATURE_IDS;
   const canFilter = true; // 常に「画面内の星文化だけ表示」
 
   for (const li of list.querySelectorAll("li")) {
-    const btn = li.querySelector("button[data-ainu-id]");
+    const btn = li.querySelector("button[data-aynu-id]");
     if (!btn) continue;
-    const id = String(btn.dataset.ainuId || "");
+    const id = String(btn.dataset.aynuId || "");
     const isInView = !!id && visibleSet?.has(id);
     li.hidden = canFilter ? !isInView : false;
   }
 }
 
-function updateVisibleAinuFeatureIds(transformedFeatures, ctx) {
+function updateVisibleAynuFeatureIds(transformedFeatures, ctx) {
   if (!Array.isArray(transformedFeatures)) return;
   const canvas = ctx?.canvas;
   const w = canvas?.width;
@@ -669,12 +664,12 @@ function updateVisibleAinuFeatureIds(transformedFeatures, ctx) {
   if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) return;
 
   const margin = 14;
-  const next = AppState.VISIBLE_AINU_FEATURE_IDS;
+  const next = AppState.VISIBLE_AYNU_FEATURE_IDS;
   if (!(next instanceof Set)) return;
   next.clear();
 
   for (const f of transformedFeatures) {
-    const id = getAinuFeatureId(f);
+    const id = getAynuFeatureId(f);
     const loc = f?.properties?.loc;
     if (!id || !loc) continue;
     const xy = Celestial.mapProjection(loc);
@@ -687,24 +682,24 @@ function updateVisibleAinuFeatureIds(transformedFeatures, ctx) {
     next.add(id);
   }
 
-  scheduleAinuListViewportSync();
+  scheduleAynuListViewportSync();
 }
 
-function setupAinuListInteraction() {
-  const list = document.getElementById("ainu-list");
+function setupAynuListInteraction() {
+  const list = document.getElementById("aynu-list");
   if (!list) return;
-  if (list.dataset.ainuClickBound === "1") return;
-  list.dataset.ainuClickBound = "1";
+  if (list.dataset.aynuClickBound === "1") return;
+  list.dataset.aynuClickBound = "1";
 
   list.addEventListener("click", (e) => {
-    const btn = e.target?.closest?.("button[data-ainu-id]");
+    const btn = e.target?.closest?.("button[data-aynu-id]");
     if (!btn || !list.contains(btn)) return;
-    const id = String(btn.dataset.ainuId || "");
+    const id = String(btn.dataset.aynuId || "");
     if (!id) return;
 
-    AppState.SELECTED_AINU_FEATURE_ID = AppState.SELECTED_AINU_FEATURE_ID === id ? null : id;
+    AppState.SELECTED_AYNU_FEATURE_ID = AppState.SELECTED_AYNU_FEATURE_ID === id ? null : id;
 
-    updateAinuList();
+    updateAynuList();
     if (typeof Celestial?.redraw === "function") Celestial.redraw();
   });
 }
@@ -714,15 +709,15 @@ function setupAinuListInteraction() {
 // ============================================================
 // 選択地域に対応する星文化情報をリスト表示。
 // GeoJSONデータがなければメッセージのみ表示します。
-function updateAinuList() {
-  const list = document.getElementById("ainu-list");
+function updateAynuList() {
+  const list = document.getElementById("aynu-list");
   list.innerHTML = "";
 
-  if (!AppState.AINU_GEOJSON?.features?.length) {
+  if (!AppState.AYNU_GEOJSON?.features?.length) {
     // 該当地域がなければメッセージだけ表示。
-    list.innerHTML = `<li>${MSG_NO_AINU}</li>`;
-    AppState.SELECTED_AINU_FEATURE_ID = null;
-    AppState.VISIBLE_AINU_FEATURE_IDS?.clear?.();
+    list.innerHTML = `<li>${MSG_NO_AYNU}</li>`;
+    AppState.SELECTED_AYNU_FEATURE_ID = null;
+    AppState.VISIBLE_AYNU_FEATURE_IDS?.clear?.();
     return;
   }
 
@@ -1041,9 +1036,7 @@ function updateAreaMapA11y(areaKeys) {
   const preview = document.getElementById("area-map-preview");
   const img = document.getElementById("area-map-single");
 
-  const labels = (Array.isArray(areaKeys) ? areaKeys : [])
-    .map((k) => AREA_LABEL_MAP[k] || k)
-    .filter(Boolean);
+  const labels = (Array.isArray(areaKeys) ? areaKeys : []).map((k) => AREA_LABEL_MAP[k] || k).filter(Boolean);
 
   const text = labels.length ? `エリアマップ: ${labels.join(" / ")}` : "エリアマップ（未選択）";
   if (preview) preview.setAttribute("aria-label", text);

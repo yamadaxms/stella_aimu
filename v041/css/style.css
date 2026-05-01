@@ -44,7 +44,7 @@ img {
 
 @media print, screen and (-webkit-min-device-pixel-ratio: 0) {
   body::after {
-    content: "© 2025–2026 Ainu Star Culture プロジェクト";
+    content: "© 2025–2026 Aynu Star Culture プロジェクト";
     position: fixed;
     top: 50%;
     left: 50%;
@@ -264,7 +264,7 @@ select {
  * ========================================================= */
 
 /* アイヌ民族星文化リスト */
-.ainu-list {
+.aynu-list {
   list-style: none; /* 行頭マーカーを消す */
   padding-left: 0; /* 左インデントをなくす */
   margin: 0; /* 周囲の余白をゼロに */
@@ -274,14 +274,14 @@ select {
 }
 
 /* アイヌ民族星文化リストの各項目 */
-.ainu-list li {
+.aynu-list li {
   margin-bottom: 0.5rem; /* 項目間の下余白 */
   padding-bottom: 0.4rem; /* 下ボーダーとの距離 */
   border-bottom: 1px dashed #374151; /* 点線の区切り線 */
 }
 
 /* アイヌ民族星文化リストの名称（クリック可能） */
-.ainu-name-btn {
+.aynu-name-btn {
   appearance: none;
   border: 0;
   background: transparent;
@@ -297,29 +297,29 @@ select {
   border-radius: 6px;
 }
 
-.ainu-name-btn:hover {
+.aynu-name-btn:hover {
   text-decoration: underline;
   background: #0b1221;
 }
 
-.ainu-name-btn:focus-visible {
+.aynu-name-btn:focus-visible {
   outline: 2px solid #ffeb3b;
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-.ainu-list li.is-selected .ainu-name-btn {
+.aynu-list li.is-selected .aynu-name-btn {
   color: #ffeb3b;
 }
 
 /* アイヌ民族星文化リストのコード部分（将来用／表示する場合に使用） */
-.ainu-list li .code {
+.aynu-list li .code {
   font-size: 0.75rem; /* コードを小さめに */
   color: #9ca3af; /* 淡めの文字色 */
 }
 
 /* アイヌ民族星文化リストの説明部分 */
-.ainu-list li .desc {
+.aynu-list li .desc {
   margin-top: 0.15rem; /* 説明とタイトルの間隔 */
   font-size: 0.8rem; /* 説明テキストのサイズ */
   color: #d1d5db; /* 説明文の文字色 */
