@@ -256,8 +256,9 @@ def main() -> None:
     load_dotenv()
     mimetypes.add_type("text/javascript; charset=utf-8", ".js")
     port = int(os.environ.get("PORT", str(DEFAULT_PORT)))
-    server = ThreadingHTTPServer(("127.0.0.1", port), StellaHandler)
-    print(f"Serving Stella Ainu viewer at http://127.0.0.1:{port}/")
+    host = os.environ.get("HOST", "0.0.0.0")
+    server = ThreadingHTTPServer((host, port), StellaHandler)
+    print(f"Serving Stella Ainu viewer at http://{host}:{port}/")
     server.serve_forever()
 
 
