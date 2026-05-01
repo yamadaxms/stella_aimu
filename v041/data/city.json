@@ -8,7 +8,7 @@
     "subprefecture": "石狩",
     "lat": 43.0619,
     "lon": 141.3544,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -19,7 +19,7 @@
     "subprefecture": "渡島",
     "lat": 41.7686,
     "lon": 140.7289,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -30,7 +30,7 @@
     "subprefecture": "後志",
     "lat": 43.1907,
     "lon": 140.9946,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -41,7 +41,7 @@
     "subprefecture": "上川",
     "lat": 43.7706,
     "lon": 142.365,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -52,7 +52,7 @@
     "subprefecture": "胆振",
     "lat": 42.3153,
     "lon": 140.9742,
-    "ainu": ["ainu1", "ainu2"]
+    "aynu": ["aynu1", "aynu2"]
   },
   {
     "region": "北海道",
@@ -63,7 +63,7 @@
     "subprefecture": "釧路",
     "lat": 42.985,
     "lon": 144.3817,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -74,7 +74,7 @@
     "subprefecture": "釧路",
     "lat": 42.8928,
     "lon": 143.933,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -85,7 +85,7 @@
     "subprefecture": "釧路",
     "lat": 43.0826,
     "lon": 144.2345,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -96,7 +96,7 @@
     "subprefecture": "十勝",
     "lat": 42.9236,
     "lon": 143.1964,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -107,7 +107,7 @@
     "subprefecture": "オホーツク",
     "lat": 42.1387,
     "lon": 142.9168,
-    "ainu": ["ainu3", "ainu4"]
+    "aynu": ["aynu3", "aynu4"]
   },
   {
     "region": "北海道",
@@ -118,7 +118,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.1207,
     "lon": 144.071,
-    "ainu": ["ainu3", "ainu4"]
+    "aynu": ["aynu3", "aynu4"]
   },
   {
     "region": "北海道",
@@ -129,7 +129,7 @@
     "subprefecture": "空知",
     "lat": 43.0563,
     "lon": 141.9739,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -140,7 +140,7 @@
     "subprefecture": "空知",
     "lat": 43.1961,
     "lon": 141.7758,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -151,7 +151,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.0199,
     "lon": 141.268,
-    "ainu": ["ainu3", "ainu4"]
+    "aynu": ["aynu3", "aynu4"]
   },
   {
     "region": "北海道",
@@ -162,7 +162,7 @@
     "subprefecture": "留萌",
     "lat": 43.9408,
     "lon": 141.6369,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -173,7 +173,7 @@
     "subprefecture": "胆振",
     "lat": 42.6341,
     "lon": 141.6055,
-    "ainu": ["ainu1", "ainu2"]
+    "aynu": ["aynu1", "aynu2"]
   },
   {
     "region": "北海道",
@@ -184,7 +184,7 @@
     "subprefecture": "宗谷",
     "lat": 45.4416,
     "lon": 141.6733,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -195,7 +195,7 @@
     "subprefecture": "空知",
     "lat": 43.3326,
     "lon": 141.8537,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -206,7 +206,7 @@
     "subprefecture": "空知",
     "lat": 43.5183,
     "lon": 142.1898,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -217,7 +217,7 @@
     "subprefecture": "石狩",
     "lat": 43.1037,
     "lon": 141.5359,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -228,7 +228,7 @@
     "subprefecture": "空知",
     "lat": 43.5579,
     "lon": 142.044,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -239,7 +239,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.3565,
     "lon": 143.3545,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -250,7 +250,7 @@
     "subprefecture": "上川",
     "lat": 44.1785,
     "lon": 142.4002,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -261,7 +261,7 @@
     "subprefecture": "上川",
     "lat": 44.3558,
     "lon": 142.4632,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -272,7 +272,7 @@
     "subprefecture": "空知",
     "lat": 43.2458,
     "lon": 141.8746,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -283,7 +283,7 @@
     "subprefecture": "根室",
     "lat": 43.33,
     "lon": 145.5828,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -294,7 +294,7 @@
     "subprefecture": "石狩",
     "lat": 42.8209,
     "lon": 141.651,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -305,7 +305,7 @@
     "subprefecture": "空知",
     "lat": 43.5578,
     "lon": 141.9104,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -316,7 +316,7 @@
     "subprefecture": "空知",
     "lat": 43.4949,
     "lon": 141.9035,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -327,7 +327,7 @@
     "subprefecture": "空知",
     "lat": 43.5214,
     "lon": 142.0346,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -338,7 +338,7 @@
     "subprefecture": "空知",
     "lat": 43.7234,
     "lon": 142.0541,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -349,7 +349,7 @@
     "subprefecture": "上川",
     "lat": 43.342,
     "lon": 142.3832,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -360,7 +360,7 @@
     "subprefecture": "胆振",
     "lat": 42.4128,
     "lon": 141.1065,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -371,7 +371,7 @@
     "subprefecture": "石狩",
     "lat": 42.8827,
     "lon": 141.5776,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -382,7 +382,7 @@
     "subprefecture": "胆振",
     "lat": 42.472,
     "lon": 140.8647,
-    "ainu": ["ainu1", "ainu2"]
+    "aynu": ["aynu1", "aynu2"]
   },
   {
     "region": "北海道",
@@ -393,7 +393,7 @@
     "subprefecture": "石狩",
     "lat": 42.9854,
     "lon": 141.563,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -404,7 +404,7 @@
     "subprefecture": "石狩",
     "lat": 43.1717,
     "lon": 141.316,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -415,7 +415,7 @@
     "subprefecture": "渡島",
     "lat": 41.824,
     "lon": 140.653,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -426,7 +426,7 @@
     "subprefecture": "石狩",
     "lat": 43.2237,
     "lon": 141.5172,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -437,7 +437,7 @@
     "subprefecture": "石狩",
     "lat": 43.2254,
     "lon": 141.6491,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -448,7 +448,7 @@
     "subprefecture": "渡島",
     "lat": 41.43,
     "lon": 140.1104,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -459,7 +459,7 @@
     "subprefecture": "渡島",
     "lat": 41.4839,
     "lon": 140.2509,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -470,7 +470,7 @@
     "subprefecture": "渡島",
     "lat": 41.5983,
     "lon": 140.4188,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -481,7 +481,7 @@
     "subprefecture": "渡島",
     "lat": 41.6784,
     "lon": 140.4376,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -492,7 +492,7 @@
     "subprefecture": "渡島",
     "lat": 41.8958,
     "lon": 140.6944,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -503,7 +503,7 @@
     "subprefecture": "渡島",
     "lat": 42.0266,
     "lon": 140.8316,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -514,7 +514,7 @@
     "subprefecture": "渡島",
     "lat": 42.1052,
     "lon": 140.5766,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -525,7 +525,7 @@
     "subprefecture": "渡島",
     "lat": 42.2519,
     "lon": 140.2786,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -536,7 +536,7 @@
     "subprefecture": "渡島",
     "lat": 42.1293,
     "lon": 139.9829,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -547,7 +547,7 @@
     "subprefecture": "渡島",
     "lat": 42.5136,
     "lon": 140.3804,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -558,7 +558,7 @@
     "subprefecture": "檜山",
     "lat": 41.8692,
     "lon": 140.1275,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -569,7 +569,7 @@
     "subprefecture": "檜山",
     "lat": 41.8014,
     "lon": 140.1209,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -580,7 +580,7 @@
     "subprefecture": "檜山",
     "lat": 41.9204,
     "lon": 140.2255,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -591,7 +591,7 @@
     "subprefecture": "檜山",
     "lat": 41.9684,
     "lon": 140.136,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -602,7 +602,7 @@
     "subprefecture": "檜山",
     "lat": 42.1723,
     "lon": 139.5122,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -613,7 +613,7 @@
     "subprefecture": "檜山",
     "lat": 42.4294,
     "lon": 140.0092,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -624,7 +624,7 @@
     "subprefecture": "檜山",
     "lat": 42.4172,
     "lon": 139.883,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -635,7 +635,7 @@
     "subprefecture": "後志",
     "lat": 42.701,
     "lon": 140.0616,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -646,7 +646,7 @@
     "subprefecture": "後志",
     "lat": 42.791,
     "lon": 140.229,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -657,7 +657,7 @@
     "subprefecture": "後志",
     "lat": 42.6679,
     "lon": 140.3075,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -668,7 +668,7 @@
     "subprefecture": "後志",
     "lat": 42.8092,
     "lon": 140.5282,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -679,7 +679,7 @@
     "subprefecture": "後志",
     "lat": 42.8047,
     "lon": 140.6873,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -690,7 +690,7 @@
     "subprefecture": "後志",
     "lat": 42.763,
     "lon": 140.8039,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -701,7 +701,7 @@
     "subprefecture": "後志",
     "lat": 42.7478,
     "lon": 140.9044,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -712,7 +712,7 @@
     "subprefecture": "後志",
     "lat": 42.7955,
     "lon": 140.9344,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -723,7 +723,7 @@
     "subprefecture": "後志",
     "lat": 42.8582,
     "lon": 140.8839,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -734,7 +734,7 @@
     "subprefecture": "後志",
     "lat": 42.9017,
     "lon": 140.7589,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -745,7 +745,7 @@
     "subprefecture": "後志",
     "lat": 42.9804,
     "lon": 140.6115,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -756,7 +756,7 @@
     "subprefecture": "後志",
     "lat": 42.9798,
     "lon": 140.5148,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -767,7 +767,7 @@
     "subprefecture": "後志",
     "lat": 43.0631,
     "lon": 140.499,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -778,7 +778,7 @@
     "subprefecture": "後志",
     "lat": 43.1438,
     "lon": 140.4307,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -789,7 +789,7 @@
     "subprefecture": "後志",
     "lat": 43.2986,
     "lon": 140.5978,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -800,7 +800,7 @@
     "subprefecture": "後志",
     "lat": 43.2652,
     "lon": 140.6389,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -811,7 +811,7 @@
     "subprefecture": "後志",
     "lat": 43.1515,
     "lon": 140.7665,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -822,7 +822,7 @@
     "subprefecture": "後志",
     "lat": 43.1509,
     "lon": 140.7607,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -833,7 +833,7 @@
     "subprefecture": "後志",
     "lat": 43.0834,
     "lon": 140.8135,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -844,7 +844,7 @@
     "subprefecture": "空知",
     "lat": 43.0637,
     "lon": 141.6502,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -855,7 +855,7 @@
     "subprefecture": "空知",
     "lat": 43.4255,
     "lon": 141.8828,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -866,7 +866,7 @@
     "subprefecture": "空知",
     "lat": 43.4826,
     "lon": 141.9843,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -877,7 +877,7 @@
     "subprefecture": "空知",
     "lat": 42.9995,
     "lon": 141.7906,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -888,7 +888,7 @@
     "subprefecture": "空知",
     "lat": 43.0103,
     "lon": 141.6951,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -899,7 +899,7 @@
     "subprefecture": "空知",
     "lat": 43.0563,
     "lon": 141.7843,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -910,7 +910,7 @@
     "subprefecture": "空知",
     "lat": 43.3384,
     "lon": 141.6693,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -921,7 +921,7 @@
     "subprefecture": "空知",
     "lat": 43.4304,
     "lon": 141.8192,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -932,7 +932,7 @@
     "subprefecture": "空知",
     "lat": 43.5485,
     "lon": 141.8771,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -943,7 +943,7 @@
     "subprefecture": "空知",
     "lat": 43.6995,
     "lon": 141.9618,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -954,7 +954,7 @@
     "subprefecture": "空知",
     "lat": 43.7673,
     "lon": 141.9584,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -965,7 +965,7 @@
     "subprefecture": "空知",
     "lat": 43.6438,
     "lon": 141.8899,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -976,7 +976,7 @@
     "subprefecture": "空知",
     "lat": 43.7315,
     "lon": 141.8794,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -987,7 +987,7 @@
     "subprefecture": "空知",
     "lat": 43.8068,
     "lon": 141.934,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -998,7 +998,7 @@
     "subprefecture": "上川",
     "lat": 43.8433,
     "lon": 142.3544,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1009,7 +1009,7 @@
     "subprefecture": "上川",
     "lat": 43.6963,
     "lon": 142.4516,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1020,7 +1020,7 @@
     "subprefecture": "上川",
     "lat": 43.8282,
     "lon": 142.5083,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1031,7 +1031,7 @@
     "subprefecture": "上川",
     "lat": 43.8757,
     "lon": 142.4772,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1042,7 +1042,7 @@
     "subprefecture": "上川",
     "lat": 43.9067,
     "lon": 142.5777,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1053,7 +1053,7 @@
     "subprefecture": "上川",
     "lat": 43.847,
     "lon": 142.7704,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1064,7 +1064,7 @@
     "subprefecture": "上川",
     "lat": 43.6991,
     "lon": 142.5104,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1075,7 +1075,7 @@
     "subprefecture": "上川",
     "lat": 43.5882,
     "lon": 142.4669,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1086,7 +1086,7 @@
     "subprefecture": "上川",
     "lat": 43.4556,
     "lon": 142.4673,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1097,7 +1097,7 @@
     "subprefecture": "上川",
     "lat": 43.4054,
     "lon": 142.4251,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1108,7 +1108,7 @@
     "subprefecture": "上川",
     "lat": 43.1642,
     "lon": 142.568,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1119,7 +1119,7 @@
     "subprefecture": "上川",
     "lat": 42.98,
     "lon": 142.3981,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1130,7 +1130,7 @@
     "subprefecture": "上川",
     "lat": 44.0232,
     "lon": 142.4136,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1141,7 +1141,7 @@
     "subprefecture": "上川",
     "lat": 44.0959,
     "lon": 142.3614,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1152,7 +1152,7 @@
     "subprefecture": "上川",
     "lat": 44.3026,
     "lon": 142.635,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -1163,7 +1163,7 @@
     "subprefecture": "上川",
     "lat": 44.4811,
     "lon": 142.343,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -1174,7 +1174,7 @@
     "subprefecture": "上川",
     "lat": 44.7266,
     "lon": 142.2617,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -1185,7 +1185,7 @@
     "subprefecture": "上川",
     "lat": 44.8115,
     "lon": 142.0717,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -1196,7 +1196,7 @@
     "subprefecture": "上川",
     "lat": 44.0098,
     "lon": 142.1538,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -1207,7 +1207,7 @@
     "subprefecture": "留萌",
     "lat": 43.856,
     "lon": 141.5256,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1218,7 +1218,7 @@
     "subprefecture": "留萌",
     "lat": 44.0152,
     "lon": 141.6628,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1229,7 +1229,7 @@
     "subprefecture": "留萌",
     "lat": 44.3061,
     "lon": 141.6528,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1240,7 +1240,7 @@
     "subprefecture": "留萌",
     "lat": 44.3608,
     "lon": 141.6974,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1251,7 +1251,7 @@
     "subprefecture": "留萌",
     "lat": 44.5324,
     "lon": 141.7663,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1262,7 +1262,7 @@
     "subprefecture": "留萌",
     "lat": 44.7224,
     "lon": 141.7921,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1273,7 +1273,7 @@
     "subprefecture": "留萌",
     "lat": 44.8884,
     "lon": 141.7454,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1284,7 +1284,7 @@
     "subprefecture": "宗谷",
     "lat": 45.3306,
     "lon": 142.1088,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1295,7 +1295,7 @@
     "subprefecture": "宗谷",
     "lat": 45.1237,
     "lon": 142.3596,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1306,7 +1306,7 @@
     "subprefecture": "宗谷",
     "lat": 44.9698,
     "lon": 142.2867,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1317,7 +1317,7 @@
     "subprefecture": "宗谷",
     "lat": 44.9387,
     "lon": 142.5814,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1328,7 +1328,7 @@
     "subprefecture": "宗谷",
     "lat": 45.1028,
     "lon": 141.7775,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1339,7 +1339,7 @@
     "subprefecture": "宗谷",
     "lat": 45.303,
     "lon": 141.0477,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1350,7 +1350,7 @@
     "subprefecture": "宗谷",
     "lat": 45.187,
     "lon": 141.1396,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1361,7 +1361,7 @@
     "subprefecture": "宗谷",
     "lat": 45.2475,
     "lon": 141.2145,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1372,7 +1372,7 @@
     "subprefecture": "宗谷",
     "lat": 45.0176,
     "lon": 141.8493,
-    "ainu": ["ainu5"]
+    "aynu": ["aynu5"]
   },
   {
     "region": "北海道",
@@ -1383,7 +1383,7 @@
     "subprefecture": "オホーツク",
     "lat": 43.8233,
     "lon": 144.1083,
-    "ainu": ["ainu3", "ainu4"]
+    "aynu": ["aynu3", "aynu4"]
   },
   {
     "region": "北海道",
@@ -1394,7 +1394,7 @@
     "subprefecture": "オホーツク",
     "lat": 43.7067,
     "lon": 144.0243,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1405,7 +1405,7 @@
     "subprefecture": "オホーツク",
     "lat": 43.9124,
     "lon": 144.6721,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1416,7 +1416,7 @@
     "subprefecture": "オホーツク",
     "lat": 43.8349,
     "lon": 144.5945,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1427,7 +1427,7 @@
     "subprefecture": "オホーツク",
     "lat": 43.8568,
     "lon": 144.4611,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1438,7 +1438,7 @@
     "subprefecture": "オホーツク",
     "lat": 43.7252,
     "lon": 143.7418,
-    "ainu": ["ainu3", "ainu4"]
+    "aynu": ["aynu3", "aynu4"]
   },
   {
     "region": "北海道",
@@ -1449,7 +1449,7 @@
     "subprefecture": "オホーツク",
     "lat": 43.6763,
     "lon": 143.5863,
-    "ainu": ["ainu3", "ainu4"]
+    "aynu": ["aynu3", "aynu4"]
   },
   {
     "region": "北海道",
@@ -1460,7 +1460,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.0178,
     "lon": 143.7744,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1471,7 +1471,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.0615,
     "lon": 143.5279,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1482,7 +1482,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.1515,
     "lon": 143.573,
-    "ainu": ["ainu3", "ainu4"]
+    "aynu": ["aynu3", "aynu4"]
   },
   {
     "region": "北海道",
@@ -1493,7 +1493,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.1922,
     "lon": 143.078,
-    "ainu": ["ainu4"]
+    "aynu": ["aynu4"]
   },
   {
     "region": "北海道",
@@ -1504,7 +1504,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.4699,
     "lon": 143.1225,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -1515,7 +1515,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.3289,
     "lon": 142.945,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -1526,7 +1526,7 @@
     "subprefecture": "オホーツク",
     "lat": 44.5828,
     "lon": 142.9618,
-    "ainu": ["ainu4", "ainu5"]
+    "aynu": ["aynu4", "aynu5"]
   },
   {
     "region": "北海道",
@@ -1537,7 +1537,7 @@
     "subprefecture": "オホーツク",
     "lat": 43.9115,
     "lon": 144.1727,
-    "ainu": ["ainu3", "ainu4"]
+    "aynu": ["aynu3", "aynu4"]
   },
   {
     "region": "北海道",
@@ -1548,7 +1548,7 @@
     "subprefecture": "胆振",
     "lat": 42.5835,
     "lon": 140.7116,
-    "ainu": ["ainu1"]
+    "aynu": ["aynu1"]
   },
   {
     "region": "北海道",
@@ -1559,7 +1559,7 @@
     "subprefecture": "胆振",
     "lat": 42.552,
     "lon": 140.8858,
-    "ainu": ["ainu1", "ainu2"]
+    "aynu": ["aynu1", "aynu2"]
   },
   {
     "region": "北海道",
@@ -1570,7 +1570,7 @@
     "subprefecture": "胆振",
     "lat": 42.5515,
     "lon": 141.3559,
-    "ainu": ["ainu1", "ainu2"]
+    "aynu": ["aynu1", "aynu2"]
   },
   {
     "region": "北海道",
@@ -1581,7 +1581,7 @@
     "subprefecture": "胆振",
     "lat": 42.7236,
     "lon": 141.8779,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -1592,7 +1592,7 @@
     "subprefecture": "胆振",
     "lat": 42.5513,
     "lon": 140.7643,
-    "ainu": ["ainu1", "ainu2"]
+    "aynu": ["aynu1", "aynu2"]
   },
   {
     "region": "北海道",
@@ -1603,7 +1603,7 @@
     "subprefecture": "胆振",
     "lat": 42.7627,
     "lon": 141.8179,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -1614,7 +1614,7 @@
     "subprefecture": "胆振",
     "lat": 42.5748,
     "lon": 141.9269,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -1625,7 +1625,7 @@
     "subprefecture": "日高",
     "lat": 42.4802,
     "lon": 142.0746,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -1636,7 +1636,7 @@
     "subprefecture": "日高",
     "lat": 42.5849,
     "lon": 142.1284,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -1647,7 +1647,7 @@
     "subprefecture": "日高",
     "lat": 42.3623,
     "lon": 142.3185,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -1658,7 +1658,7 @@
     "subprefecture": "日高",
     "lat": 42.1685,
     "lon": 142.7681,
-    "ainu": ["ainu2", "ainu3"]
+    "aynu": ["aynu2", "aynu3"]
   },
   {
     "region": "北海道",
@@ -1669,7 +1669,7 @@
     "subprefecture": "日高",
     "lat": 42.1277,
     "lon": 142.934,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1680,7 +1680,7 @@
     "subprefecture": "日高",
     "lat": 42.0163,
     "lon": 143.1487,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1691,7 +1691,7 @@
     "subprefecture": "日高",
     "lat": 42.3416,
     "lon": 142.3686,
-    "ainu": ["ainu2"]
+    "aynu": ["aynu2"]
   },
   {
     "region": "北海道",
@@ -1702,7 +1702,7 @@
     "subprefecture": "十勝",
     "lat": 42.9943,
     "lon": 143.1981,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1713,7 +1713,7 @@
     "subprefecture": "十勝",
     "lat": 43.1682,
     "lon": 143.2418,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1724,7 +1724,7 @@
     "subprefecture": "十勝",
     "lat": 43.2327,
     "lon": 143.2959,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1735,7 +1735,7 @@
     "subprefecture": "十勝",
     "lat": 43.0988,
     "lon": 142.9889,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1746,7 +1746,7 @@
     "subprefecture": "十勝",
     "lat": 43.0797,
     "lon": 142.8393,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1757,7 +1757,7 @@
     "subprefecture": "十勝",
     "lat": 43.0114,
     "lon": 142.8841,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1768,7 +1768,7 @@
     "subprefecture": "十勝",
     "lat": 42.9117,
     "lon": 143.0507,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1779,7 +1779,7 @@
     "subprefecture": "十勝",
     "lat": 42.6978,
     "lon": 143.1324,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1790,7 +1790,7 @@
     "subprefecture": "十勝",
     "lat": 42.6503,
     "lon": 143.1877,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1801,7 +1801,7 @@
     "subprefecture": "十勝",
     "lat": 42.4972,
     "lon": 143.2788,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1812,7 +1812,7 @@
     "subprefecture": "十勝",
     "lat": 42.2855,
     "lon": 143.3116,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1823,7 +1823,7 @@
     "subprefecture": "十勝",
     "lat": 42.9085,
     "lon": 143.3561,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1834,7 +1834,7 @@
     "subprefecture": "十勝",
     "lat": 42.9288,
     "lon": 143.4485,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1845,7 +1845,7 @@
     "subprefecture": "十勝",
     "lat": 42.8009,
     "lon": 143.5061,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1856,7 +1856,7 @@
     "subprefecture": "十勝",
     "lat": 43.1246,
     "lon": 143.611,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1867,7 +1867,7 @@
     "subprefecture": "十勝",
     "lat": 43.2448,
     "lon": 143.5539,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1878,7 +1878,7 @@
     "subprefecture": "十勝",
     "lat": 43.4689,
     "lon": 143.7472,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1889,7 +1889,7 @@
     "subprefecture": "十勝",
     "lat": 42.8086,
     "lon": 143.6584,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1900,7 +1900,7 @@
     "subprefecture": "釧路",
     "lat": 42.996,
     "lon": 144.4663,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1911,7 +1911,7 @@
     "subprefecture": "釧路",
     "lat": 43.0518,
     "lon": 144.8477,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1922,7 +1922,7 @@
     "subprefecture": "釧路",
     "lat": 43.0759,
     "lon": 145.1312,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1933,7 +1933,7 @@
     "subprefecture": "釧路",
     "lat": 43.3034,
     "lon": 144.6007,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1944,7 +1944,7 @@
     "subprefecture": "釧路",
     "lat": 43.4853,
     "lon": 144.4594,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1955,7 +1955,7 @@
     "subprefecture": "釧路",
     "lat": 43.2301,
     "lon": 144.3212,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1966,7 +1966,7 @@
     "subprefecture": "釧路",
     "lat": 42.9562,
     "lon": 144.0715,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1977,7 +1977,7 @@
     "subprefecture": "根室",
     "lat": 43.3941,
     "lon": 145.1171,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1988,7 +1988,7 @@
     "subprefecture": "根室",
     "lat": 43.5552,
     "lon": 144.9717,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -1999,7 +1999,7 @@
     "subprefecture": "根室",
     "lat": 43.6612,
     "lon": 145.1314,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   },
   {
     "region": "北海道",
@@ -2010,6 +2010,6 @@
     "subprefecture": "根室",
     "lat": 44.0219,
     "lon": 145.1897,
-    "ainu": ["ainu3"]
+    "aynu": ["aynu3"]
   }
 ]

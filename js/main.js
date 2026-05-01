@@ -722,25 +722,25 @@ function updateAynuList() {
   }
 
   // 選択中IDがリストに存在しない場合は解除
-  const idSet = new Set(AppState.AINU_GEOJSON.features.map(getAinuFeatureId));
-  if (AppState.SELECTED_AINU_FEATURE_ID && !idSet.has(AppState.SELECTED_AINU_FEATURE_ID)) {
-    AppState.SELECTED_AINU_FEATURE_ID = null;
+  const idSet = new Set(AppState.AYNU_GEOJSON.features.map(getAynuFeatureId));
+  if (AppState.SELECTED_AYNU_FEATURE_ID && !idSet.has(AppState.SELECTED_AYNU_FEATURE_ID)) {
+    AppState.SELECTED_AYNU_FEATURE_ID = null;
   }
 
   // 各星文化をリストアイテムとして描画。
-  for (const f of AppState.AINU_GEOJSON.features) {
-    const id = getAinuFeatureId(f);
+  for (const f of AppState.AYNU_GEOJSON.features) {
+    const id = getAynuFeatureId(f);
     const name = f.properties?.n || "";
     const desc = f.properties?.desc || "";
-    const isSelected = id && id === String(AppState.SELECTED_AINU_FEATURE_ID || "");
+    const isSelected = id && id === String(AppState.SELECTED_AYNU_FEATURE_ID || "");
 
     const li = document.createElement("li");
     if (isSelected) li.classList.add("is-selected");
 
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "ainu-name-btn";
-    btn.dataset.ainuId = id;
+    btn.className = "aynu-name-btn";
+    btn.dataset.aynuId = id;
     btn.textContent = name;
     btn.setAttribute("aria-pressed", isSelected ? "true" : "false");
 
@@ -753,7 +753,7 @@ function updateAynuList() {
     list.appendChild(li);
   }
 
-  syncAinuListToViewport();
+  syncAynuListToViewport();
 }
 
 // ============================================================
@@ -766,16 +766,16 @@ function setupCelestial() {
 
     // GeoJSON が揃ったタイミングで path 要素を作成。
     callback: () => {
-      if (!AppState.AINU_GEOJSON) return;
-      bindAinuFeatures();
+      if (!AppState.AYNU_GEOJSON) return;
+      bindAynuFeatures();
     },
 
     redraw: () => {
       const ctx = Celestial.context;
-      const selectedId = String(AppState.SELECTED_AINU_FEATURE_ID || "");
+      const selectedId = String(AppState.SELECTED_AYNU_FEATURE_ID || "");
 
       // path 要素に紐づくデータを Canvas に描画。
-      const sel = Celestial.container.selectAll(".ainu-constellation");
+      const sel = Celestial.container.selectAll(".aynu-constellation");
       const drawFeature = (d, style) => {
         Celestial.setStyle(style);
         Celestial.map(d);
@@ -785,21 +785,21 @@ function setupCelestial() {
 
       // 非選択を先に描画し、選択中があれば最後に重ねる（見えやすさ優先）
       sel
-        .filter((d) => !selectedId || getAinuFeatureId(d) !== selectedId)
+        .filter((d) => !selectedId || getAynuFeatureId(d) !== selectedId)
         .each(function (d) {
-          drawFeature(d, AINU_LINE_STYLE);
+          drawFeature(d, AYNU_LINE_STYLE);
         });
       if (selectedId) {
         sel
-          .filter((d) => getAinuFeatureId(d) === selectedId)
+          .filter((d) => getAynuFeatureId(d) === selectedId)
           .each(function (d) {
-            drawFeature(d, AINU_HIGHLIGHT_LINE_STYLE);
+            drawFeature(d, AYNU_HIGHLIGHT_LINE_STYLE);
           });
       }
 
       // ラベル用に GeoJSON を再投影し、中心座標に文字を描画。
-      if (!AppState.AINU_GEOJSON) return;
-      const transformed = Celestial.getData(AppState.AINU_GEOJSON, CELESTIAL_CONFIG.transform);
+      if (!AppState.AYNU_GEOJSON) return;
+      const transformed = Celestial.getData(AppState.AYNU_GEOJSON, CELESTIAL_CONFIG.transform);
 
       const drawLabel = (f, isSelected) => {
         const name = f.properties?.n;
@@ -808,9 +808,9 @@ function setupCelestial() {
 
         // 使用した星の数で色分け
         const numPoints = f.properties?.starCount ?? f.geometry.coordinates.length;
-        ctx.fillStyle = isSelected ? AINU_LABEL_COLOR_HIGHLIGHT : numPoints === 1 ? AINU_LABEL_COLOR_STAR : AINU_LABEL_COLOR_CONST;
-        ctx.font = AINU_LABEL_FONT;
-        ctx.textAlign = AINU_LABEL_TEXT_ALIGN;
+        ctx.fillStyle = isSelected ? AYNU_LABEL_COLOR_HIGHLIGHT : numPoints === 1 ? AYNU_LABEL_COLOR_STAR : AYNU_LABEL_COLOR_CONST;
+        ctx.font = AYNU_LABEL_FONT;
+        ctx.textAlign = AYNU_LABEL_TEXT_ALIGN;
 
         const xy = Celestial.mapProjection(loc);
         if (!xy) return;
@@ -819,13 +819,13 @@ function setupCelestial() {
       };
 
       // ラベルも同様に「選択中を最後に」描画
-      transformed.features.filter((f) => !selectedId || getAinuFeatureId(f) !== selectedId).forEach((f) => drawLabel(f, false));
+      transformed.features.filter((f) => !selectedId || getAynuFeatureId(f) !== selectedId).forEach((f) => drawLabel(f, false));
       if (selectedId) {
-        transformed.features.filter((f) => getAinuFeatureId(f) === selectedId).forEach((f) => drawLabel(f, true));
+        transformed.features.filter((f) => getAynuFeatureId(f) === selectedId).forEach((f) => drawLabel(f, true));
       }
 
       // 現在ビュー（ズーム/スクロール）で画面内に入っている星文化を一覧へ反映
-      updateVisibleAinuFeatureIds(transformed.features, ctx);
+      updateVisibleAynuFeatureIds(transformed.features, ctx);
     },
   });
 
@@ -839,36 +839,36 @@ function setupCelestial() {
 // GeoJSONデータのD3バインド
 // ============================================================
 // Celestial.jsの投影座標系に合わせてGeoJSONを変換し、path要素へデータバインドします。
-function bindAinuFeatures() {
-  if (!AppState.AINU_GEOJSON) return;
+function bindAynuFeatures() {
+  if (!AppState.AYNU_GEOJSON) return;
 
   // GeoJSON を現在の投影設定に合わせて変換。
-  const transformed = Celestial.getData(AppState.AINU_GEOJSON, CELESTIAL_CONFIG.transform);
+  const transformed = Celestial.getData(AppState.AYNU_GEOJSON, CELESTIAL_CONFIG.transform);
 
   // Feature ごとに path を紐づけ。id をキーに差分更新する。
-  const sel = Celestial.container.selectAll(".ainu-constellation").data(transformed.features, (d) => getAinuFeatureId(d));
+  const sel = Celestial.container.selectAll(".aynu-constellation").data(transformed.features, (d) => getAynuFeatureId(d));
 
   sel.exit().remove();
   sel
     .enter()
     .append("path")
-    .attr("class", "ainu-constellation")
-    .attr("data-ainu-id", (d) => getAinuFeatureId(d));
+    .attr("class", "aynu-constellation")
+    .attr("data-aynu-id", (d) => getAynuFeatureId(d));
 }
 
 // ============================================================
 // 選択地域に対応するGeoJSONデータの生成・更新
 // ============================================================
 // 現在の文化地域キーで星文化GeoJSONを再生成し、描画レイヤーを更新します。
-function updateAinuGeoJSON() {
+function updateAynuGeoJSON() {
   const areaKeys = AppState.CURRENT_AREA_KEYS || [];
   if (!areaKeys.length) return;
 
   // 現在の文化地域キーで GeoJSON を再生成。
-  AppState.AINU_GEOJSON = buildAinuGeoJSON(AppState.AINU_DATA.constellations, AppState.AINU_DATA.stars, areaKeys);
+  AppState.AYNU_GEOJSON = buildAynuGeoJSON(AppState.AYNU_DATA.constellations, AppState.AYNU_DATA.stars, areaKeys);
 
   // path 要素とデータの紐付けを更新。
-  bindAinuFeatures();
+  bindAynuFeatures();
 }
 
 // ============================================================
@@ -883,14 +883,14 @@ function raDecToLonLat(raDeg, decDeg) {
 // アイヌ民族星文化データ → GeoJSON生成
 // ============================================================
 // 地域ごとの星文化定義から線分・ラベル位置を算出し、MultiLineString形式でGeoJSON化します。
-function buildAinuGeoJSON(constellations, stars, areaKeys) {
+function buildAynuGeoJSON(constellations, stars, areaKeys) {
   const areaKeyList = Array.isArray(areaKeys) ? areaKeys.filter(Boolean) : areaKeys ? [areaKeys] : [];
   if (!areaKeyList.length) {
     return { type: "FeatureCollection", features: [] };
   }
 
-  const targetAinuCodes = mapAreaKeysToAinuCodes(areaKeyList);
-  if (!targetAinuCodes.length) {
+  const targetAynuCodes = mapAreaKeysToAynuCodes(areaKeyList);
+  if (!targetAynuCodes.length) {
     return { type: "FeatureCollection", features: [] };
   }
 
@@ -903,7 +903,7 @@ function buildAinuGeoJSON(constellations, stars, areaKeys) {
     const desc = c?.description || "";
     if (!name) continue;
 
-    const belongs = Array.isArray(c.ainu) && c.ainu.some((code) => targetAinuCodes.includes(code));
+    const belongs = Array.isArray(c.aynu) && c.aynu.some((code) => targetAynuCodes.includes(code));
     if (!belongs) continue;
 
     const lineSegments = [];
@@ -1082,14 +1082,14 @@ function applyGeoposition(lat, lon) {
   }
 }
 
-function mapAreaKeysToAinuCodes(areaKeys) {
-  // UI用のareaキーをデータ定義用のainuコードへ変換（重複を除外）
+function mapAreaKeysToAynuCodes(areaKeys) {
+  // UI用のareaキーをデータ定義用のaynuコードへ変換（重複を除外）
   const map = {
-    area1: "ainu1",
-    area2: "ainu2",
-    area3: "ainu3",
-    area4: "ainu4",
-    area5: "ainu5",
+    area1: "aynu1",
+    area2: "aynu2",
+    area3: "aynu3",
+    area4: "aynu4",
+    area5: "aynu5",
   };
   const codes = new Set();
   for (const key of areaKeys || []) {
