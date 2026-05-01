@@ -5,3 +5,8 @@ scripts/
 .env
 global-bundle.pem
 __pycache__/
+.vscode/launch.json
+.gitignore
+.vscode/tasks.json
+.gitignore
+.vscode/settings.json
