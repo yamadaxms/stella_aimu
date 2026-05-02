@@ -3,7 +3,7 @@
 // fetchによるデータ取得時のエラー検証やJSON変換は本モジュールで行い、呼び出し元はtry-catchで例外処理を一括管理できます。
 
 const API_BASE_URL = "http://stella-aynu-api-env.eba-icmiu7gn.ap-northeast-1.elasticbeanstalk.com";
-const AYNU_DATA_API_PATH = "/api/aynu-data";
+const AYNU_DATA_API_PATH = "/api/star-cultures";
 
 async function loadApiJSON(path) {
   const url = `${API_BASE_URL}${path}`;
