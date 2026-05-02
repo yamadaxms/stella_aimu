@@ -2,20 +2,16 @@
 // 各関数は役割を明確に分離し、データ取得・検証・変換の責務を担います。
 // fetchによるデータ取得時のエラー検証やJSON変換は本モジュールで行い、呼び出し元はtry-catchで例外処理を一括管理できます。
 
-const AYNU_DATA_API_PATH = "/api/aynu-data";
+const API_BASE_URL = "https://yyyyy.elasticbeanstalk.com";
+//const AYNU_DATA_API_PATH = "/api/aynu-data";
 
 async function loadApiJSON(path) {
-// ↓↓↓↓
-//  const res = await fetch(path, { headers: { Accept: "application/json" }, cache: "no-store" });
-  const API_BASE_URL = "https://yyyyy.elasticbeanstalk.com";
-
-  async function loadApiJSON(path) {
-    const url = `${API_BASE_URL}${path}`;
-    const res = await fetch(url, {
-      headers: { Accept: "application/json" },
-      cache: "no-store"
-    });
-// ↑↑↑↑
+  //  const res = await fetch(path, { headers: { Accept: "application/json" }, cache: "no-store" });
+  const url = `${API_BASE_URL}${path}`;
+  const res = await fetch(url, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
 
   if (!res.ok) {
     let detail = "";
