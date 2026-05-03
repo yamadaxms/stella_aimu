@@ -2,17 +2,14 @@
 // 各関数は役割を明確に分離し、データ取得・検証・変換の責務を担います。
 // fetchによるデータ取得時のエラー検証やJSON変換は本モジュールで行い、呼び出し元はtry-catchで例外処理を一括管理できます。
 
-const DEFAULT_API_BASE_URL = "https://stella-aynu-api-env.eba-icmiu7gn.ap-northeast-1.elasticbeanstalk.com";
-const API_BASE_URL = (window.AYNU_API_BASE_URL || (window.location.hostname.includes("elasticbeanstalk.com") ? window.location.origin : DEFAULT_API_BASE_URL)).replace(/\/$/, "");
-const AYNU_DATA_API_PATH = "/api/star-cultures";
+const API_BASE_URL = (window.AYNU_API_BASE_URL || "http://stella-aynu-api-env.eba-icmiu7gn.ap-northeast-1.elasticbeanstalk.com").replace(/\/$/, "");
+const AYNU_DATA_API_PATH = `${API_BASE_URL}/api/aynu-data`;
 
-async function loadApiJSON(path) {
-  const url = `${API_BASE_URL}${path}`;
+async function loadApiJSON(url) {
   const res = await fetch(url, {
     headers: { Accept: "application/json" },
     cache: "no-store",
   });
-  //  const res = await fetch(path, { headers: { Accept: "application/json" }, cache: "no-store" });
 
   if (!res.ok) {
     let detail = "";
@@ -22,7 +19,7 @@ async function loadApiJSON(path) {
     } catch (_) {
       detail = "";
     }
-    throw new Error(`データAPIの読み込みに失敗しました: ${path} (${res.status})${detail}`);
+    throw new Error(`データAPIの読み込みに失敗しました: ${url} (${res.status})${detail}`);
   }
   return await res.json();
 }
