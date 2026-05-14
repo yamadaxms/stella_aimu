@@ -4,17 +4,19 @@
     <meta charset="UTF-8" />
     <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
 
-    <!-- レスポンシブ -->
+    <!-- 参考文献一覧をスマホ幅でも読みやすくするため、viewportを実デバイス幅に合わせる -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- d3-celestial の CSS -->
+    <!-- 星図ページと同じ共通スタイル順にして、ヘッダーや補足ページの見た目を統一する -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css" />
-    <!-- 自前の CSS -->
+    <!-- content-wrapper/content-card と参考文献ページの配色・余白を定義するCSS -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <!-- js/includes.js が共通ヘッダーと現在ページのナビ強調へ差し替える -->
     <div id="site-header-include"></div>
 
+    <!-- 星文化データ・表記・地域区分を編集する際に参照した資料一覧を掲載するページ -->
     <main class="content-wrapper">
       <article class="content-card">
         <h2>参考文献・資料</h2>
@@ -83,6 +85,7 @@
       </article>
     </main>
 
+    <!-- 共通ヘッダー読み込みと、参考文献ページ上の文章に対する軽い複製抑止を適用する -->
     <script src="js/includes.js?v=20260214"></script>
     <script src="js/contentProtection.js?v=20260214"></script>
   </body>

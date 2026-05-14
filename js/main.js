@@ -10,6 +10,8 @@
 // ============================================================
 // 定数定義
 // ============================================================
+// 画面表示、d3-celestial 設定、データ変換で共有する固定値をここに集約する。
+// UI文字列や色を関数内に散らさないことで、表示文言・配色・既定地域の調整箇所を明確にする。
 const AREA_DEFAULT = "area0";
 const MSG_NO_AYNU = "この地域に対応するアイヌ民族の星文化はありません。";
 const CITY_SELECT_PLACEHOLDER = "現在地を選択してください";
@@ -38,6 +40,9 @@ let DEFAULT_STACK_HTML = null;
 // ============================================================
 // アプリ状態管理オブジェクト
 // ============================================================
+// d3-celestial は内部状態を持つライブラリなので、画面側で必要な状態を AppState に集約する。
+// 市町村選択、現在の観測地、生成済みGeoJSON、一覧で選択中の星文化IDなどを一元管理し、
+// UI更新・Canvas再描画・リセット処理が同じ状態を参照できるようにする。
 const AppState = {
   AYNU_DATA: null,
   CURRENT_AREA_KEYS: [],
@@ -123,14 +128,19 @@ const CELESTIAL_CONFIG = {
 // ステータスメッセージ（エラー/注意）の表示
 // ============================================================
 function escapeHtml(str) {
+  // エラー文にはAPI由来の文字列が含まれるため、innerHTMLへ入れる前に必ずエスケープする。
+  // 改行はそのままテキストとして扱い、HTMLタグとして解釈されないようにする。
   return String(str).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 }
 
 function setStatusMessage(message, { isError = true, persistent = true, actionLabel = null, onAction = null } = {}) {
+  // データ取得失敗や注意を、左ペインの status-message へ表示する共通処理。
+  // actionLabel/onAction を渡すと「再試行」などの操作ボタンも同じ領域に出せる。
   const el = document.getElementById("status-message");
   if (!el) return;
 
   if (!message) {
+    // 空文字はクリア指示として扱う。hidden を戻し、前回のボタン束縛フラグも消す。
     el.hidden = true;
     el.textContent = "";
     delete el.dataset.actionBound;
@@ -149,6 +159,7 @@ function setStatusMessage(message, { isError = true, persistent = true, actionLa
   el.innerHTML = `${safe}${actionHtml}`;
 
   if (actionLabel && typeof onAction === "function") {
+    // innerHTML でボタンを作り直すため、同じ表示に対してリスナーを二重登録しないよう data 属性で管理する。
     const btn = el.querySelector("#status-action-btn");
     if (btn && el.dataset.actionBound !== "1") {
       el.dataset.actionBound = "1";
@@ -158,10 +169,12 @@ function setStatusMessage(message, { isError = true, persistent = true, actionLa
 }
 
 function clearStatusMessage() {
+  // 呼び出し側で空文字の意味を知らなくて済むよう、ステータス消去用の薄いラッパーを用意する。
   setStatusMessage("");
 }
 
 function formatInitError(err) {
+  // 初期化失敗は利用者が復旧方法を判断しやすいよう、原因メッセージに加えて file:// 直開きの補足を出す。
   const msg = err?.message ? String(err.message) : String(err || "");
   // ローカル直開き(file://)は fetch が失敗しやすいので補足
   if (window.location.protocol === "file:") {
@@ -178,6 +191,8 @@ function formatInitError(err) {
 document.addEventListener("DOMContentLoaded", initApp);
 
 window.addEventListener("DOMContentLoaded", () => {
+  // DOM要素に依存するUIイベントを登録する。
+  // initApp はデータ取得も行うため別リスナーに分け、操作UIのイベント束縛自体は早めに済ませる。
   setupAynuListInteraction();
 
   // 投影法プルダウンのイベント登録
@@ -236,6 +251,8 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 async function initApp() {
+  // 初期化は「データ取得 → UI構築 → 天球図初期化 → 初期表示」の順で行う。
+  // どこかで失敗しても画面が無反応にならないよう、try/catchでステータス表示と再試行導線を出す。
   clearStatusMessage();
   setLoadingMessage("データ読み込み中……");
 
@@ -278,17 +295,21 @@ async function initApp() {
 }
 
 function clampNumber(value, min, max) {
+  // スライダー値や緯度など、外部入力が想定範囲外でもライブラリへ壊れた値を渡さないための数値クランプ。
   if (!Number.isFinite(value)) return min;
   return Math.min(max, Math.max(min, value));
 }
 
 function formatMagLimit(value) {
+  // 恒星表示上限はUI上「等級」として見せるため、小数1桁にそろえて表示を安定させる。
   const v = Number(value);
   if (!Number.isFinite(v)) return "";
   return `${v.toFixed(1)}等級`;
 }
 
 function applyStarMagnitudeLimit(limit) {
+  // d3-celestial の stars.limit を更新し、表示する恒星の暗さ上限を変える。
+  // 設定オブジェクトも同時に更新しておくことで、投影法変更など display() 再実行後も選択値を保てる。
   const next = clampNumber(limit, -1, 6);
   if (CELESTIAL_CONFIG?.stars) {
     CELESTIAL_CONFIG.stars.limit = next;
@@ -446,18 +467,23 @@ function setCelestialTimeToJST() {
 }
 
 function getCelestialDateSafe() {
+  // Celestial.date() が未定義または不正値を返す環境差分に備え、常に有効な Date を返す。
   if (typeof Celestial?.date !== "function") return new Date();
   const d = Celestial.date();
   return d instanceof Date && !Number.isNaN(d.getTime()) ? d : new Date();
 }
 
 function normalizeDeg0To360(deg) {
+  // 恒星時計算では角度を 0-360 度に正規化して扱う。
+  // JavaScript の % は負値を負のまま返すため、負の場合は360度を足す。
   const d = deg % 360;
   return d < 0 ? d + 360 : d;
 }
 
 // 参考: Meeus, Astronomical Algorithms（簡易GMST）
 function computeLocalSiderealTimeDeg(date, lonDegEast) {
+  // 現在時刻と東経から地方恒星時を求め、観測地の真南に来る赤経を推定する。
+  // 星図の中心を「その地点で今見やすい向き」に寄せるために使う簡易計算。
   const timeMs = date instanceof Date ? date.getTime() : Date.now();
   const jd = timeMs / 86400000 + 2440587.5; // Unix epoch -> JD
   const d = jd - 2451545.0; // days since J2000.0
@@ -468,6 +494,8 @@ function computeLocalSiderealTimeDeg(date, lonDegEast) {
 }
 
 function setDefaultViewToLocalMeridian(lonDegEast, latDeg = AppState.CURRENT_GEO_POS?.[0]) {
+  // 観測地の地方恒星時を使い、初期表示やリセット時の中心回転を決める。
+  // 通常投影では赤道面を水平にした center 追従、星座早見盤では天頂中心の zenith 追従に切り替える。
   const date = getCelestialDateSafe();
   const lstDeg = computeLocalSiderealTimeDeg(date, lonDegEast);
   // center は [-180, 180] 系で扱う（既存の raDecToLonLat と同じ）
@@ -487,6 +515,8 @@ function setDefaultViewToLocalMeridian(lonDegEast, latDeg = AppState.CURRENT_GEO
 }
 
 function initDefaultViewFromBrowserLocation() {
+  // 市町村未選択でも星図が現在地に近い向きになるよう、ブラウザ位置情報を使って観測地を初期化する。
+  // 許可待ち・拒否・非対応でも画面を先に描けるよう、最初に札幌市の座標でフォールバック表示を作る。
   const fallback = resolveCityCoordinates(DEFAULT_CITY_LOCATION, AppState.AYNU_DATA?.cityMap);
 
   // 既に市町村が選択済みなら、初期位置の上書きはしない
@@ -588,7 +618,7 @@ function resetSelection() {
   AppState.AYNU_GEOJSON = null;
   AppState.SELECTED_AYNU_FEATURE_ID = null;
 
-  // clear drawn features and reset UI to initial state
+  // Canvas上に残っているアイヌ民族星文化の path データを削除し、一覧・地域情報・地図を未選択表示へ戻す。
   Celestial.container?.selectAll(".aynu-constellation").remove();
   updateAreaMapPreview([AREA_DEFAULT]);
   updateRegionInfo();
@@ -620,6 +650,8 @@ function setLoadingMessage(text) {
 // 選択状態に応じて右側の地域名・区分・文化地域を表示します。
 // 未選択時はダミー文言を表示。
 function updateRegionInfo() {
+  // 左ペインの地域情報を、現在の市町村選択に合わせて組み立て直す。
+  // innerHTML を使うが、値はAPI管理の市町村・地域名のみで、任意HTMLを入力するUIは存在しない。
   const div = document.getElementById("region-info");
   if (!AppState.CURRENT_CITY) {
     div.innerHTML = ["<div><strong>振興局　　：</strong>未選択</div>", "<div><strong>地方区分　：</strong>未選択</div>", "<div><strong>気象予報区：</strong>未選択</div>", "<div><strong>星文化地域：</strong>未選択</div>"].join("");
@@ -631,6 +663,7 @@ function updateRegionInfo() {
 }
 
 function getAynuFeatureId(feature) {
+  // d3-celestial の変換後データでは feature.id / properties.id のどちらかに入る可能性があるため吸収する。
   const id = feature?.id ?? feature?.properties?.id;
   return id == null ? "" : String(id);
 }
@@ -638,6 +671,7 @@ function getAynuFeatureId(feature) {
 let AYNU_LIST_VIEWPORT_SYNC_RAF = 0;
 
 function scheduleAynuListViewportSync() {
+  // redraw 中に一覧DOMを何度も更新すると重くなるため、requestAnimationFrameで1フレーム1回にまとめる。
   if (AYNU_LIST_VIEWPORT_SYNC_RAF) return;
   AYNU_LIST_VIEWPORT_SYNC_RAF = requestAnimationFrame(() => {
     AYNU_LIST_VIEWPORT_SYNC_RAF = 0;
@@ -646,6 +680,8 @@ function scheduleAynuListViewportSync() {
 }
 
 function syncAynuListToViewport() {
+  // 星図上で現在見えている星文化だけを一覧に残す。
+  // ズームや投影法変更で画面外になった項目を隠し、リストとCanvasの対応を追いやすくする。
   const list = document.getElementById("aynu-list");
   if (!list) return;
 
@@ -662,6 +698,8 @@ function syncAynuListToViewport() {
 }
 
 function updateVisibleAynuFeatureIds(transformedFeatures, ctx) {
+  // d3-celestial で投影済みのラベル中心座標をCanvas座標へ変換し、画面内に入るFeature IDを記録する。
+  // 一覧フィルタはこのSetを参照するため、星図のパン/ズーム後も見えている文化だけに絞れる。
   if (!Array.isArray(transformedFeatures)) return;
   const canvas = ctx?.canvas;
   const w = canvas?.width;
@@ -691,6 +729,8 @@ function updateVisibleAynuFeatureIds(transformedFeatures, ctx) {
 }
 
 function setupAynuListInteraction() {
+  // 星文化一覧は再描画で中身が作り直されるため、ulにイベント委譲してクリックを拾う。
+  // data属性のIDを使い、同じ項目を再クリックした場合は選択解除として扱う。
   const list = document.getElementById("aynu-list");
   if (!list) return;
   if (list.dataset.aynuClickBound === "1") return;
@@ -889,6 +929,8 @@ function raDecToLonLat(raDeg, decDeg) {
 // ============================================================
 // 地域ごとの星文化定義から線分・ラベル位置を算出し、MultiLineString形式でGeoJSON化します。
 function buildAynuGeoJSON(constellations, stars, areaKeys) {
+  // 選択地域に属する星文化だけを抽出し、d3-celestial が描画できるGeoJSON FeatureCollectionに変換する。
+  // lines はHIPキーの点列なので、stars辞書から赤経・赤緯を引き、天球図用の経度・緯度へ直して線分化する。
   const areaKeyList = Array.isArray(areaKeys) ? areaKeys.filter(Boolean) : areaKeys ? [areaKeys] : [];
   if (!areaKeyList.length) {
     return { type: "FeatureCollection", features: [] };
@@ -904,6 +946,7 @@ function buildAynuGeoJSON(constellations, stars, areaKeys) {
   const seenFeatureIds = new Set();
 
   for (const c of constellations || []) {
+    // 名前がない星文化は一覧・ラベルで識別できないためスキップする。
     const name = c?.name;
     const desc = c?.description || "";
     if (!name) continue;
@@ -915,6 +958,8 @@ function buildAynuGeoJSON(constellations, stars, areaKeys) {
     const usedPoints = [];
 
     for (const item of c.lines || []) {
+      // item が配列なら連続する星同士を線分にし、単独星なら同一点の線分として登録する。
+      // 単独星もGeoJSONへ載せることで、ラベル描画と一覧表示の対象にできる。
       const indices = Array.isArray(item) ? item : [item];
       for (let i = 0; i < indices.length - 1; i++) {
         const s1 = starMap[indices[i]];
@@ -938,8 +983,10 @@ function buildAynuGeoJSON(constellations, stars, areaKeys) {
 
     let labelLon, labelLat;
     if (typeof c.ra === "number" && typeof c.dec === "number") {
+      // DB/データ側にラベル位置が明示されている場合は、それを優先する。
       [labelLon, labelLat] = raDecToLonLat(c.ra, c.dec);
     } else {
+      // ラベル位置がない場合は使用星の平均位置を仮の中心にする。
       labelLon = usedPoints.reduce((a, p) => a + p[0], 0) / usedPoints.length;
       labelLat = usedPoints.reduce((a, p) => a + p[1], 0) / usedPoints.length;
     }
@@ -948,6 +995,7 @@ function buildAynuGeoJSON(constellations, stars, areaKeys) {
 
     const featureIdBase = c.key || name;
     const featureId = featureIdBase || `const-${features.length}`;
+    // d3 の data join でIDをキーに使うため、重複IDは二重描画を避けてスキップする。
     if (seenFeatureIds.has(featureId)) continue;
     seenFeatureIds.add(featureId);
 
@@ -1038,6 +1086,7 @@ function updateAreaMapPreview(areaKeys) {
 // エリアマッププレビュー更新（アクセシビリティも含む）
 // ============================================================
 function updateAreaMapA11y(areaKeys) {
+  // 画像を重ね合わせ表示している場合でも、支援技術には「どの文化地域の地図か」をテキストで伝える。
   const preview = document.getElementById("area-map-preview");
   const img = document.getElementById("area-map-single");
 

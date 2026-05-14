@@ -1,13 +1,18 @@
 (() => {
-  // --- コンテンツ保護（軽い抑止） ---
+  // ============================================================
+  // コンテンツ保護（ブラウザUI操作に対する軽い抑止）
+  // ============================================================
   // ※静的配信では「完全な抜き取り防止」は不可能です。
-  //   ここでは UI 操作（右クリック/ドラッグ/選択/一部ショートカット）を抑止し、注意喚起します。
+  //   ここでは UI 操作（右クリック/ドラッグ/選択/一部ショートカット）を抑止し、
+  //   掲載コンテンツの無断保存・複製が禁止されていることを利用者へ即時通知します。
+  //   入力フォームやボタンなど、通常操作に必要な要素は除外してUXを壊さないようにしています。
 
   // ページ全体に保護を適用（必要ならセレクタを絞る）
   const PROTECT_SELECTORS = ["body"];
 
   const isInProtectedArea = (target) => {
-    // document / window / svg なども来るので安全側で判定
+    // イベントの target には HTMLElement 以外に document / window / SVG 要素なども来る。
+    // closest() を持たない対象で例外を出さないようにしつつ、ページ全体(body)は保護対象として扱う。
     if (!target) return false;
     if (target === document || target === window) return true;
     if (target === document.documentElement || target === document.body)
@@ -18,6 +23,8 @@
 
   // UI 操作に必要な要素は巻き込まない（最低限）
   const isExemptElement = (target) => {
+    // 市町村選択、投影法選択、ボタン操作、編集可能領域などは通常のUI操作に必要。
+    // ここを保護対象から外すことで、コピー抑止処理がフォーム操作やアクセシビリティを妨げないようにする。
     if (!target || !target.closest) return false;
     return !!target.closest(
       "input, textarea, select, option, button, label, [contenteditable='true']",
@@ -26,6 +33,8 @@
 
   // alert() はUXが悪いので廃止し、簡易トーストで通知（連打防止あり）
   const toast = (() => {
+    // alert() はフォーカスを奪って連続操作時の体験が悪いため、画面下部の一時通知にする。
+    // CSSファイルへ依存させず、このスクリプトだけで通知UIを完結させるためインラインスタイルを使う。
     let el;
     let lastAt = 0;
     let timer;
@@ -75,6 +84,8 @@
   })();
 
   const preventWithNotice = (e, message) => {
+    // preventDefault でブラウザ標準動作を止め、stopPropagation で後続の右クリックメニュー等も抑える。
+    // message があるイベントだけトーストを出し、ドラッグや選択開始のような高頻度イベントでは通知を省く。
     e.preventDefault();
     // 一部イベントでは stopPropagation も併用（右クリックメニュー等）
     if (typeof e.stopPropagation === "function") e.stopPropagation();
@@ -138,6 +149,7 @@
         isInProtectedArea(e.target) ||
         isInProtectedArea(document.activeElement);
 
+      // ブラウザやOSによって完全には止められないが、一般的な開発者ツール/ソース表示/保存/印刷/コピーを抑止する。
       const isDevtools =
         e.key === "F12" ||
         (isCtrlOrMeta && e.shiftKey && (key === "i" || key === "j" || key === "c"));
@@ -167,4 +179,3 @@
     true,
   );
 })();
-

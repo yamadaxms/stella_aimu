@@ -4,25 +4,28 @@
     <meta charset="UTF-8" />
     <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
 
-    <!-- レスポンシブ -->
+    <!-- 端末幅に合わせて3カラム/縦積みレイアウトを切り替えるため、viewportを実デバイス幅に合わせる -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- d3-celestial の CSS -->
+    <!-- d3-celestial 本体が挿入する星図UIの標準スタイルを先に読み込む -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css" />
-    <!-- 自前の CSS -->
+    <!-- サイト固有の配色、3カラム配置、一覧、エリアマップ、補足ページのスタイル -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <!-- js/includes.js が共通ヘッダーHTMLへ差し替えるプレースホルダー -->
     <div id="site-header-include"></div>
 
     <main class="layout">
+      <!-- 左ペイン: 市町村選択、地域情報、表示設定をまとめる操作パネル -->
       <section class="controls">
         <div id="loading-indicator" class="loading" aria-live="polite"></div>
 
-        <!-- エラー/注意の表示（スクリーンリーダーにも通知） -->
+        <!-- API取得失敗や注意を表示する領域。role/aria-live によりスクリーンリーダーにも即時通知する -->
         <div id="status-message" class="status-message" role="alert" aria-live="assertive" hidden></div>
 
         <div class="field">
+          <!-- 視覚ラベルは省略しつつ、支援技術には「現在地（市町村）」の入力だと伝える -->
           <label for="city-select" class="sr-only">現在地（市町村）</label>
           <select id="city-select" aria-describedby="city-select-help">
             <option value="">……</option>
@@ -32,6 +35,7 @@
 
         <div id="region-info">星文化地域：未選択</div>
 
+        <!-- 選択市町村が属する星文化地域を地図画像で示す。複数地域の場合はJSで画像を重ね合わせる -->
         <div id="area-map-preview" class="area-map-preview" aria-label="エリアマップ">
           <img id="area-map-single" class="area-map-image" alt="エリアマップ（未選択）" />
           <div id="area-map-stack" class="area-map-stack" aria-hidden="true">
@@ -45,7 +49,7 @@
         </div>
         <br />
 
-        <!-- 投影法選択プルダウン -->
+        <!-- d3-celestial の投影法を切り替える。星座早見盤だけは天頂中心の特殊モードとして扱う -->
         <div class="field field-compact">
           <label for="projection-select">星図投影法：</label>
           <select id="projection-select">
@@ -60,7 +64,7 @@
           </select>
         </div>
 
-        <!-- 恒星の等級（視等級）表示上限 -->
+        <!-- 恒星の視等級表示上限。暗い星を減らすと星図が見やすくなり、描画負荷も下がる -->
         <div class="field field-compact">
           <label for="star-mag-limit">恒星等級：</label>
           <input id="star-mag-limit" type="range" min="-1" max="6" step="0.1" value="6" aria-label="恒星の視等級表示上限" />
@@ -68,38 +72,40 @@
         </div>
 
         <div class="field field-compact">
-          <!-- 星図リセットボタン -->
+          <!-- パン/ズーム/投影法変更後の表示を、現在の観測地と時刻に基づく初期向きへ戻す -->
           <button id="reset-view" type="button">星図表示リセット</button>
-          <!-- 88星座表示ON/OFFチェックボックス -->
+          <!-- IAUの88星座線・星座名を下地として表示/非表示にする -->
           <label for="toggle-constellations"><input type="checkbox" id="toggle-constellations" checked />88星座表示</label>
         </div>
+      </section>
 
-        <hr />
+      <!-- 中央ペイン: d3-celestial のCanvas星図と利用上の注記を表示する主表示領域 -->
+      <section class="map-area">
+        <!-- d3-celestial がこのdiv内にcanvasを生成し、js/main.js が独自GeoJSONレイヤーを重ね描きする -->
+        <div id="celestial-map"></div>
 
-        <h2>アイヌ民族星文化一覧</h2>
+        <!-- 星図上の色分け凡例。緑は単独星、紫は星座線、黄色は一覧で選択中の強調を示す -->
+        <p class="note">※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています（一覧で選択すると黄色で強調表示）。</p>
+        <!-- 掲載コンテンツの利用条件を、星図直下で常時確認できるようにする -->
+        <p class="attention">当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。 <br />ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a>までお問い合わせください。 <br />&copy;2025–2026 Aynu Star Culture プロジェクト</p>
+      </section>
+
+      <!-- 右ペイン: 星図上で現在見えている星文化だけをJSで表示し、クリック時はCanvas側も黄色で強調する -->
+      <aside class="culture-panel" aria-labelledby="aynu-list-heading">
+        <h2 id="aynu-list-heading">アイヌ民族星文化一覧</h2>
         <ul id="aynu-list" class="aynu-list">
           <li>……</li>
         </ul>
-      </section>
-
-      <section class="map-area">
-        <!-- d3-celestial がここにキャンバスを作る -->
-        <div id="celestial-map"></div>
-
-        <!-- d3-celestial キャンバス下 note -->
-        <p class="note">※ 星図上では紫/緑色でアイヌ民族の星文化を描画しています（一覧で選択すると黄色で強調表示）。</p>
-        <!-- d3-celestial キャンバス下 attention -->
-        <p class="attention">当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。 <br />ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a>までお問い合わせください。 <br />&copy;2025–2026 Aynu Star Culture プロジェクト</p>
-      </section>
+      </aside>
     </main>
 
-    <!-- d3-celestial 関連ライブラリ -->
+    <!-- d3-celestial 関連ライブラリ。依存順は d3 → 地図投影拡張 → celestial 本体 -->
     <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/lib/d3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/lib/d3.geo.projection.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.min.js"></script>
 
-    <!-- 自前の JS -->
-    <!-- キャッシュ更新用にバージョンを付与 -->
+    <!-- 自前の JS。dataLoader を先に読み込み、main.js から loadAllAynuData() を呼べるようにする -->
+    <!-- クエリ文字列の v は、静的配信/CDN/ブラウザキャッシュ更新用の簡易バージョン -->
     <script src="js/dataLoader.js?v=20260501"></script>
     <script src="js/main.js?v=20260501"></script>
     <script src="js/includes.js?v=20260214"></script>
