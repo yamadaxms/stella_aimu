@@ -154,7 +154,7 @@ body::after {
   display: flex; /* 横並びレイアウトにする */
   flex-wrap: wrap; /* 狭い幅では折り返しを許可 */
   max-width: 1600px; /* 1600px 幅で整える */
-  margin: 0 auto; /* 中央寄せ */
+  margin: 0 auto 0 0; /* 幅上限に達しても左寄せを維持 */
   width: 100%; /* 余白を含めて横幅を占有 */
   padding: 0 0.75rem 1rem; /* 端の余白と下余白 */
 }
