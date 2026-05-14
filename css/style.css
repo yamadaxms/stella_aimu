@@ -382,7 +382,9 @@ select {
 /* 備考表示用（星図の直下に表示する短い説明）
    Canvas内の色分けを文章で補い、一覧選択時の黄色強調にも気付けるようにする。 */
 .note {
+  flex: 0 0 auto;
   margin-top: 0.8rem; /* 備考の上余白 */
+  margin-bottom: 0;
   font-size: 0.8rem; /* 備考の文字サイズ */
   color: #9ca3af; /* 備考の文字色 */
 }
@@ -390,7 +392,9 @@ select {
 /* 注意事項表示用（利用規約／免責など強調文）
    複製禁止や問い合わせ先を星図直下に置くため、通常本文より目立つ暖色にする。 */
 .attention {
+  flex: 0 0 auto;
   margin-top: 0.8rem; /* 注意事項の上余白 */
+  margin-bottom: 0;
   font-size: 0.8rem; /* 注意事項の文字サイズ */
   color: #ffcc66; /* 注意事項の色 */
 }
@@ -425,6 +429,8 @@ a[href*="x.com/trapezium_orion"] {
 .map-area {
   flex: 1 1 0; /* 余ったスペースを占有 */
   min-width: 0; /* はみ出し防止の最小幅リセット */
+  min-height: 0;
+  max-height: 100%;
   height: 100%;
   padding: 0.5rem; /* 内側余白 */
   box-sizing: border-box; /* パディング込みで計算 */
@@ -441,8 +447,9 @@ a[href*="x.com/trapezium_orion"] {
 #celestial-map {
   flex: 1 1 auto;
   width: 100%; /* 横幅いっぱいに描画 */
+  height: auto !important; /* d3-celestial が付ける高さより、中央ペインの残り高さを優先 */
   min-height: 0;
-  max-height: none; /* clampで制御するため上限は不要 */
+  max-height: 100%; /* 中央ペインからはみ出さない */
   position: relative; /* 子要素(canvas)の絶対配置の基準にするためrelativeを指定 */
   overflow: hidden; /* はみ出し分でレイアウトが崩れないようにする */
 }
@@ -630,6 +637,6 @@ a[href*="x.com/trapezium_orion"] {
 
   /* 星図コンテナはviewport高ベースに */
   #celestial-map {
-    height: 60vh;
+    height: 60vh !important;
   }
 }
