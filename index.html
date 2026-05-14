@@ -4,20 +4,20 @@
     <meta charset="UTF-8" />
     <title>アイヌ民族星文化ビューア ～カムイの星図～</title>
 
-    <!-- 端末幅に合わせて3カラム/縦積みレイアウトを切り替えるため、viewportを実デバイス幅に合わせる -->
+    <!-- 端末幅に合わせて2カラム/縦積みレイアウトを切り替えるため、viewportを実デバイス幅に合わせる -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- d3-celestial 本体が挿入する星図UIの標準スタイルを先に読み込む -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/d3-celestial@0.7.35/celestial.css" />
-    <!-- サイト固有の配色、3カラム配置、一覧、エリアマップ、補足ページのスタイル -->
+    <!-- サイト固有の配色、2カラム配置、一覧、エリアマップ、補足ページのスタイル -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body class="star-map-page">
+  <body>
     <!-- js/includes.js が共通ヘッダーHTMLへ差し替えるプレースホルダー -->
     <div id="site-header-include"></div>
 
     <main class="layout">
-      <!-- 左ペイン: 市町村選択、地域情報、表示設定をまとめる操作パネル -->
+      <!-- 左ペイン: 市町村選択、地域情報、表示設定、星文化一覧をまとめる操作パネル -->
       <section class="controls">
         <div id="loading-indicator" class="loading" aria-live="polite"></div>
 
@@ -77,9 +77,17 @@
           <!-- IAUの88星座線・星座名を下地として表示/非表示にする -->
           <label for="toggle-constellations"><input type="checkbox" id="toggle-constellations" checked />88星座表示</label>
         </div>
+
+        <hr />
+
+        <!-- 星図上で現在見えている星文化だけをJSで表示し、クリック時はCanvas側も黄色で強調する -->
+        <h2>アイヌ民族星文化一覧</h2>
+        <ul id="aynu-list" class="aynu-list">
+          <li>……</li>
+        </ul>
       </section>
 
-      <!-- 中央ペイン: d3-celestial のCanvas星図と利用上の注記を表示する主表示領域 -->
+      <!-- 右ペイン: d3-celestial のCanvas星図と利用上の注記を表示する主表示領域 -->
       <section class="map-area">
         <!-- d3-celestial がこのdiv内にcanvasを生成し、js/main.js が独自GeoJSONレイヤーを重ね描きする -->
         <div id="celestial-map"></div>
@@ -89,14 +97,6 @@
         <!-- 掲載コンテンツの利用条件を、星図直下で常時確認できるようにする -->
         <p class="attention">当サイトに掲載されている星図・星座線・星文化情報・地図情報など、すべてのコンテンツのダウンロードおよび無断複製（スクリーンショット等を含む）は固く禁止いたします。 <br />ご利用を希望される場合は、必ず管理者：<a href="https://x.com/trapezium_orion" target="_blank" rel="noopener">@trapezium_orion (X/Twitter)</a>までお問い合わせください。 <br />&copy;2025–2026 Aynu Star Culture プロジェクト</p>
       </section>
-
-      <!-- 右ペイン: 星図上で現在見えている星文化だけをJSで表示し、クリック時はCanvas側も黄色で強調する -->
-      <aside class="culture-panel" aria-labelledby="aynu-list-heading">
-        <h2 id="aynu-list-heading">アイヌ民族星文化一覧</h2>
-        <ul id="aynu-list" class="aynu-list">
-          <li>……</li>
-        </ul>
-      </aside>
     </main>
 
     <!-- d3-celestial 関連ライブラリ。依存順は d3 → 地図投影拡張 → celestial 本体 -->
