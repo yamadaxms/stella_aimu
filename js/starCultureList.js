@@ -92,7 +92,7 @@
   }
 
   function normalizeStandardAynuCode(value) {
-    const text = String(value ?? "").trim();
+    const text = String(value ?? "").normalize("NFKC").trim();
     if (!text) return "";
 
     const lower = text.toLowerCase();
