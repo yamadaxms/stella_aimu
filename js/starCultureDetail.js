@@ -69,15 +69,14 @@
 
   function renderBasic(item) {
     els.basic.textContent = "";
-    appendBasicRow("star_culture_id", getField(item, "star_culture_id") || getCultureKey(item));
-    appendBasicRow("name_ja", getField(item, "name_ja") || getField(item, "name"));
-    appendBasicRow("name_en", getField(item, "name_en"));
-    appendBasicRow("meaning", getField(item, "meaning") || getField(item, "description"));
-    appendBasicRow("constellation_key", getField(item, "constellation_key"));
-    appendBasicRow("original_name_ja", getField(item, "original_name_ja"));
-    appendBasicRow("original_name_en", getField(item, "original_name_en"));
-    appendBasicRow("original_meaning", getField(item, "original_meaning"));
-    appendBasicRow("memo", getField(item, "memo"));
+    appendBasicRow("星文化ID", getField(item, "star_culture_id") || getCultureKey(item));
+    appendBasicRow("名称", getField(item, "name_ja") || getField(item, "name"));
+    appendBasicRow("名称（英名）", getField(item, "name_en"));
+    appendBasicRow("意味", getField(item, "meaning") || getField(item, "description"));
+    appendBasicRow("オリジナル名称", getField(item, "original_name_ja"));
+    appendBasicRow("オリジナル名称（英名）", getField(item, "original_name_en"));
+    appendBasicRow("オリジナル意味", getField(item, "original_meaning"));
+    appendBasicRow("メモ", getField(item, "memo"));
   }
 
   function renderDetail(item) {
