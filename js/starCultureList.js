@@ -15,7 +15,9 @@
   }
 
   function normalizeText(value) {
-    return String(value ?? "").trim().toLowerCase();
+    return String(value ?? "")
+      .trim()
+      .toLowerCase();
   }
 
   function formatText(value) {
@@ -34,21 +36,21 @@
   const OTHER_REGION_FILTER = "other";
 
   const AYNU_VARIANT_MAP = {
-    "1": "aynu1",
-    "2": "aynu2",
-    "3": "aynu3",
-    "4": "aynu4",
-    "5": "aynu5",
+    1: "aynu1",
+    2: "aynu2",
+    3: "aynu3",
+    4: "aynu4",
+    5: "aynu5",
     i: "aynu1",
     ii: "aynu2",
     iii: "aynu3",
     iv: "aynu4",
     v: "aynu5",
-    "Ⅰ": "aynu1",
-    "Ⅱ": "aynu2",
-    "Ⅲ": "aynu3",
-    "Ⅳ": "aynu4",
-    "Ⅴ": "aynu5",
+    Ⅰ: "aynu1",
+    Ⅱ: "aynu2",
+    Ⅲ: "aynu3",
+    Ⅳ: "aynu4",
+    Ⅴ: "aynu5",
   };
 
   function getPublishValue(item) {
@@ -72,13 +74,7 @@
   }
 
   function getCultureKey(item) {
-    return (
-      item?.key ??
-      item?.star_culture?.key ??
-      item?.starCulture?.key ??
-      item?.star_culture_key ??
-      ""
-    );
+    return item?.key ?? item?.star_culture?.key ?? item?.starCulture?.key ?? item?.star_culture_key ?? "";
   }
 
   function getName(item) {
@@ -86,13 +82,7 @@
   }
 
   function getDescription(item) {
-    return (
-      item?.description ??
-      item?.star_culture?.description ??
-      item?.starCulture?.description ??
-      item?.meaning ??
-      ""
-    );
+    return item?.description ?? item?.star_culture?.description ?? item?.starCulture?.description ?? item?.meaning ?? "";
   }
 
   function getAynuCodes(item) {
@@ -134,11 +124,12 @@
     const seen = new Set();
     const values = [];
 
-    for (const value of getAynuCodes(item)) {
-      const text = String(value || "").trim();
-      if (!text || normalizeStandardAynuCode(text) || seen.has(text)) continue;
-      seen.add(text);
-      values.push(text);
+    for (const value of getAreaNames(item)) {
+      for (const text of splitAreaName(value)) {
+        if (!text || normalizeStandardAynuCode(text) || seen.has(text)) continue;
+        seen.add(text);
+        values.push(text);
+      }
     }
 
     return values;
@@ -158,15 +149,44 @@
     return values.length ? values.join(",") : "";
   }
 
+  function splitAreaName(value) {
+    return String(value ?? "")
+      .split(/[,\u3001\uff0c]/)
+      .map((text) => text.trim())
+      .filter(Boolean);
+  }
+
+  function collectAreaNamesFrom(value, out) {
+    if (!value) return;
+
+    if (Array.isArray(value)) {
+      for (const item of value) collectAreaNamesFrom(item, out);
+      return;
+    }
+
+    if (typeof value === "string") {
+      out.push(...splitAreaName(value));
+      return;
+    }
+
+    if (typeof value === "object") {
+      const text = value.area_name ?? value.areaName ?? value.name ?? value.area?.name ?? value.area?.area_name;
+      out.push(...splitAreaName(text));
+    }
+  }
+
+  function getAreaNames(item) {
+    const names = [];
+    collectAreaNamesFrom(item?.star_area_link, names);
+    collectAreaNamesFrom(item?.star_area_links, names);
+    collectAreaNamesFrom(item?.area_names, names);
+    collectAreaNamesFrom(item?.areaNames, names);
+
+    return Array.from(new Set(names.filter(Boolean)));
+  }
+
   function getNameEn(item) {
-    return (
-      item?.star_culture?.name_en ??
-      item?.starCulture?.name_en ??
-      item?.name_en ??
-      item?.nameEn ??
-      item?.star_culture_name_en ??
-      ""
-    );
+    return item?.star_culture?.name_en ?? item?.starCulture?.name_en ?? item?.name_en ?? item?.nameEn ?? item?.star_culture_name_en ?? "";
   }
 
   function collectAstroNamesFrom(value, out) {
@@ -184,14 +204,7 @@
     }
 
     if (typeof value === "object") {
-      const text =
-        value.astro_name ??
-        value.astroName ??
-        value.name ??
-        value.star?.astro_name ??
-        value.star?.astroName ??
-        value.astro?.name ??
-        value.astro?.astro_name;
+      const text = value.astro_name ?? value.astroName ?? value.name ?? value.star?.astro_name ?? value.star?.astroName ?? value.astro?.name ?? value.astro?.astro_name;
       if (text) out.push(String(text).trim());
     }
   }
@@ -244,6 +257,7 @@
 
   function createDetailCell(item) {
     const td = document.createElement("td");
+    td.className = "star-culture-detail-cell";
     const key = String(getCultureKey(item)).trim();
 
     if (!key) {
@@ -268,13 +282,7 @@
 
       const nameEn = getNameEn(item);
       const astroNames = getAstroNames(item).join(",");
-      const matchesQuery =
-        !query ||
-        normalizeText(getName(item)).includes(query) ||
-        normalizeText(getDescription(item)).includes(query) ||
-        normalizeText(getCultureKey(item)).includes(query) ||
-        normalizeText(nameEn).includes(query) ||
-        normalizeText(astroNames).includes(query);
+      const matchesQuery = !query || normalizeText(getName(item)).includes(query) || normalizeText(getDescription(item)).includes(query) || normalizeText(getCultureKey(item)).includes(query) || normalizeText(nameEn).includes(query) || normalizeText(astroNames).includes(query);
 
       const matchesRegion = regions.length === 0 || regions.some((region) => hasRegion(item, region));
 
@@ -289,17 +297,17 @@
     const fragment = document.createDocumentFragment();
     for (const item of rows) {
       const tr = document.createElement("tr");
+      tr.appendChild(createDetailCell(item));
       tr.appendChild(createCell(formatText(getName(item)), "star-culture-name-cell"));
+      tr.appendChild(createCell(formatText(getNameEn(item)), "star-culture-code-cell star-culture-name-en-cell"));
       tr.appendChild(createCell(formatText(getDescription(item)), "star-culture-description-cell"));
-      tr.appendChild(createCell(formatText(getNameEn(item)), "star-culture-code-cell"));
-      tr.appendChild(createCell(formatAstroNames(item)));
+      tr.appendChild(createCell(formatAstroNames(item), "star-culture-astro-cell"));
       tr.appendChild(createRegionMarkCell(item, "aynu1"));
       tr.appendChild(createRegionMarkCell(item, "aynu2"));
       tr.appendChild(createRegionMarkCell(item, "aynu3"));
       tr.appendChild(createRegionMarkCell(item, "aynu4"));
       tr.appendChild(createRegionMarkCell(item, "aynu5"));
       tr.appendChild(createCell(formatOtherRegions(item), "star-culture-other-region-cell"));
-      tr.appendChild(createDetailCell(item));
       fragment.appendChild(tr);
     }
 

@@ -57,7 +57,7 @@
 
 .star-culture-search-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(320px, 420px) auto;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
   gap: 0.85rem;
   align-items: end;
 }
@@ -83,11 +83,12 @@
 
 .star-culture-region-filter {
   display: grid;
-  grid-template-columns: repeat(3, minmax(5rem, 1fr));
+  grid-template-columns: repeat(6, max-content);
   gap: 0.35rem 0.6rem;
   margin: 0;
   padding: 0;
   border: 0;
+  overflow-x: auto;
 }
 
 .star-culture-region-filter legend {
@@ -198,7 +199,7 @@
 .star-culture-table,
 .star-culture-detail-table {
   width: 100%;
-  min-width: 1180px;
+  min-width: 1280px;
   border-collapse: collapse;
   background: #070d1a;
 }
@@ -241,17 +242,39 @@
 }
 
 .star-culture-name-cell {
-  min-width: 10rem;
+  min-width: 15rem;
   font-weight: 600;
 }
 
+.star-culture-detail-cell {
+  width: 1%;
+  min-width: 3.5rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.star-culture-detail-cell .star-culture-action-link {
+  min-height: 1.65rem;
+  padding: 0.18rem 0.45rem;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
 .star-culture-description-cell {
-  min-width: 18rem;
+  min-width: 10rem;
 }
 
 .star-culture-code-cell {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.85rem;
+}
+
+.star-culture-name-en-cell {
+  min-width: 15rem;
+}
+
+.star-culture-astro-cell {
+  min-width: 10rem;
 }
 
 .star-culture-region-mark-cell {
@@ -284,10 +307,6 @@
     grid-template-columns: 1fr;
   }
 
-  .star-culture-region-filter {
-    grid-template-columns: repeat(2, minmax(5rem, 1fr));
-  }
-
   .star-culture-actions,
   .star-culture-actions button,
   .star-culture-back-link,
@@ -296,6 +315,6 @@
   }
 
   .star-culture-table {
-    min-width: 1080px;
+    min-width: 1180px;
   }
 }
