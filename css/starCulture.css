@@ -1,0 +1,250 @@
+/* =========================================================
+ * Star culture admin pages
+ * ========================================================= */
+
+.star-culture-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  line-height: 1.7;
+}
+
+.star-culture-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.star-culture-page-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.star-culture-kicker {
+  margin: 0 0 0.15rem;
+  color: #9ca3af;
+  font-size: 0.78rem;
+}
+
+.star-culture-panel {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #0b1221;
+  border: 1px solid #1f2933;
+  border-radius: 8px;
+}
+
+.star-culture-panel h3 {
+  margin: 0 0 0.8rem;
+  font-size: 1rem;
+}
+
+.star-culture-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.star-culture-section-header h3,
+.star-culture-section-header p {
+  margin: 0;
+}
+
+.star-culture-search-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(160px, 220px) auto;
+  gap: 0.85rem;
+  align-items: end;
+}
+
+.star-culture-field label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #cbd5f5;
+  font-size: 0.85rem;
+}
+
+.star-culture-field input,
+.star-culture-field select {
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid #4b5563;
+  border-radius: 4px;
+  background: #020617;
+  color: #e5e7eb;
+  font: inherit;
+}
+
+.star-culture-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.star-culture-actions button,
+.star-culture-action-link,
+.star-culture-back-link,
+.star-culture-inline-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.15rem;
+  padding: 0.42rem 0.8rem;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  background: #0b152b;
+  color: #8ae2ff;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.star-culture-actions button:hover,
+.star-culture-action-link:hover,
+.star-culture-back-link:hover,
+.star-culture-inline-link:hover {
+  border-color: #66ccff;
+}
+
+.star-culture-back-link {
+  flex: 0 0 auto;
+  margin-top: 0.1rem;
+}
+
+.star-culture-inline-link {
+  min-height: 1.9rem;
+  padding: 0.32rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.star-culture-result-count {
+  color: #cbd5f5;
+  font-size: 0.9rem;
+}
+
+.star-culture-loading,
+.star-culture-status,
+.star-culture-empty {
+  margin: 0.5rem 0 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.star-culture-loading {
+  background: #0b152b;
+  border-left: 3px solid #66ccff;
+  color: #d9e6ff;
+}
+
+.star-culture-status {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fecaca;
+}
+
+.star-culture-empty {
+  background: rgba(156, 163, 175, 0.1);
+  border: 1px solid rgba(156, 163, 175, 0.24);
+  color: #d1d5db;
+}
+
+.star-culture-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #1f2933;
+  border-radius: 8px;
+}
+
+.star-culture-table,
+.star-culture-detail-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  background: #070d1a;
+}
+
+.star-culture-detail-table {
+  min-width: 0;
+}
+
+.star-culture-table th,
+.star-culture-table td,
+.star-culture-detail-table th,
+.star-culture-detail-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #1f2933;
+  vertical-align: top;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.star-culture-table th,
+.star-culture-detail-table th {
+  width: 9rem;
+  background: #111827;
+  color: #cbd5f5;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.star-culture-table tbody tr:last-child td,
+.star-culture-detail-table tr:last-child th,
+.star-culture-detail-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.star-culture-table tbody tr:hover {
+  background: rgba(102, 204, 255, 0.06);
+}
+
+.star-culture-name-cell {
+  min-width: 10rem;
+  font-weight: 600;
+}
+
+.star-culture-description-cell {
+  min-width: 18rem;
+}
+
+.star-culture-code-cell {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.85rem;
+}
+
+.star-culture-detail {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .star-culture-page {
+    padding: 0.9rem;
+  }
+
+  .star-culture-page-header,
+  .star-culture-section-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .star-culture-search-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .star-culture-actions,
+  .star-culture-actions button,
+  .star-culture-back-link,
+  .star-culture-inline-link {
+    width: 100%;
+  }
+
+  .star-culture-table {
+    min-width: 680px;
+  }
+}

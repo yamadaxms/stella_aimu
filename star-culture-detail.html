@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>星文化詳細 | アイヌ民族星文化ビューア</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/starCulture.css?v=20260515" />
+  </head>
+  <body>
+    <div id="site-header-include"></div>
+
+    <main class="star-culture-page star-culture-detail-page">
+      <header class="star-culture-page-header">
+        <div>
+          <p class="star-culture-kicker">管理系ページ</p>
+          <h2>星文化詳細</h2>
+        </div>
+        <a class="star-culture-back-link" href="star-cultures.html">検索へ戻る</a>
+      </header>
+
+      <div id="star-culture-loading" class="star-culture-loading" aria-live="polite" hidden>データを読み込んでいます。</div>
+      <div id="star-culture-status" class="star-culture-status" role="alert" aria-live="assertive" hidden></div>
+
+      <article id="star-culture-detail" class="star-culture-detail" hidden>
+        <section class="star-culture-panel" aria-labelledby="star-culture-basic-heading">
+          <div class="star-culture-section-header">
+            <h3 id="star-culture-basic-heading">基本情報</h3>
+            <a id="star-culture-detail-list-link" class="star-culture-inline-link" href="star-cultures.html">一覧で見る</a>
+          </div>
+          <div class="star-culture-table-wrap">
+            <table class="star-culture-detail-table">
+              <tbody id="star-culture-basic"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="star-culture-panel" aria-labelledby="star-culture-lines-heading">
+          <h3 id="star-culture-lines-heading">星座線 lines</h3>
+          <div id="star-culture-lines-empty" class="star-culture-empty" hidden>星座線情報はありません。</div>
+          <div id="star-culture-lines-wrap" class="star-culture-table-wrap" hidden>
+            <table class="star-culture-table">
+              <thead>
+                <tr>
+                  <th scope="col">No.</th>
+                  <th scope="col">使用恒星</th>
+                </tr>
+              </thead>
+              <tbody id="star-culture-lines"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="star-culture-panel" aria-labelledby="star-culture-stars-heading">
+          <h3 id="star-culture-stars-heading">使用恒星一覧</h3>
+          <div id="star-culture-stars-empty" class="star-culture-empty" hidden>使用恒星情報はありません。</div>
+          <div id="star-culture-stars-wrap" class="star-culture-table-wrap" hidden>
+            <table class="star-culture-table">
+              <thead>
+                <tr>
+                  <th scope="col">恒星キー</th>
+                  <th scope="col">RA</th>
+                  <th scope="col">Dec</th>
+                </tr>
+              </thead>
+              <tbody id="star-culture-stars"></tbody>
+            </table>
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <script src="js/dataLoader.js?v=20260501"></script>
+    <script src="js/starCultureDetail.js?v=20260515"></script>
+    <script src="js/includes.js?v=20260214"></script>
+    <script src="js/contentProtection.js?v=20260214"></script>
+  </body>
+</html>
