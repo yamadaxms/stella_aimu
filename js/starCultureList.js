@@ -110,7 +110,7 @@
     const seen = new Set();
     const codes = [];
 
-    for (const value of getAynuCodes(item)) {
+    for (const value of [...getAynuCodes(item), ...getAreaNames(item)]) {
       const code = normalizeStandardAynuCode(value);
       if (!code || seen.has(code)) continue;
       seen.add(code);
