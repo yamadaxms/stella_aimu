@@ -34,6 +34,7 @@
   };
   const STANDARD_AYNU_CODES = Object.keys(AYNU_LABEL_MAP);
   const OTHER_REGION_FILTER = "other";
+  const EXCLUDED_OTHER_AREA_NAMES = new Set(["全域"]);
 
   const AYNU_VARIANT_MAP = {
     1: "aynu1",
@@ -126,7 +127,7 @@
 
     for (const value of getAreaNames(item)) {
       for (const text of splitAreaName(value)) {
-        if (!text || normalizeStandardAynuCode(text) || seen.has(text)) continue;
+        if (!text || normalizeStandardAynuCode(text) || EXCLUDED_OTHER_AREA_NAMES.has(text.normalize("NFKC")) || seen.has(text)) continue;
         seen.add(text);
         values.push(text);
       }
