@@ -57,7 +57,7 @@
 
 .star-culture-search-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(160px, 220px) auto;
+  grid-template-columns: minmax(220px, 1fr) minmax(320px, 420px) auto;
   gap: 0.85rem;
   align-items: end;
 }
@@ -79,6 +79,39 @@
   background: #020617;
   color: #e5e7eb;
   font: inherit;
+}
+
+.star-culture-region-filter {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(5rem, 1fr));
+  gap: 0.35rem 0.6rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.star-culture-region-filter legend {
+  grid-column: 1 / -1;
+  margin-bottom: 0.25rem;
+  color: #cbd5f5;
+  font-size: 0.85rem;
+}
+
+.star-culture-region-filter label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2rem;
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.star-culture-region-filter input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
 }
 
 .star-culture-actions {
@@ -165,7 +198,7 @@
 .star-culture-table,
 .star-culture-detail-table {
   width: 100%;
-  min-width: 760px;
+  min-width: 1180px;
   border-collapse: collapse;
   background: #070d1a;
 }
@@ -187,11 +220,14 @@
 
 .star-culture-table th,
 .star-culture-detail-table th {
-  width: 9rem;
   background: #111827;
   color: #cbd5f5;
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+.star-culture-detail-table th {
+  width: 9rem;
 }
 
 .star-culture-table tbody tr:last-child td,
@@ -218,6 +254,17 @@
   font-size: 0.85rem;
 }
 
+.star-culture-region-mark-cell {
+  min-width: 4.25rem;
+  color: #ffeb3b;
+  font-weight: 700;
+  text-align: center;
+}
+
+.star-culture-other-region-cell {
+  min-width: 9rem;
+}
+
 .star-culture-detail {
   display: block;
 }
@@ -237,6 +284,10 @@
     grid-template-columns: 1fr;
   }
 
+  .star-culture-region-filter {
+    grid-template-columns: repeat(2, minmax(5rem, 1fr));
+  }
+
   .star-culture-actions,
   .star-culture-actions button,
   .star-culture-back-link,
@@ -245,6 +296,6 @@
   }
 
   .star-culture-table {
-    min-width: 680px;
+    min-width: 1080px;
   }
 }

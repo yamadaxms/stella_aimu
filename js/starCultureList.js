@@ -5,7 +5,7 @@
     constellations: [],
     hasPublishFlag: false,
     query: "",
-    region: "",
+    regions: [],
   };
 
   const els = {};
@@ -29,6 +29,26 @@
     aynu3: "区分Ⅲ",
     aynu4: "区分Ⅳ",
     aynu5: "区分Ⅴ",
+  };
+  const STANDARD_AYNU_CODES = Object.keys(AYNU_LABEL_MAP);
+  const OTHER_REGION_FILTER = "other";
+
+  const AYNU_VARIANT_MAP = {
+    "1": "aynu1",
+    "2": "aynu2",
+    "3": "aynu3",
+    "4": "aynu4",
+    "5": "aynu5",
+    i: "aynu1",
+    ii: "aynu2",
+    iii: "aynu3",
+    iv: "aynu4",
+    v: "aynu5",
+    "Ⅰ": "aynu1",
+    "Ⅱ": "aynu2",
+    "Ⅲ": "aynu3",
+    "Ⅳ": "aynu4",
+    "Ⅴ": "aynu5",
   };
 
   function getPublishValue(item) {
@@ -81,9 +101,61 @@
     return value.map((code) => String(code || "").trim()).filter(Boolean);
   }
 
-  function formatAynu(item) {
-    const labels = getAynuCodes(item).map((code) => AYNU_LABEL_MAP[code] || code);
-    return labels.length ? labels.join(" / ") : "-";
+  function normalizeStandardAynuCode(value) {
+    const text = String(value ?? "").trim();
+    if (!text) return "";
+
+    const lower = text.toLowerCase();
+    if (STANDARD_AYNU_CODES.includes(lower)) return lower;
+
+    const simplified = lower
+      .replace(/[（）()\[\]\s]/g, "")
+      .replace(/^地域/, "")
+      .replace(/^区分/, "");
+
+    return AYNU_VARIANT_MAP[simplified] || "";
+  }
+
+  function getStandardAynuCodes(item) {
+    const seen = new Set();
+    const codes = [];
+
+    for (const value of getAynuCodes(item)) {
+      const code = normalizeStandardAynuCode(value);
+      if (!code || seen.has(code)) continue;
+      seen.add(code);
+      codes.push(code);
+    }
+
+    return codes;
+  }
+
+  function getOtherAynuValues(item) {
+    const seen = new Set();
+    const values = [];
+
+    for (const value of getAynuCodes(item)) {
+      const text = String(value || "").trim();
+      if (!text || normalizeStandardAynuCode(text) || seen.has(text)) continue;
+      seen.add(text);
+      values.push(text);
+    }
+
+    return values;
+  }
+
+  function hasRegion(item, region) {
+    if (region === OTHER_REGION_FILTER) return getOtherAynuValues(item).length > 0;
+    return getStandardAynuCodes(item).includes(region);
+  }
+
+  function formatRegionMark(item, region) {
+    return hasRegion(item, region) ? "○" : "";
+  }
+
+  function formatOtherRegions(item) {
+    const values = getOtherAynuValues(item);
+    return values.length ? values.join(",") : "";
   }
 
   function getNameEn(item) {
@@ -166,6 +238,10 @@
     return td;
   }
 
+  function createRegionMarkCell(item, region) {
+    return createCell(formatRegionMark(item, region), "star-culture-region-mark-cell");
+  }
+
   function createDetailCell(item) {
     const td = document.createElement("td");
     const key = String(getCultureKey(item)).trim();
@@ -185,7 +261,7 @@
 
   function filterConstellations() {
     const query = normalizeText(state.query);
-    const region = state.region;
+    const regions = state.regions;
 
     return state.constellations.filter((item) => {
       if (!isPublished(item)) return false;
@@ -200,8 +276,7 @@
         normalizeText(nameEn).includes(query) ||
         normalizeText(astroNames).includes(query);
 
-      const aynu = getAynuCodes(item);
-      const matchesRegion = !region || aynu.includes(region);
+      const matchesRegion = regions.length === 0 || regions.some((region) => hasRegion(item, region));
 
       return matchesQuery && matchesRegion;
     });
@@ -218,7 +293,12 @@
       tr.appendChild(createCell(formatText(getDescription(item)), "star-culture-description-cell"));
       tr.appendChild(createCell(formatText(getNameEn(item)), "star-culture-code-cell"));
       tr.appendChild(createCell(formatAstroNames(item)));
-      tr.appendChild(createCell(formatAynu(item)));
+      tr.appendChild(createRegionMarkCell(item, "aynu1"));
+      tr.appendChild(createRegionMarkCell(item, "aynu2"));
+      tr.appendChild(createRegionMarkCell(item, "aynu3"));
+      tr.appendChild(createRegionMarkCell(item, "aynu4"));
+      tr.appendChild(createRegionMarkCell(item, "aynu5"));
+      tr.appendChild(createCell(formatOtherRegions(item), "star-culture-other-region-cell"));
       tr.appendChild(createDetailCell(item));
       fragment.appendChild(tr);
     }
@@ -240,31 +320,45 @@
       render();
     });
 
-    els.region?.addEventListener("change", (event) => {
-      state.region = event.target.value;
-      render();
-    });
+    for (const input of els.regionInputs || []) {
+      input.addEventListener("change", () => {
+        state.regions = getSelectedRegions();
+        render();
+      });
+    }
 
     els.reset?.addEventListener("click", () => {
       state.query = "";
-      state.region = "";
+      state.regions = [];
       if (els.query) els.query.value = "";
-      if (els.region) els.region.value = "";
+      for (const input of els.regionInputs || []) input.checked = false;
       render();
       els.query?.focus();
     });
   }
 
+  function getSelectedRegions() {
+    return Array.from(els.regionInputs || [])
+      .filter((input) => input.checked)
+      .map((input) => input.value)
+      .filter((value) => STANDARD_AYNU_CODES.includes(value) || value === OTHER_REGION_FILTER);
+  }
+
   function applyInitialFiltersFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const query = params.get("key") || params.get("q") || "";
-    const region = params.get("region") || "";
+    const regions = (params.get("region") || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter((value) => STANDARD_AYNU_CODES.includes(value) || value === OTHER_REGION_FILTER);
 
     state.query = query;
-    state.region = /^aynu[1-5]$/.test(region) ? region : "";
+    state.regions = regions;
 
     if (els.query) els.query.value = state.query;
-    if (els.region) els.region.value = state.region;
+    for (const input of els.regionInputs || []) {
+      input.checked = state.regions.includes(input.value);
+    }
   }
 
   async function loadData() {
@@ -297,7 +391,7 @@
 
   function init() {
     els.query = getElement("star-culture-query");
-    els.region = getElement("star-culture-region");
+    els.regionInputs = document.querySelectorAll('input[name="star-culture-region"]');
     els.reset = getElement("star-culture-reset");
     els.results = getElement("star-culture-results");
     els.tableWrap = getElement("star-culture-table-wrap");

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/starCulture.css?v=20260515" />
+    <link rel="stylesheet" href="css/starCulture.css?v=20260515b" />
   </head>
   <body>
     <div id="site-header-include"></div>
@@ -27,17 +27,15 @@
             <label for="star-culture-query">名称・意味・英字表記・関連天体</label>
             <input id="star-culture-query" type="search" autocomplete="off" />
           </div>
-          <div class="star-culture-field">
-            <label for="star-culture-region">伝承地域</label>
-            <select id="star-culture-region">
-              <option value="">すべて</option>
-              <option value="aynu1">区分Ⅰ</option>
-              <option value="aynu2">区分Ⅱ</option>
-              <option value="aynu3">区分Ⅲ</option>
-              <option value="aynu4">区分Ⅳ</option>
-              <option value="aynu5">区分Ⅴ</option>
-            </select>
-          </div>
+          <fieldset class="star-culture-region-filter">
+            <legend>伝承地域</legend>
+            <label><input type="checkbox" name="star-culture-region" value="aynu1" />区分Ⅰ</label>
+            <label><input type="checkbox" name="star-culture-region" value="aynu2" />区分Ⅱ</label>
+            <label><input type="checkbox" name="star-culture-region" value="aynu3" />区分Ⅲ</label>
+            <label><input type="checkbox" name="star-culture-region" value="aynu4" />区分Ⅳ</label>
+            <label><input type="checkbox" name="star-culture-region" value="aynu5" />区分Ⅴ</label>
+            <label><input type="checkbox" name="star-culture-region" value="other" />その他</label>
+          </fieldset>
           <div class="star-culture-actions">
             <button id="star-culture-reset" type="button">クリア</button>
           </div>
@@ -62,7 +60,12 @@
                 <th scope="col">意味</th>
                 <th scope="col">英字表記</th>
                 <th scope="col">関連天体</th>
-                <th scope="col">伝承地域</th>
+                <th scope="col">区分Ⅰ</th>
+                <th scope="col">区分Ⅱ</th>
+                <th scope="col">区分Ⅲ</th>
+                <th scope="col">区分Ⅳ</th>
+                <th scope="col">区分Ⅴ</th>
+                <th scope="col">その他</th>
                 <th scope="col">詳細</th>
               </tr>
             </thead>
@@ -73,7 +76,7 @@
     </main>
 
     <script src="js/dataLoader.js?v=20260501"></script>
-    <script src="js/starCultureList.js?v=20260515a"></script>
+    <script src="js/starCultureList.js?v=20260515b"></script>
     <script src="js/includes.js?v=20260214"></script>
     <script src="js/contentProtection.js?v=20260214"></script>
   </body>
