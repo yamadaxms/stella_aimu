@@ -316,7 +316,7 @@
   }
 
   function render() {
-    const rows = filterConstellations();
+    const rows = filterConstellations().sort((a, b) => getName(a).localeCompare(getName(b), "ja"));
     renderRows(rows);
     updateCount(rows.length);
     setHidden(els.tableWrap, rows.length === 0);

@@ -228,7 +228,8 @@
 }
 
 .star-culture-detail-table th {
-  width: 9rem;
+  width: 13rem;
+  white-space: nowrap;
 }
 
 .star-culture-table tbody tr:last-child td,
