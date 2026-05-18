@@ -197,7 +197,8 @@
 }
 
 .star-culture-table,
-.star-culture-detail-table {
+.star-culture-detail-table,
+.star-culture-related-table {
   width: 100%;
   min-width: 1280px;
   border-collapse: collapse;
@@ -208,10 +209,16 @@
   min-width: 0;
 }
 
+.star-culture-related-table {
+  min-width: 960px;
+}
+
 .star-culture-table th,
 .star-culture-table td,
 .star-culture-detail-table th,
-.star-culture-detail-table td {
+.star-culture-detail-table td,
+.star-culture-related-table th,
+.star-culture-related-table td {
   padding: 0.65rem 0.75rem;
   border-bottom: 1px solid #1f2933;
   vertical-align: top;
@@ -220,7 +227,8 @@
 }
 
 .star-culture-table th,
-.star-culture-detail-table th {
+.star-culture-detail-table th,
+.star-culture-related-table th {
   background: #111827;
   color: #cbd5f5;
   font-size: 0.85rem;
@@ -234,11 +242,13 @@
 
 .star-culture-table tbody tr:last-child td,
 .star-culture-detail-table tr:last-child th,
-.star-culture-detail-table tr:last-child td {
+.star-culture-detail-table tr:last-child td,
+.star-culture-related-table tbody tr:last-child td {
   border-bottom: 0;
 }
 
-.star-culture-table tbody tr:hover {
+.star-culture-table tbody tr:hover,
+.star-culture-related-table tbody tr:hover {
   background: rgba(102, 204, 255, 0.06);
 }
 
@@ -293,6 +303,50 @@
   display: block;
 }
 
+.star-culture-tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+  border-bottom: 1px solid #1f2933;
+}
+
+.star-culture-tab {
+  flex: 0 0 auto;
+  min-height: 2.2rem;
+  padding: 0.38rem 0.75rem;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+  color: #cbd5f5;
+  font: inherit;
+  cursor: pointer;
+}
+
+.star-culture-tab:hover {
+  color: #8ae2ff;
+}
+
+.star-culture-tab[aria-selected="true"] {
+  background: #070d1a;
+  border-color: #1f2933;
+  color: #8ae2ff;
+}
+
+.star-culture-tab-panel {
+  min-height: 4rem;
+}
+
+.star-culture-related-empty {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid #1f2933;
+  border-radius: 8px;
+  background: #070d1a;
+  color: #d1d5db;
+}
+
 @media (max-width: 768px) {
   .star-culture-page {
     padding: 0.9rem;
@@ -317,5 +371,9 @@
 
   .star-culture-table {
     min-width: 1180px;
+  }
+
+  .star-culture-related-table {
+    min-width: 900px;
   }
 }
