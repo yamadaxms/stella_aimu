@@ -102,12 +102,6 @@
     return item?.star_culture?.original_meaning ?? item?.starCulture?.original_meaning ?? item?.starCulture?.originalMeaning ?? item?.original_meaning ?? item?.originalMeaning ?? "";
   }
 
-  function getAynuCodes(item) {
-    const value = item?.aynu ?? item?.star_culture?.aynu ?? item?.starCulture?.aynu;
-    if (!Array.isArray(value)) return [];
-    return value.map((code) => String(code || "").trim()).filter(Boolean);
-  }
-
   function normalizeStandardAynuCode(value) {
     const text = String(value ?? "").normalize("NFKC").trim();
     if (!text) return "";
@@ -127,7 +121,7 @@
     const seen = new Set();
     const codes = [];
 
-    for (const value of [...getAynuCodes(item), ...getAreaNames(item)]) {
+    for (const value of getAreaNames(item)) {
       const code = normalizeStandardAynuCode(value);
       if (!code || seen.has(code)) continue;
       seen.add(code);
